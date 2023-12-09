@@ -3,17 +3,20 @@
 
 const express = require('express')
 const path = require('path');
+
 require('./db/mongoose') // to connect mongose to the database
 
-const userRouter = require('./routers/user')
-const zakatRouter = require('./routers/zakat')
+const adminRouter = require('./routers/admin')
+const patientRouter = require('./routers/patient')
+const doctorRouter = require('./routers/doctor')
 
 const app = express()
 const port = process.env.PORT || 5000
 
 app.use(express.json()) // configuring express to automatically parse the incoming json so we can use it as an oject
-app.use(userRouter) // to register user router
-app.use(zakatRouter) // to register zakat router
+app.use(adminRouter) // to register admin router
+app.use(patientRouter) // to register patient router
+app.use(doctorRouter) // to register doctor router
 
 app.listen
     (port, () => { console.log('Server is up on port ' + port); })
