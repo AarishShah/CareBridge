@@ -1,23 +1,28 @@
-
-
-
+const express = require('express');
+const Patient = require('../models/patient');
+const auth = require('../middleware/auth');
+const router = new express.Router();
 
 // createAccount() @humma-irshad
 
 // Create a new patient
-router.post('/patients', async (req, res) => {
-    try {
+router.post('/patients', async (req, res) => 
+{
+    try
+    {
         const { name, email, password, age, gender } = req.body;
 
-        if (!name || !email || !password || !age || !gender) {
+        if (!name || !email || !password || !age || !gender)
+        {
             return res.status(400).send({ error: 'Name, email, password, age and gender are required' });
         }
 
         // Implement logic to create a new patient in the database
-        const newpatient = await d1.create({ name, email, password, age, gender });
+        const newpatient = await Patient.create({ name, email, password, age, gender });
 
         res.status(201).send({ newpatient });
-    } catch (e) {
+    } catch (e)
+    {
         console.error('Create error:', e);
         res.status(500).send({ error: 'Create failed' });
     }
@@ -33,18 +38,22 @@ router.post('/patients', async (req, res) => {
 // deleteAccount() @KhushbooHamid
 
 // Delete a patient by ID
-router.delete('/patients/:id', async (req, res) => {
-    try {
+router.delete('/patients/:id', async (req, res) =>
+{
+    try
+    {
         const patientId = req.params.id;
 
-        const deletedpatient = await d1.findByIdAndDelete(patientId);
+        const deletedpatient = await Patient.findByIdAndDelete(patientId);
 
-        if (!deletedpatient) {
+        if (!deletedpatient)
+        {
             return res.status(404).send({ error: 'patient not found' });
         }
 
         res.send({ message: `patient with ID ${patientId} deleted successfully` });
-    } catch (e) {
+    } catch (e)
+    {
         console.error('Delete error:', e);
         res.status(500).send({ error: 'Delete failed' });
     }
