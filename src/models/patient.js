@@ -8,37 +8,46 @@ const userSchema = new mongoose.Schema({
     trim: true,
   },
 
-  email: {
-    type: String,
-    required: false,
-    validator(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error("Email is invalid");
-      }
-    },
-    trim: true,
-  },
 
-  password: {
-    type: String,
-    minlength: 6,
-    required: true,
-    trim: true,
-  },
+        email:
+        {
+            type: String,
+            required: false,
+            validator(value)
+            {
+                if (!validator.isEmail(value))
+                {
+                    throw new Error('Email is invalid');
+                }
+            },
+            trim: true,
+        },
 
-  age: {
-    type: Number,
-    required: true,
-    trim: true,
-  },
 
-  gender: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-});
+        password:
+        {
+            type: String,
+            minlength: 6,
+            required: true,
+            trim: true,
+        },
 
-const patient = mongoose.model("patient", userSchema);
+        age:
+        {
+            type: Number,
+            required: true,
+            trim: true,
+        },
+
+        gender:
+        {
+            type: String,
+            required: true,
+            trim: true,
+        }
+
+    })
+
+const patient = mongoose.model('patient', userSchema)
 
 module.exports = patient;
