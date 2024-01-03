@@ -62,8 +62,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.virtual("age").get(function () // improve age calculation
-{
+userSchema.virtual("age").get(function () {
   const currentDate = new Date();
   const age = currentDate.getFullYear() - this.DOB.getFullYear();
   return age;

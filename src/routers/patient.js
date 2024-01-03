@@ -4,13 +4,13 @@ const Patient = require("../models/patient");
 const router = new express.Router();
 
 // createAccount()        -   completed
-// readAccount()          -   completed - change it to read by id
+// readAccount()          -   completed - change it ti read by id
 // updateAccount()        -   INCOMPLETE
 // logging out()          -   INCOMPLETE
 // logout-all()           -   INCOMPLETE
 // deleteAccount()        -   completed
-// chooseDoctor()         -   INCOMPLETE
-// viewDiagnosisAndMed() -    INCOMPLETE
+// chooseDoctor()         -   INCOMPLETE - Aarish
+// viewDiagnosisAndMed() -    INCOMPLETE - Aarish
 
 // createAccount() - Create a new patient
 router.post("/patient", async (req, res) => {
