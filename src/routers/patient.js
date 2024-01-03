@@ -67,10 +67,33 @@ router.patch("/patient/:id", async (req, res) =>
 
 
 // Logout() - Logout a patient from a single device
-router.post("/patient/logout", async (req, res) =>
-{
-
-});
+  router.post('/patient/logout', async (req, res) => {
+    try {
+        // Check if the session exists
+        if (req.session) {
+            const patientSession = req.session.user;
+  
+            if (!patientSession) {
+                return res.status(401).send({ error: 'User not authenticated' });
+            }
+  
+            // Clear the session data
+            req.session.destroy((err) => {
+                if (err) {
+                    console.error(err);
+                    res.status(500).send({ error: 'Logout failed' });
+                } else {
+                    res.send('logout successfull');
+                }
+            });
+        } else {
+            return res.status(401).send({ error: 'User not authenticated' });
+        }
+    } catch (e) {
+        console.error(e);
+        res.status(500).send({ error: 'Logout failed' });
+    }
+  });
 
 
 
