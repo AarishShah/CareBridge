@@ -1,19 +1,26 @@
-const express = require('express');
-const Patient = require('../models/patient');
-const auth = require('../middleware/auth');
+const express = require("express");
+const Patient = require("../models/patient");
+// const auth = require('../middleware/auth');
 const router = new express.Router();
 
-// createAccount() @humma-irshad
+// createAccount()        -   completed
+// readAccount()          -   completed - change it to read by id
+// updateAccount()        -   INCOMPLETE
+// logging out()          -   INCOMPLETE
+// logout-all()           -   INCOMPLETE
+// deleteAccount()        -   completed
+// chooseDoctor()         -   INCOMPLETE
+// viewDiagnosisAndMed() -    INCOMPLETE
 
-// Create a new patient
-patientRouter.post("/patient", async (req, res) => {
+// createAccount() - Create a new patient
+router.post("/patient", async (req, res) => {
   try {
-    const { name, email, password, age, gender } = req.body;
+    const { name, email, password, DOB, gender } = req.body;
 
-    if (!name || !email || !password || !age || !gender) {
+    if (!name || !email || !password || !DOB || !gender) {
       return res
         .status(400)
-        .send({ error: "Name, email, password, age and gender are required" });
+        .send({ error: "Name, email, password, DOB and gender are required" });
     }
 
     // Implement logic to create a new patient in the database
@@ -21,10 +28,9 @@ patientRouter.post("/patient", async (req, res) => {
       name,
       email,
       password,
-      age,
+      DOB,
       gender,
     });
-
     res.status(201).send({ newPatient });
   } catch (e) {
     console.error("Create error:", e);
@@ -32,29 +38,63 @@ patientRouter.post("/patient", async (req, res) => {
   }
 });
 
-// readAccount() @humma-irshad - @KhushbooHamid
-patientRouter.get("/patient", async (_, res) => {
-  const patients = await Patient.find();
+// readAccount() - Read all patients
+router.get("/patient", async (_, res) => {
+  const patient = await Patient.find();
 
-  if (!patients)
+  if (!patient)
     res.send({
       statusCode: 404,
       status: "Not Found",
       messgae: "No records found",
     });
 
-  res.status(200).send({ statusCode: 200, status: "OK", data: patients });
+  res.status(200).send({ statusCode: 200, status: "OK", data: patient });
 });
 
-// updateAccount()
+// updateAccount() - Update a patient by ID
+router.patch("/patient/:id", async (req, res) => {
+  const patient = await Patient.findById(req.params.id);
 
-// logging out()
-// logout-all()
+  if (!patient) {
+    return res.status(404).send({
+      statusCode: 404,
+      status: "Not Found",
+      error: "Patient with that id doesn't exist",
+    });
+  }
 
-// deleteAccount() @KhushbooHamid
+  if (req.body.age || req.body.DOB) {
+    return res.status(400).send({
+      statusCode: 400,
+      status: "Bad Request",
+      error: "Can't update age or DOB",
+    });
+  }
 
-// Delete a patient by ID
-patientRouter.delete("/patient/:id", async (req, res) => {
+  await patient.updateOne({
+    name: req.body.name,
+    gender: req.body.gender,
+    email: req.body.email,
+    password: req.body.password,
+  });
+
+  return res.status(200).send({
+    statusCode: 200,
+    status: "Success",
+    message: "Resouce update successful",
+    data: patient,
+  });
+});
+
+// Logout() - Logout a patient from a single device
+router.post("/patient/logout", async (req, res) => {});
+
+// logout-all() - Logout a patient from all devices
+router.post("/patient/logoutall", async (req, res) => {});
+
+// deleteAccount() - Delete a patient by ID
+router.delete("/patient/:id", async (req, res) => {
   try {
     const patientId = req.params.id;
 
@@ -73,5 +113,9 @@ patientRouter.delete("/patient/:id", async (req, res) => {
 });
 
 // chooseDoctor()
+// post?
+
 // viewDiagnosisAndMed()
-module.exports = patientRouter;
+router.get("/patient/:id", async (req, res) => {});
+
+module.exports = router;
