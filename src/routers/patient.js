@@ -4,13 +4,14 @@ const Patient = require('../models/patient');
 const router = new express.Router();
 
 // createAccount()        -   completed
-// readAccount()          -   completed - change it ti read by id
-// updateAccount()        -   INCOMPLETE
-// logging out()          -   INCOMPLETE
-// logout-all()           -   INCOMPLETE
+// readAccount()          -   completed - change it ti read by id - humma
+// login()                -   INCOMPLETE - humma
+// updateAccount()        -   INCOMPLETE - humma
+// logging out()          -   INCOMPLETE - Khushboo
+// logout-all()           -   INCOMPLETE - Khushboo
 // deleteAccount()        -   completed
-// chooseDoctor()         -   INCOMPLETE
-// viewDiagnosisAndMed() -    INCOMPLETE
+// chooseDoctor()         -   INCOMPLETE - Aarish
+// viewDiagnosisAndMed() -    INCOMPLETE - Aarish
 
 // createAccount() - Create a new patient
 router.post("/patient", async (req, res) =>
@@ -51,6 +52,11 @@ router.get("/patient", async (_, res) =>
   res.status(200).send({ statusCode: 200, status: "OK", data: patient });
 });
 
+// login() - Login a patient
+router.post("/patient/login", async (req, res) =>
+{
+
+});
 
 
 // updateAccount() - Update a patient by ID
