@@ -3,14 +3,23 @@ const Patient = require("../models/patient");
 // const auth = require('../middleware/auth');
 const router = new express.Router();
 
-// createAccount()        -   completed
-// readAccount()          -   completed - change it to read by id
-// updateAccount()        -   completed - add auth middleware
-// logging out()          -   INCOMPLETE - @KhushbooHamid
-// logout-all()           -   INCOMPLETE - @KhushbooHamid
-// deleteAccount()        -   completed
-// chooseDoctor()         -   INCOMPLETE - Aarish
-// viewDiagnosisAndMed() -    INCOMPLETE - Aarish
+```
+completed:
+
+createAccount()
+readAccount() - change it to read by id
+updateAccount() - add auth middleware
+deleteAccount()
+```
+
+```
+incomplete:
+
+logging out() - @KhushbooHamid
+logout-all() - @KhushbooHamid
+chooseDoctor() - @AarishShah
+viewDiagnosisAndMed() - @AarishShah
+```
 
 // createAccount() - Create a new patient
 router.post("/patient", async (req, res) =>
@@ -62,6 +71,7 @@ router.patch("/patient/:id", async (req, res) =>
     return res.send({ statusCode: 400, status: "Bad Request", error: "Can't update age or DOB", });
   }
 
+  // incomplete - fix it as per the items that user mentions and not all the items
   await patient.updateOne(
     {
       name: req.body.name,
