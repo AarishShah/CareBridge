@@ -56,6 +56,7 @@ router.get("/patient", async (_, res) => {
 router.patch("/patient/:id", async (req, res) => {
   const patient = await Patient.findById(req.params.id);
 
+  // we wont need this because we would have already checked for the patient's existence in the auth middleware
   if (!patient) {
     return res.status(404).send({
       statusCode: 404,
