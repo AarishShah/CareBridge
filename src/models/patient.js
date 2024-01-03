@@ -76,3 +76,15 @@ userSchema.virtual("age").get(function () // update calculated age in better way
 const patient = mongoose.model("patient", userSchema);
 
 module.exports = patient;
+
+```
+Test data"
+
+{
+    name: "Alice Smith",
+    email: "alicesmith@example.com",
+    password: "securePassword123",
+    DOB: new Date("1990-01-01"), // Date of Birth in YYYY-MM-DD format
+    gender: "Female"
+}
+```
