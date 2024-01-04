@@ -19,11 +19,14 @@ const router = new express.Router();
 // viewDiagnosisAndMed() - @AarishShah
 
 // createAccount() - Create a new patient
-router.post("/patient/signup", async (req, res) => {
-  try {
+router.post("/patient/signup", async (req, res) =>
+{
+  try
+  {
     const { name, email, password, DOB, gender } = req.body;
 
-    if (!name || !email || !password || !DOB || !gender) {
+    if (!name || !email || !password || !DOB || !gender)
+    {
       return res
         .status(400)
         .send({ error: "Name, email, password, DOB and gender are required" });
@@ -41,15 +44,18 @@ router.post("/patient/signup", async (req, res) => {
     req.session.isLoggedIn = true;
     req.session.patient = newPatient;
     res.status(201).send({ newPatient });
-  } catch (e) {
+  } catch (e)
+  {
     console.error("Create error:", e);
     res.status(500).send({ statusCode: 500, messgae: "Create failed" });
   }
 });
 
 // readAccount() - Read all patients
-router.get("/patient/:id", async (req, res) => {
-  if (!req.session.isLoggedIn) {
+router.get("/patient/:id", async (req, res) =>
+{
+  if (!req.session.isLoggedIn)
+  {
     return res.status(401).send({
       statusCode: 401,
       status: "Unauthorized",
@@ -70,8 +76,10 @@ router.get("/patient/:id", async (req, res) => {
 });
 
 // updateAccount() - Update a patient by ID
-router.patch("/patient/:id", async (req, res) => {
-  if (!req.session.isLoggedIn) {
+router.patch("/patient/:id", async (req, res) =>
+{
+  if (!req.session.isLoggedIn)
+  {
     return res.status(401).send({
       statusCode: 401,
       status: "Unauthorized",
@@ -82,16 +90,18 @@ router.patch("/patient/:id", async (req, res) => {
   const patient = await Patient.findById(req.params.id);
 
   // we wont need this because we would have already checked for the patient's existence in the auth middleware
-  if (!patient) {
-    return res.send({
+  if (!patient)
+  {
+    return res.status(404).send({
       statusCode: 404,
       status: "Not Found",
       message: "Patient with that id doesn't exist",
     });
   }
 
-  if (req.body.age || req.body.DOB) {
-    return res.send({
+  if (req.body.age || req.body.DOB)
+  {
+    return res.status(400).send({
       statusCode: 400,
       status: "Bad Request",
       message: "Can't update age or DOB",
@@ -115,12 +125,14 @@ router.patch("/patient/:id", async (req, res) => {
 });
 
 // Login() - Login a patient from a single device
-router.post("/patient/login", async (req, res) => {
+router.post("/patient/login", async (req, res) =>
+{
   const { email, password } = req.body;
 
   const patient = await Patient.findOne({ email, password });
 
-  if (!patient) {
+  if (!patient)
+  {
     return res.status(401).send({
       statusCode: 401,
       status: "Unauthorized",
@@ -130,14 +142,14 @@ router.post("/patient/login", async (req, res) => {
 
   req.session.isLoggedIn = true;
   req.session.patient = patient;
-  return res
-    .status(200)
-    .send({ statusCode: 200, status: "Success", message: "Patient Logged-in" });
+  return res.status(200).send({ statusCode: 200, status: "Success", message: "Patient Logged-in" });
 });
 
 // Logout() - Logout a patient from a single device
-router.post("/patient/logout", async (req, res) => {
-  req.session.destroy((error) => {
+router.post("/patient/logout", async (req, res) =>
+{
+  req.session.destroy((error) =>
+  {
     console.log(error);
   });
 
@@ -145,12 +157,15 @@ router.post("/patient/logout", async (req, res) => {
 });
 
 // logout-all() - Logout a patient from all devices
-router.post("/patient/logoutall", async (req, res) => {});
+router.post("/patient/logoutall", async (req, res) => { });
 
 // deleteAccount() - Delete a patient by ID
-router.delete("/patient/:id", async (req, res) => {
-  try {
-    if (!req.session.isLoggedIn) {
+router.delete("/patient/:id", async (req, res) =>
+{
+  try
+  {
+    if (!req.session.isLoggedIn)
+    {
       return res.status(401).send({
         statusCode: 401,
         status: "Unauthorized",
@@ -162,7 +177,8 @@ router.delete("/patient/:id", async (req, res) => {
 
     const deletedpatient = await Patient.findByIdAndDelete(patientId);
 
-    if (!deletedpatient) {
+    if (!deletedpatient)
+    {
       return res
         .status(404)
         .send({ statusCode: 404, message: "patient not found" });
@@ -171,7 +187,8 @@ router.delete("/patient/:id", async (req, res) => {
     req.session.destroy();
     // when deleting a resource only a status code of 204 is sent
     res.status(204);
-  } catch (e) {
+  } catch (e)
+  {
     console.error("Delete error:", e);
     res.status(500).send({ message: "Delete failed" });
   }
@@ -181,6 +198,6 @@ router.delete("/patient/:id", async (req, res) => {
 // post?
 
 // viewDiagnosisAndMed()
-router.get("/patient/:id", async (req, res) => {});
+router.get("/patient/:id", async (req, res) => { });
 
 module.exports = router;
