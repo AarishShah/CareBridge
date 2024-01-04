@@ -105,7 +105,7 @@ const Doc = mongoose.model('Doc', doctorSchema);
 
 module.exports = Doc;
 
-```
+/*
 Test data:
 
 {
@@ -117,4 +117,4 @@ Test data:
     yearsOfExperience: 15,
     qualifications: ["MD", "Board Certified in Cardiology", "Ph.D. in Internal Medicine"] 
 }
-```
+*/

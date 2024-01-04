@@ -2,7 +2,7 @@ const express = require('express');
 const Doctor = require('../models/doctor');
 const router = express.Router();
 
-```
+/*
 completed:
 
 createDoctor()
@@ -10,16 +10,16 @@ getDoctorById()
 deleteDoctorById()
 loginDoctor()
 logoutDoctor()
-```
+*/
 
 
-```
+/*
 incomplete:
 
 updateDoctor()
 viewPatientHistory()
 provideDiagnosisAndMed()
-```
+*/
 
 // Create a new doctor
 router.post('/doctors', async (req, res) =>
