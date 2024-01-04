@@ -69,6 +69,34 @@ userSchema.virtual("age").get(function () // update calculated age in better way
   return age;
 });
 
+// Authentication method for the patient model
+userSchema.statics.findByCredentials = async function (email, password) {
+  const user = await this.findOne({ email });
+
+  if (!user) {
+      throw new Error('Unable to login');
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+      throw new Error('Unable to login');
+  }
+
+  return user;
+};
+
+// Hash password before saving
+userSchema.pre('save', async function (next) {
+  const patient = this;
+
+  if (patient.isModified('password')) {
+      patient.password = await bcrypt.hash(patient.password, 8);
+  }
+
+  next();
+});
+
 const patient = mongoose.model("patient", userSchema);
 
 module.exports = patient;
