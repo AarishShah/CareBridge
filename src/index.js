@@ -31,7 +31,7 @@ app.use(
 app.use(express.json()); // configuring express to automatically parse the incoming json so we can use it as an oject
 // app.use(adminRouter); // to register admin router
 app.use(patientRouter); // to register patient router
-// app.use(doctorRouter); // to register doctor router
+app.use(doctorRouter); // to register doctor router
 
 app.listen(port, () => {
   console.log("Server is up on port " + port);

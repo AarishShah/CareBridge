@@ -1,6 +1,8 @@
 const express = require('express');
 const Doctor = require('../models/doctor');
+const { log } = require('console');
 const router = express.Router();
+
 
 /*
 completed:
@@ -10,13 +12,15 @@ getDoctorById()
 deleteDoctorById()
 loginDoctor()
 logoutDoctor()
+
+tested with postman and working
 */
 
 
 /*
 incomplete:
 
-updateDoctor()
+updateDoctor() 
 viewPatientHistory()
 provideDiagnosisAndMed()
 */
@@ -26,6 +30,7 @@ router.post('/doctors', async (req, res) =>
 {
     try
     {
+        console.log('Received POST request to /doctors');
         const { name, email, password, gender, specialization, yearsOfExperience, qualifications } = req.body;
 
         if (!name || !email || !password || !gender || !specialization || !yearsOfExperience || !qualifications)
@@ -50,7 +55,7 @@ router.get('/doctors/:id', async (req, res) =>
     try
     {
         const doctorId = req.params.id;
-        const doctor = await doctor.findById(doctorId);
+        const doctor = await Doctor.findById(doctorId);
 
         if (!doctor)
         {
@@ -70,13 +75,16 @@ router.get('/doctors/:id', async (req, res) =>
 // Update a doctor by ID
 router.patch('/doctors/:id', async (req, res) =>
 {
-    const doctorId = await doctor.findById(req.params.id);
+    const doctorId = await Doctor.findById(req.params.id);
+
 
     if (!doctorId)
     {
         return res.send({ statusCode: 404, status: "Not Found", error: 'Doctor not found', });
     }
-
+    // replace the line below with proper code
+    // return res.send({message: "hi"});
+    
     // incomplete - fix it as per the items that user mentions and not all the items
 
 })
