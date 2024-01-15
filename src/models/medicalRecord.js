@@ -33,7 +33,11 @@ const medicalRecordSchema = new mongoose.Schema({
         required: true,
         ref: 'Doctor'
     },
-    entries: [recordEntrySchema]
+    entries: [recordEntrySchema],
+    prescriptions: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Prescription'
+    }]
 }, {
     timestamps: true
 });
