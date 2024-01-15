@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require('bcrypt');
+
 
 const userSchema = new mongoose.Schema(
   {
@@ -71,20 +73,21 @@ userSchema.virtual("age").get(function () // update calculated age in better way
 
 // Authentication method for the patient model
 userSchema.statics.findByCredentials = async function (email, password) {
-  const user = await this.findOne({ email });
+  const patient = await this.findOne({ email });
 
-  if (!user) {
+  if (!patient) {
       throw new Error('Unable to login');
   }
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await bcrypt.compare(password, patient.password);
 
   if (!isMatch) {
       throw new Error('Unable to login');
   }
 
-  return user;
+  return patient;
 };
+
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {
@@ -96,6 +99,7 @@ userSchema.pre('save', async function (next) {
 
   next();
 });
+
 
 const patient = mongoose.model("patient", userSchema);
 

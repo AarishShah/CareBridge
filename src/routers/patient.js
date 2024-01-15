@@ -18,38 +18,65 @@ const router = new express.Router();
 // chooseDoctor() - @AarishShah
 // viewDiagnosisAndMed() - @AarishShah
 
+
+
 // createAccount() - Create a new patient
-router.post("/patient/signup", async (req, res) =>
+// router.post("/patient/signup", async (req, res) =>
+// {
+//   try
+//   {
+//     const { name, email, password, DOB, gender } = req.body;
+
+//     if (!name || !email || !password || !DOB || !gender)
+//     {
+//       return res
+//         .status(400)
+//         .send({ error: "Name, email, password, DOB and gender are required" });
+//     }
+
+//     // Implement logic to create a new patient in the database
+//     const newPatient = await Patient.create({
+//       name,
+//       email,
+//       password,
+//       DOB,
+//       gender,
+//     });
+
+//     req.session.isLoggedIn = true;
+//     req.session.patient = newPatient;
+//     res.status(201).send({ newPatient });
+//   } catch (e)
+//   {
+//     console.error("Create error:", e);
+//     res.status(500).send({ statusCode: 500, message: "Create failed" });
+//   }
+// });
+
+// ```````````````````````````````````````````
+// Create a new doctor
+router.post('/patient/signup', async (req, res) =>
 {
-  try
-  {
-    const { name, email, password, DOB, gender } = req.body;
-
-    if (!name || !email || !password || !DOB || !gender)
+    try
     {
-      return res
-        .status(400)
-        .send({ error: "Name, email, password, DOB and gender are required" });
+        console.log('Received POST request to /doctors');
+        const { name, email, password, DOB, gender } = req.body;
+
+        if (!name || !email || !password || !DOB || !gender)
+        {
+            return res.status(400).send({ error: 'Name, email, password, dob, gender are required' });
+        }
+
+        const newPatient = await Patient.create({ name, email, password, DOB, gender});
+
+        res.status(201).send({ newPatient });
+    } catch (e)
+    {
+        console.error('Create error:', e);
+        res.status(500).send({ error: 'Create failed' });
     }
-
-    // Implement logic to create a new patient in the database
-    const newPatient = await Patient.create({
-      name,
-      email,
-      password,
-      DOB,
-      gender,
-    });
-
-    req.session.isLoggedIn = true;
-    req.session.patient = newPatient;
-    res.status(201).send({ newPatient });
-  } catch (e)
-  {
-    console.error("Create error:", e);
-    res.status(500).send({ statusCode: 500, messgae: "Create failed" });
-  }
 });
+// `````````````````````````````````````````
 
 // readAccount() - Read all patients
 router.get("/patient/:id", async (req, res) =>
@@ -125,24 +152,38 @@ router.patch("/patient/:id", async (req, res) =>
 });
 
 // Login() - Login a patient from a single device
-router.post("/patient/login", async (req, res) =>
+
+router.post('/patient/login', async (req, res) =>
 {
-  const { email, password } = req.body;
+    try
+    {
+        const { email, password } = req.body;
 
-  const patient = await Patient.findOne({ email, password });
+        if (!email || !password)
+        {
+            return res.status(400).send({ error: 'Email and password are required' });
+        }
 
-  if (!patient)
-  {
-    return res.status(401).send({
-      statusCode: 401,
-      status: "Unauthorized",
-      message: "Could not find a patient with given credentials",
-    });
-  }
+        const user1 = await Patient.findByCredentials(email, password);
 
-  req.session.isLoggedIn = true;
-  req.session.patient = patient;
-  return res.status(200).send({ statusCode: 200, status: "Success", message: "Patient Logged-in" });
+        if (!user1)
+        {
+            return res.status(400).send({ error: 'Login failed. Invalid email or password' });
+        }
+
+        // Set the user in the session
+        req.session.user = {
+            _id: user1._id,
+            email: user1.email,
+            // Add any other relevant user data you want to store in the session
+        };
+
+        res.send({ user1 });
+    } catch (e)
+    {
+        console.error('Login error:', e);
+        res.status(400).send({ error: 'Login failed' });
+    }
 });
 
 // Logout() - Logout a patient from a single device
