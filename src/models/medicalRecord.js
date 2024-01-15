@@ -71,4 +71,31 @@ Dummy data
     ]
 }
 
+// Complete Medical Record Data Example:
+{
+    patient: "5f8d0d55b54764421b7156da", // Example patient ObjectId
+    doctor: "5f8d0d55b54764421b7156db", // Example doctor ObjectId
+    entries: [
+        {
+            content: "Patient reports experiencing mild headaches for the past week.",
+            createdBy: "5f8d0d55b54764421b7156db", // Doctor's ObjectId
+            onModel: "Doctor"
+        },
+        {
+            content: "Follow-up visit: Headaches have reduced after medication.",
+            createdBy: "5f8d0d55b54764421b7156db", // Doctor's ObjectId
+            onModel: "Doctor"
+        },
+        {
+            content: "Self-note: Feeling better, but still slight dizziness occasionally.",
+            createdBy: "5f8d0d55b54764421b7156da", // Patient's ObjectId
+            onModel: "Patient"
+        }
+    ],
+    prescriptions: [
+        "5f8d0d55b54764421b7156dc" // Example prescription ObjectId
+    ]
+}
+
+
 */

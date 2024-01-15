@@ -66,3 +66,30 @@ const prescriptionSchema = new mongoose.Schema({
 const Prescription = mongoose.model('Prescription', prescriptionSchema);
 
 module.exports = Prescription;
+
+/*
+// Minimal data example:
+{
+    patientId: "5f8d0d55b54764421b7156da", // Replace with a valid patient ObjectId
+    doctorId: "5f8d0d55b54764421b7156db", // Replace with a valid doctor ObjectId
+    medication: "Ibuprofen"
+}
+
+
+// Complte data example:
+{
+    patientId: "5f8d0d55b54764421b7156da", // Example patient ObjectId
+    doctorId: "5f8d0d55b54764421b7156db", // Example doctor ObjectId
+    medication: "Amoxicillin",
+    dosage: "500 mg every 8 hours",
+    duration: "7 days",
+    modeOfAction: "Antibiotic that fights bacteria",
+    dateOfPrescription: new Date(), // Current date and time
+    instructionsForUse: "Take with food to reduce stomach irritation",
+    refillInformation: "One-time refill",
+    investigations: ["Complete Blood Count", "X-Ray Chest"],
+    treatment: "Infection treatment",
+    diagnosis: "Bacterial Pneumonia"
+}
+
+*/
