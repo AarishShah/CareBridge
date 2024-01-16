@@ -2,6 +2,28 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require('bcrypt');
 
+const addressSchema = new mongoose.Schema({
+  street: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  city: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  state: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  pinCode: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+});
 
 const userSchema = new mongoose.Schema(
   {
@@ -9,6 +31,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+    },
+    
+    address: {
+      type: addressSchema,
+      required: true,
     },
 
     email: {

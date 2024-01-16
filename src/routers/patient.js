@@ -60,14 +60,14 @@ router.post('/patient/signup', async (req, res) =>
     try
     {
         console.log('Received POST request to /doctors');
-        const { name, email, password, DOB, gender } = req.body;
+        const { name, address, email, password, DOB, gender } = req.body;
 
-        if (!name || !email || !password || !DOB || !gender)
+        if (!name || !address || !email || !password || !DOB || !gender)
         {
-            return res.status(400).send({ error: 'Name, email, password, dob, gender are required' });
+            return res.status(400).send({ error: 'Name, address, email, password, dob, gender are required' });
         }
 
-        const newPatient = await Patient.create({ name, email, password, DOB, gender});
+        const newPatient = await Patient.create({ name, address, email, password, DOB, gender});
 
         res.status(201).send({ newPatient });
     } catch (e)
@@ -99,7 +99,7 @@ router.get("/patient/:id", async (req, res) =>
       messgae: "No records found",
     });
 
-  res.status(201).send({ statusCode: 201, status: "Created", data: patient });
+  res.status(200).send({ statusCode: 200, status: "OK", data: patient });
 });
 
 // updateAccount() - Update a patient by ID
@@ -172,11 +172,13 @@ router.post('/patient/login', async (req, res) =>
         }
 
         // Set the user in the session
-        req.session.user = {
-            _id: user1._id,
-            email: user1.email,
-            // Add any other relevant user data you want to store in the session
-        };
+        // req.session.user = {
+        //     _id: user1._id,
+        //     email: user1.email,
+        //     // Add any other relevant user data you want to store in the session
+        // };
+        req.session.isLoggedIn = true;
+        req.session.patient = user1;
 
         res.send({ user1 });
     } catch (e)
