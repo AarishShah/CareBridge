@@ -19,18 +19,22 @@ const router = new express.Router();
 // chooseDoctor() - @AarishShah
 // viewDiagnosisAndMed() - @AarishShah
 
-// createAccount() - Create a new patient
+
+// ```````````````````````````````````````````
+// Create a new patient
 router.post("/patient/signup", async (req, res) => {
   try {
+    console.log("Received POST request to /doctors");
     const { name, address, email, password, DOB, gender } = req.body;
 
     if (!name || !address || !email || !password || !DOB || !gender) {
-      return res.status(400).send({
-        error: "Name, address, email, password, DOB and gender are required",
-      });
+      return res
+        .status(400)
+        .send({
+          error: "Name, address, email, password, dob, gender are required",
+        });
     }
 
-    // Implement logic to create a new patient in the database
     const newPatient = await Patient.create({
       name,
       address,
@@ -40,16 +44,15 @@ router.post("/patient/signup", async (req, res) => {
       gender,
     });
 
-    req.session.isLoggedIn = true;
-    req.session.patient = newPatient;
     res.status(201).send({ newPatient });
   } catch (e) {
     console.error("Create error:", e);
-    res.status(500).send({ statusCode: 500, message: "Create failed" });
+    res.status(500).send({ error: "Create failed" });
   }
 });
+// `````````````````````````````````````````
 
-// readAccount() - Read all patients
+// readAccount() - Read patient by ID
 router.get("/patient/:id", async (req, res) => {
   if (!req.session.isLoggedIn) {
     return res.status(401).send({
@@ -68,7 +71,7 @@ router.get("/patient/:id", async (req, res) => {
       message: "No records found",
     });
 
-  res.status(200).send({ statusCode: 200, status: "OK", data: { patient } });
+  res.status(200).send({ statusCode: 200, status: "OK", data: patient });
 });
 
 // updateAccount() - Update a patient by ID
@@ -118,24 +121,31 @@ router.patch("/patient/:id", async (req, res) => {
 });
 
 // Login() - Login a patient from a single device
+
 router.post("/patient/login", async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const patient = await Patient.findOne({ email, password });
+    if (!email || !password) {
+      return res.status(400).send({ error: "Email and password are required" });
+    }
 
-  if (!patient) {
-    return res.status(401).send({
-      statusCode: 401,
-      status: "Unauthorized",
-      message: "Could not find a patient with given credentials",
-    });
+    const user1 = await Patient.findByCredentials(email, password);
+
+    if (!user1) {
+      return res
+        .status(400)
+        .send({ error: "Login failed. Invalid email or password" });
+    }
+
+    req.session.isLoggedIn = true;
+    req.session.patient = user1;
+
+    res.send({ user1 });
+  } catch (e) {
+    console.error("Login error:", e);
+    res.status(400).send({ error: "Login failed" });
   }
-
-  req.session.isLoggedIn = true;
-  req.session.patient = patient;
-  return res
-    .status(200)
-    .send({ statusCode: 200, status: "Success", message: "Patient Logged-in" });
 });
 
 // Logout() - Logout a patient from a single device
