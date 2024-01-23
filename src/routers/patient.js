@@ -19,20 +19,16 @@ const router = new express.Router();
 // chooseDoctor() - @AarishShah
 // viewDiagnosisAndMed() - @AarishShah
 
-
 // ```````````````````````````````````````````
 // Create a new patient
 router.post("/patient/signup", async (req, res) => {
   try {
-    console.log("Received POST request to /doctors");
     const { name, address, email, password, DOB, gender } = req.body;
 
     if (!name || !address || !email || !password || !DOB || !gender) {
-      return res
-        .status(400)
-        .send({
-          error: "Name, address, email, password, dob, gender are required",
-        });
+      return res.status(400).send({
+        error: "Name, address, email, password, dob, gender are required",
+      });
     }
 
     const newPatient = await Patient.create({
@@ -130,18 +126,18 @@ router.post("/patient/login", async (req, res) => {
       return res.status(400).send({ error: "Email and password are required" });
     }
 
-    const user1 = await Patient.findByCredentials(email, password);
+    const patient = await Patient.findByCredentials(email, password);
 
-    if (!user1) {
+    if (!patient) {
       return res
         .status(400)
         .send({ error: "Login failed. Invalid email or password" });
     }
 
     req.session.isLoggedIn = true;
-    req.session.patient = user1;
+    req.session.patient = patient;
 
-    res.send({ user1 });
+    res.send({ patient });
   } catch (e) {
     console.error("Login error:", e);
     res.status(400).send({ error: "Login failed" });

@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-<<<<<<< HEAD
 const bcrypt = require("bcrypt");
-=======
-const bcrypt = require('bcrypt');
->>>>>>> 47451ae70247183e88ea52504905988622505f44
 
 const addressSchema = new mongoose.Schema({
   street: {
@@ -111,13 +107,8 @@ userSchema.virtual("age").get(function () // update calculated age in better way
 userSchema.statics.findByCredentials = async function (email, password) {
   const patient = await this.findOne({ email });
 
-<<<<<<< HEAD
   if (!user) {
     throw new Error("Unable to login");
-=======
-  if (!patient) {
-      throw new Error('Unable to login');
->>>>>>> 47451ae70247183e88ea52504905988622505f44
   }
 
   const isMatch = await bcrypt.compare(password, patient.password);
