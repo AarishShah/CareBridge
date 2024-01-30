@@ -25,7 +25,7 @@ const addressSchema = new mongoose.Schema({
   },
 });
 
-const userSchema = new mongoose.Schema(
+const patientSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -107,11 +107,11 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Virtual property for patient medical record and prescription
+// Virtual property for patient medical record and prescription, to link patient with medical record and prescription
 // Add after defining medical record and prescription models
 
 // Age virtual property
-userSchema.virtual("age").get(function ()
+patientSchema.virtual("age").get(function ()
 {
   const currentDate = new Date();
   const birthDate = new Date(this.DOB);
@@ -136,8 +136,32 @@ userSchema.virtual("age").get(function ()
   return { years: ageYears, months: ageMonths, days: ageDays };
 });
 
+// hide private data when sending patient object
+patientSchema.methods.toJSON = function ()
+{
+  const patient = this;
+  const patientObject = patient.toObject();
+
+  delete patientObject.password;
+  delete patientObject.tokens;
+
+  return patientObject;
+};
+
+patientSchema.methods.generateAuthToken = async function (next)
+{
+  const patient = this;
+  const token = jwt.sign({ _id: user.id.toString() }, 'thisismynewcourse')
+
+  patient.tokens = patient.tokens.concan({token})
+
+  await patient.save()
+
+  return patient;
+}
+
 // Authentication method for the patient model
-userSchema.statics.findByCredentials = async function (email, password)
+patientSchema.statics.findByCredentials = async function (email, password)
 {
   const patient = await this.findOne({ email });
 
@@ -158,7 +182,7 @@ userSchema.statics.findByCredentials = async function (email, password)
 
 
 // Hash password before saving
-userSchema.pre("save", async function (next)
+patientSchema.pre("save", async function (next)
 {
   const patient = this;
 
@@ -173,7 +197,7 @@ userSchema.pre("save", async function (next)
 // Delete patient medical record and prescription when patient is removed
 // Add after defining medical record and prescription models
 
-const patient = mongoose.model("patient", userSchema);
+const patient = mongoose.model("patient", patientSchema);
 
 module.exports = patient;
 
