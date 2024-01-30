@@ -56,6 +56,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       minlength: 8,
+      maxlength: 64,
       required: true,
       trim: true,
     },
@@ -95,11 +96,30 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.virtual("age").get(function () // update calculated age in better way
+// Age virtual property
+userSchema.virtual("age").get(function ()
 {
   const currentDate = new Date();
-  const age = currentDate.getFullYear() - this.DOB.getFullYear();
-  return age;
+  const birthDate = new Date(this.DOB);
+
+  let ageYears = currentDate.getFullYear() - birthDate.getFullYear();
+  let ageMonths = currentDate.getMonth() - birthDate.getMonth();
+  let ageDays = currentDate.getDate() - birthDate.getDate();
+
+  if (ageMonths < 0 || (ageMonths === 0 && ageDays < 0))
+  {
+    ageYears--;
+    ageMonths = (ageMonths + 12) % 12;
+  }
+
+  if (ageDays < 0)
+  {
+    const lastDayOfPreviousMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+    ageDays += lastDayOfPreviousMonth;
+    ageMonths = ageMonths - 1 < 0 ? 11 : ageMonths - 1;
+  }
+
+  return { years: ageYears, months: ageMonths, days: ageDays };
 });
 
 // Authentication method for the patient model
@@ -141,7 +161,6 @@ const patient = mongoose.model("patient", userSchema);
 
 module.exports = patient;
 
-// Docstrings weren't working for me
 // Test data
 
 // {
@@ -154,6 +173,6 @@ module.exports = patient;
 //     },
 //     "email": "alicesmith@example.com",
 //     "password": "securePassword123",
-//     "DOB": "12/05/1995", // Date of Birth in YYYY-MM-DD format
+//     "DOB": "12/05/1995",
 //     "gender": "Female"
 // }
