@@ -87,6 +87,17 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: "Prefer not to say",
     },
+
+    tokens:
+      [
+        {
+          token: 
+          {
+            type: String,
+            required: true,
+          },
+        }
+      ],
   },
 
   {
@@ -95,6 +106,9 @@ const userSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+// Virtual property for patient medical record and prescription
+// Add after defining medical record and prescription models
 
 // Age virtual property
 userSchema.virtual("age").get(function ()
@@ -156,6 +170,8 @@ userSchema.pre("save", async function (next)
   next();
 });
 
+// Delete patient medical record and prescription when patient is removed
+// Add after defining medical record and prescription models
 
 const patient = mongoose.model("patient", userSchema);
 
