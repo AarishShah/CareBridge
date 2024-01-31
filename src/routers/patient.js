@@ -26,25 +26,24 @@ router.post("/patient/signup", async (req, res) =>
   {
     const { name, address, email, password, DOB, gender } = req.body;
 
-    if (!name || !address || !email || !password || !DOB || !gender)
+    const missingFields = [];
+    if (!name) missingFields.push('name');
+    if (!address) missingFields.push('address');
+    if (!email) missingFields.push('email');
+    if (!password) missingFields.push('password');
+    if (!DOB) missingFields.push('date of birth (DOB)');
+    if (!gender) missingFields.push('gender');
+
+    if (missingFields.length > 0)
     {
-      return res.status(400).send({
-        error: "Name, address, email, password, dob, gender are all required",
-      });
+      return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(', ')}. Please ensure all fields are filled out correctly.` });
     }
 
-    const newPatient = await Patient.create({
-      name,
-      address,
-      email,
-      password,
-      DOB,
-      gender,
-    });
+    const newPatient = await Patient.create({ name, address, email, password, DOB, gender, });
 
     const token = await newPatient.generateAuthToken();
 
-    res.status(201).send({ newPatient, token});
+    res.status(201).send({ newPatient, token });
   } catch (e)
   {
     console.error("Signup error:", e);
