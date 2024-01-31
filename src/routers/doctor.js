@@ -70,7 +70,7 @@ router.post("/doctor/login", async (req, res) =>
   }
 });
 
-// Update a doctor by ID
+// Update Route
 router.patch("/doctor/:id", auth, async (req, res) =>
 {
   const updates = Object.keys(req.body);
@@ -95,6 +95,22 @@ router.patch("/doctor/:id", auth, async (req, res) =>
   }
 });
 
+// Delete a doctor by ID
+router.delete("/doctor/me", auth, async (req, res) =>
+{
+  try
+  {
+    const doctorId = req.doctor._id;
+    const deletedDoctor = await Doctor.findByIdAndDelete(doctorId);
+
+    res.send({ message: 'Account deleted successfully.' });
+  } catch (error)
+  {
+    // console.error("Delete error:", e);
+    res.status(500).send({ error: "Delete failed" });
+  }
+});
+
 // Retrieve a doctor by ID
 router.get("/doctors/:id", async (req, res) =>
 {
@@ -113,27 +129,6 @@ router.get("/doctors/:id", async (req, res) =>
   {
     console.error("Retrieve error:", e);
     res.status(500).send({ error: "Retrieve failed" });
-  }
-});
-
-// Delete a doctor by ID
-router.delete("/doctors/:id", async (req, res) =>
-{
-  try
-  {
-    const doctorId = req.params.id;
-    const deletedDoctor = await Doctor.findByIdAndDelete(doctorId);
-
-    if (!deletedDoctor)
-    {
-      return res.status(404).send({ error: "Doctor not found" });
-    }
-
-    res.send({ message: `Doctor with ID ${doctorId} deleted successfully` });
-  } catch (e)
-  {
-    console.error("Delete error:", e);
-    res.status(500).send({ error: "Delete failed" });
   }
 });
 

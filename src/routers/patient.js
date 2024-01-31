@@ -94,9 +94,10 @@ router.delete("/patient/me", auth, async (req, res) =>
 {
   try
   {
-    const patient = await Patient.findByIdAndDelete(req.patient._id);
+    const patientId = req.patient._id;
+    const deletedPatient = await Patient.findByIdAndDelete(patientId);
     // make sure to delete all prescriptions and medical records associated with the patient
-    res.send(patient);
+    res.send({message: 'Account deleted successfully.'});
   } catch (error)
   {
     // console.error("Delete error:", error);
