@@ -91,6 +91,21 @@ router.patch("/patient/:id", auth, async (req, res) =>
   }
 });
 
+// Delete Route
+router.delete("/patient/me", auth, async (req, res) =>
+{
+  try
+  {
+    const patient = await Patient.findByIdAndDelete(req.patient._id);
+    // make sure to delete all prescriptions and medical records associated with the patient
+    res.send(patient);
+  } catch (error)
+  {
+    // console.error("Delete error:", error);
+    res.status(500).send({ error: "Delete failed" });
+  }
+});
+
 // Login() - Login a patient from a single device
 
 router.post("/patient/login", async (req, res) =>
