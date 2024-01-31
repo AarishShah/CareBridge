@@ -133,7 +133,7 @@ router.post("/patient/logoutall", auth, async (req, res) =>
   }
   catch (error)
   {
-    console.error("Logout error:", error);
+    // console.error("Logout error:", error);
     res.status(500).send({ error: "Logout failed" });
   }
 });
