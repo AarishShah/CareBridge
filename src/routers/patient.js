@@ -1,7 +1,6 @@
 const express = require("express");
 const Patient = require("../models/patient");
-
-// const auth = require('../middleware/auth');
+const auth = require("../middleware/auth");
 const router = new express.Router();
 
 // completed:
@@ -27,7 +26,7 @@ router.post("/patient/signup", async (req, res) => {
 
     if (!name || !address || !email || !password || !DOB || !gender) {
       return res.status(400).send({
-        error: "Name, address, email, password, dob, gender are required",
+        error: "Name, address, email, password, dob, gender are all required",
       });
     }
 
@@ -40,10 +39,11 @@ router.post("/patient/signup", async (req, res) => {
       gender,
     });
 
-    res.status(201).send({ newPatient });
+    const token = await newPatient.generateAuthToken();
+
+    res.status(201).send({ newPatient, token });
   } catch (e) {
-    console.error("Create error:", e);
-    res.status(500).send({ error: "Create failed" });
+    res.status(500).send({ error: "Failed to create a new user." });
   }
 });
 // `````````````````````````````````````````
