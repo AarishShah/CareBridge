@@ -5,20 +5,19 @@ const router = new express.Router();
 
 // completed:
 
-// createAccount() - Completed
-// readAccount() - Completed
-// Logging in() - Completed
-// logging out() - Completed
-// deleteAccount() - Completed
-// updateAccount() - Completed
+// Sign Up Route
+// Login Route
+// Update Route
+// Delete Route // make sure to delete all prescriptions and medical records associated with the patient
+// Logout Route
+// Logout All Route
+// Read Patient Route
 
 // incomplete:
 
-// logout-all() - @KhushbooHamid
 // chooseDoctor() - @AarishShah
 // viewDiagnosisAndMed() - @AarishShah
 
-// ```````````````````````````````````````````
 // Sign Up Route
 router.post("/patient/signup", async (req, res) =>
 {
@@ -49,7 +48,6 @@ router.post("/patient/signup", async (req, res) =>
     res.status(500).send({ error: "Failed to create a new user." });
   }
 });
-// `````````````````````````````````````````
 
 // Login Route
 router.get("/patient/login", async (req, res) =>
@@ -66,7 +64,7 @@ router.get("/patient/login", async (req, res) =>
   }
 });
 
-// updateAccount() - Update a patient by ID
+// Update Route
 router.patch("/patient/:id", auth, async (req, res) =>
 {
   const updates = Object.keys(req.body); // returns the keys of the json object as an array
@@ -106,86 +104,43 @@ router.delete("/patient/me", auth, async (req, res) =>
   }
 });
 
-// Login() - Login a patient from a single device
-
-router.post("/patient/login", async (req, res) =>
+// Logout Route
+router.post("/patient/logout", auth, async (req, res) =>
 {
   try
   {
-    const { email, password } = req.body;
+    req.patient.tokens = req.patient.tokens.filter((token) => { return token.token !== req.token; });
+    await req.patient.save();
+    res.send({ message: "Logout successful" });
+  }
 
-    if (!email || !password)
-    {
-      return res.status(400).send({ error: "Email and password are required" });
-    }
-
-    const patient = await Patient.findByCredentials(email, password);
-
-    if (!patient)
-    {
-      return res
-        .status(400)
-        .send({ error: "Login failed. Invalid email or password" });
-    }
-
-    req.session.isLoggedIn = true;
-    req.session.patient = patient;
-
-    res.send({ patient });
-  } catch (e)
+  catch (e)
   {
-    console.error("Login error:", e);
-    res.status(400).send({ error: "Login failed" });
+    // console.error("Logout error:", e);
+    res.status(500).send({ error: "Logout failed" });
   }
 });
 
-// Logout() - Logout a patient from a single device
-router.post("/patient/logout", async (req, res) =>
-{
-  req.session.destroy((error) =>
-  {
-    console.log(error);
-  });
-
-  return res.send(204);
-});
-
-// logout-all() - Logout a patient from all devices
-router.post("/patient/logoutall", async (req, res) => { });
-
-// deleteAccount() - Delete a patient by ID
-router.delete("/patient/:id", async (req, res) =>
+// Logout All Route - Logout a patient from all devices
+router.post("/patient/logoutall", auth, async (req, res) =>
 {
   try
   {
-    if (!req.session.isLoggedIn)
-    {
-      return res.status(401).send({
-        statusCode: 401,
-        status: "Unauthorized",
-        message: "You must be logged-in",
-      });
-    }
-
-    const patientId = req.params.id;
-
-    const deletedpatient = await Patient.findByIdAndDelete(patientId);
-
-    if (!deletedpatient)
-    {
-      return res
-        .status(404)
-        .send({ statusCode: 404, message: "patient not found" });
-    }
-
-    req.session.destroy();
-    // when deleting a resource only a status code of 204 is sent
-    res.status(204);
-  } catch (e)
-  {
-    console.error("Delete error:", e);
-    res.status(500).send({ message: "Delete failed" });
+    req.patient.tokens = [];
+    await req.patient.save();
+    res.send({ message: "Logout successful from all instances." });
   }
+  catch (error)
+  {
+    console.error("Logout error:", error);
+    res.status(500).send({ error: "Logout failed" });
+  }
+});
+
+// Read Patient Route
+router.get("/patient/me", auth, async (req, res) =>
+{
+  res.send(req.patient);
 });
 
 // chooseDoctor()
