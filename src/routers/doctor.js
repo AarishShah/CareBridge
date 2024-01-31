@@ -111,27 +111,6 @@ router.delete("/doctor/me", auth, async (req, res) =>
   }
 });
 
-// Retrieve a doctor by ID
-router.get("/doctors/:id", async (req, res) =>
-{
-  try
-  {
-    const doctorId = req.params.id;
-    const doctor = await Doctor.findById(doctorId);
-
-    if (!doctor)
-    {
-      return res.status(404).send({ error: "Doctor not found" });
-    }
-
-    res.send({ doctor });
-  } catch (e)
-  {
-    console.error("Retrieve error:", e);
-    res.status(500).send({ error: "Retrieve failed" });
-  }
-});
-
 // Logout Route
 router.post("/doctor/logout", auth, async (req, res) =>
 {
@@ -163,6 +142,12 @@ router.post("/doctor/logoutall", auth, async (req, res) =>
     // console.error("Logout error:", error);
     res.status(500).send({ error: "Logout failed" });
   }
+});
+
+// Read Doctor Route
+router.get("/doctor/me", auth, async (req, res) =>
+{
+  res.send(req.doctor);
 });
 
 router.get("/doctors/viewPatientHistory", async (req, res) => { });
