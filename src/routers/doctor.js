@@ -55,6 +55,21 @@ router.post("/doctor/signup", async (req, res) =>
   }
 });
 
+// Login Route
+router.post("/doctor/login", async (req, res) =>
+{
+  try
+  {
+    const doctor = await Doctor.findByCredentials(req.body.email, req.body.password);
+    const token = await doctor.generateAuthToken();
+    res.status(202).send({ doctor, token });
+  } catch (error)
+  {
+    // console.error("Login error:", error);
+    res.status(400).send({ error: "Login failed" });
+  }
+});
+
 // Retrieve a doctor by ID
 router.get("/doctors/:id", async (req, res) =>
 {
@@ -113,42 +128,6 @@ router.delete("/doctors/:id", async (req, res) =>
   {
     console.error("Delete error:", e);
     res.status(500).send({ error: "Delete failed" });
-  }
-});
-
-// Doctor login
-router.post("/doctors/login", async (req, res) =>
-{
-  try
-  {
-    const { email, password } = req.body;
-
-    if (!email || !password)
-    {
-      return res.status(400).send({ error: "Email and password are required" });
-    }
-
-    const user1 = await Doctor.findByCredentials(email, password);
-
-    if (!user1)
-    {
-      return res
-        .status(400)
-        .send({ error: "Login failed. Invalid email or password" });
-    }
-
-    // Set the user in the session
-    req.session.user = {
-      _id: user1._id,
-      email: user1.email,
-      // Add any other relevant user data you want to store in the session
-    };
-
-    res.send({ user1 });
-  } catch (e)
-  {
-    console.error("Login error:", e);
-    res.status(400).send({ error: "Login failed" });
   }
 });
 

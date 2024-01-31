@@ -50,7 +50,7 @@ router.post("/patient/signup", async (req, res) =>
 });
 
 // Login Route
-router.get("/patient/login", async (req, res) =>
+router.post("/patient/login", async (req, res) =>
 {
   try
   {
