@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const doctorSchema = new mongoose.Schema({
     name:
@@ -29,6 +30,7 @@ const doctorSchema = new mongoose.Schema({
     {
         type: String,
         minlength: 8,
+        maxlength: 64,
         required: true,
         trim: true,
     },
@@ -60,7 +62,18 @@ const doctorSchema = new mongoose.Schema({
         type: [String],
         required: true,
         trim: true
-    }
+    },
+
+    tokens:
+    [
+        {
+            token:
+            {
+                type: String,
+                required: true,
+            },
+        }
+    ],
 },
     {
         timestamps: true,
@@ -69,41 +82,68 @@ const doctorSchema = new mongoose.Schema({
     }
 );
 
+// Virtual property for patient medical record and prescription, to link doctor with medical record and prescription
+// Add after defining medical record and prescription models
+
+// hide private data when sending doctor object
+doctorSchema.methods.toJSON = function ()
+{
+  const doctor = this;
+  const doctorObject = doctor.toObject();
+
+  delete doctorObject.password;
+  delete doctorObject.tokens;
+
+  return doctorObject;
+};
+
+doctorSchema.methods.generateAuthToken = async function (next)
+{
+  const doctor = this;
+  const token = jwt.sign({ _id: doctor.id.toString() }, 'thisismynewcourse')
+
+  doctor.tokens = doctor.tokens.concat({ token })
+
+  await doctor.save()
+
+  return token;
+}
+
 doctorSchema.statics.findByCredentials = async function (email, password)
 {
-    const user = await this.findOne({ email });
+    const doctor = await this.findOne({ email });
 
-    if (!user)
+    if (!doctor)
     {
         throw new Error('Unable to login');
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, doctor.password);
 
     if (!isMatch)
     {
         throw new Error('Unable to login');
     }
 
-    return user;
+    return doctor;
 };
 
 // Hash password before saving
 doctorSchema.pre('save', async function (next)
 {
-    const doc = this;
+    const doctor = this;
 
-    if (doc.isModified('password'))
+    if (doctor.isModified('password'))
     {
-        doc.password = await bcrypt.hash(doc.password, 8);
+        doctor.password = await bcrypt.hash(doctor.password, 8);
     }
 
     next();
 });
 
-const Doc = mongoose.model('Doc', doctorSchema);
+const doctor = mongoose.model('doctor', doctorSchema);
 
-module.exports = Doc;
+module.exports = doctor;
 
 /*
 Test data:
