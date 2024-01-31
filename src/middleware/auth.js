@@ -6,15 +6,9 @@ const auth = async (req, res, next) =>
   try
   {
     const token = req.header("Authorization").replace("Bearer ", "");
-    const decoded = jwt.verify(token, "thisismynewcourse"); //validating header
+    const decoded = jwt.verify(token, "thisismynewcourse");
 
-    const patient = await Patient.findOne(
-      // finds associated user
-      {
-        _id: decoded._id,
-        "tokens.token": token, // go in token's token array and match it with the token const that we got above, so user logs out and token will still be valid
-      }
-    );
+    const patient = await Patient.findOne({ _id: decoded._id, "tokens.token": token, });
 
     if (!patient)
     {
