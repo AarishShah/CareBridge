@@ -38,7 +38,7 @@ router.post("/patient/signup", async (req, res) =>
       return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(', ')}. Please ensure all fields are filled out correctly.` });
     }
 
-    const newPatient = await Patient.create({ name, address, email, password, DOB, gender, });
+    const newPatient = await Patient.create({ name, address, email, password, DOB, gender });
     const token = await newPatient.generateAuthToken();
 
     res.status(201).send({ newPatient, token });

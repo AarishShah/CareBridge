@@ -1,5 +1,6 @@
 const express = require("express");
 const Doctor = require("../models/doctor");
+const auth = require("../middleware/doctor");
 const router = express.Router();
 
 /*
@@ -22,54 +23,34 @@ viewPatientHistory()
 provideDiagnosisAndMed()
 */
 
-// Create a new doctor
-router.post("/doctors", async (req, res) =>
+// Sign Up Route
+router.post("/doctor/signup", async (req, res) =>
 {
   try
   {
-    console.log("Received POST request to /doctors");
-    const {
-      name,
-      email,
-      password,
-      gender,
-      specialization,
-      yearsOfExperience,
-      qualifications,
-    } = req.body;
+    const { name, email, password, gender, specialization, yearsOfExperience, qualifications } = req.body;
 
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !gender ||
-      !specialization ||
-      !yearsOfExperience ||
-      !qualifications
-    )
+    const missingFields = [];
+    if (!name) missingFields.push('name');
+    if (!email) missingFields.push('email');
+    if (!password) missingFields.push('password');
+    if (!gender) missingFields.push('gender');
+    if (!specialization) missingFields.push('specialization');
+    if (!yearsOfExperience) missingFields.push('years of experience');
+    if (!qualifications) missingFields.push('qualifications');
+
+    if (missingFields.length > 0)
     {
-      return res
-        .status(400)
-        .send({
-          error:
-            "Name, email, password, gender, specialization, yearsOfExperience, qualifications are required",
-        });
+      return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(', ')}. Please ensure all fields are filled out correctly.` });
     }
 
-    const newDoctor = await Doctor.create({
-      name,
-      email,
-      password,
-      gender,
-      specialization,
-      yearsOfExperience,
-      qualifications,
-    });
+    const newDoctor = await Doctor.create({ name, email, password, gender, specialization, yearsOfExperience, qualifications });
+    const token = await newDoctor.generateAuthToken();
 
-    res.status(201).send({ newDoctor });
+    res.status(201).send({ newDoctor, token });
   } catch (e)
   {
-    console.error("Create error:", e);
+    // console.error("Create error:", e);
     res.status(500).send({ error: "Create failed" });
   }
 });
