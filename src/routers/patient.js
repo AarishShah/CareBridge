@@ -19,7 +19,7 @@ const router = new express.Router();
 // viewDiagnosisAndMed() - @AarishShah
 
 // ```````````````````````````````````````````
-// Create a new patient
+// Sign Up Route
 router.post("/patient/signup", async (req, res) =>
 {
   try
@@ -40,13 +40,12 @@ router.post("/patient/signup", async (req, res) =>
     }
 
     const newPatient = await Patient.create({ name, address, email, password, DOB, gender, });
-
     const token = await newPatient.generateAuthToken();
 
     res.status(201).send({ newPatient, token });
   } catch (e)
   {
-    console.error("Signup error:", e);
+    // console.error("Signup error:", e);
     res.status(500).send({ error: "Failed to create a new user." });
   }
 });
