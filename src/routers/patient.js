@@ -11,7 +11,7 @@ const router = new express.Router();
 // Delete Route // make sure to delete all prescriptions and medical records associated with the patient
 // Logout Route
 // Logout All Route
-// Read Patient Route
+// Read Route
 
 // incomplete:
 

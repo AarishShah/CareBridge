@@ -3,25 +3,22 @@ const Doctor = require("../models/doctor");
 const auth = require("../middleware/doctor");
 const router = express.Router();
 
-/*
-completed:
 
-createDoctor()
-getDoctorById()
-deleteDoctorById()
-loginDoctor()
-logoutDoctor()
+// completed:
 
-tested with postman and working
-*/
+// Sign Up Route
+// Login Route
+// Update Route
+// Delete Route
+// Logout Route
+// Logout All Route
+// Read Route
 
-/*
-incomplete:
+// incomplete:
 
-updateDoctor() 
-viewPatientHistory()
-provideDiagnosisAndMed()
-*/
+// viewPatientHistory()
+// provideDiagnosisAndMed()
+
 
 // Sign Up Route
 router.post("/doctor/signup", async (req, res) =>
