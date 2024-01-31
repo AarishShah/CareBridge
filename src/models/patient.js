@@ -152,13 +152,13 @@ patientSchema.methods.toJSON = function ()
 patientSchema.methods.generateAuthToken = async function (next)
 {
   const patient = this;
-  const token = jwt.sign({ _id: user.id.toString() }, 'thisismynewcourse')
+  const token = jwt.sign({ _id: patient.id.toString() }, 'thisismynewcourse')
 
-  patient.tokens = patient.tokens.concan({token})
+  patient.tokens = patient.tokens.concat({token})
 
   await patient.save()
 
-  return patient;
+  return token;
 }
 
 // Authentication method for the patient model
@@ -166,7 +166,7 @@ patientSchema.statics.findByCredentials = async function (email, password)
 {
   const patient = await this.findOne({ email });
 
-  if (!user)
+  if (!patient)
   {
     throw new Error("Unable to login");
   }

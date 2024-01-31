@@ -44,9 +44,10 @@ router.post("/patient/signup", async (req, res) =>
 
     const token = await newPatient.generateAuthToken();
 
-    res.status(201).send({ newPatient, token });
+    res.status(201).send({ newPatient, token});
   } catch (e)
   {
+    console.error("Signup error:", e);
     res.status(500).send({ error: "Failed to create a new user." });
   }
 });
