@@ -61,59 +61,34 @@ router.get("/patient/login", async (req, res) =>
     res.status(202).send({ patient, token });
   } catch (error)
   {
-    console.error("Login error:", error);
+    // console.error("Login error:", error);
     res.status(400).send({ error: "Login failed" });
   }
 });
 
 // updateAccount() - Update a patient by ID
-router.patch("/patient/:id", async (req, res) =>
+router.patch("/patient/:id", auth, async (req, res) =>
 {
-  if (!req.session.isLoggedIn)
+  const updates = Object.keys(req.body); // returns the keys of the json object as an array
+  const allowedUpdates = ['name', 'address', 'email', 'password', 'gender'];
+  const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+
+  if (!isValidOperation)
   {
-    return res.status(401).send({
-      statusCode: 401,
-      status: "Unauthorized",
-      message: "You must be logged-in",
-    });
+    return res.status(404).send({ error: 'Invalid updates!' });
   }
 
-  const patient = await Patient.findById(req.params.id);
-
-  // we wont need this because we would have already checked for the patient's existence in the auth middleware
-  if (!patient)
+  try
   {
-    return res.status(404).send({
-      statusCode: 404,
-      status: "Not Found",
-      message: "Patient with that id doesn't exist",
-    });
+    updates.forEach((update) => req.patient[update] = req.body[update]);
+    await req.patient.save();
+    res.status(200).send(req.patient);
   }
-
-  if (req.body.age || req.body.DOB)
+  catch (error)
   {
-    return res.status(400).send({
-      statusCode: 400,
-      status: "Bad Request",
-      message: "Can't update age or DOB",
-    });
+    // console.error("Update error:", error);
+    res.status(400).send({ error: "Update failed" });
   }
-
-  // incomplete - fix it as per the items that user mentions and not all the items
-  await patient.updateOne({
-    name: req.body.name,
-    address: req.body.address,
-    gender: req.body.gender,
-    email: req.body.email,
-    password: req.body.password,
-  });
-
-  return res.status(200).send({
-    statusCode: 200,
-    status: "Success",
-    message: "Resouce update successful",
-    data: patient,
-  });
 });
 
 // Login() - Login a patient from a single device

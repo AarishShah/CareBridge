@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require('../models/patient'); // update this line accordingly
+const Patient = require('../models/patient'); // update this line accordingly
 
 const auth = async (req, res, next) =>
 {
@@ -8,7 +8,7 @@ const auth = async (req, res, next) =>
     const token = req.header("Authorization").replace("Bearer ", "");
     const decoded = jwt.verify(token, "thisismynewcourse"); //validating header
 
-    const user = await User.findOne(
+    const patient = await Patient.findOne(
       // finds associated user
       {
         _id: decoded._id,
@@ -16,13 +16,13 @@ const auth = async (req, res, next) =>
       }
     );
 
-    if (!user)
+    if (!patient)
     {
       throw new Error();
     }
 
     req.token = token; // for logging out, we want user to logout from only one device and not all devices
-    req.user = user;
+    req.patient = patient;
     next();
   }
   catch (e) { res.status(401).send({ error: "Please authenticate." }); }
