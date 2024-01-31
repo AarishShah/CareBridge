@@ -95,7 +95,7 @@ router.patch("/doctor/:id", auth, async (req, res) =>
   }
 });
 
-// Delete a doctor by ID
+// Delete Route
 router.delete("/doctor/me", auth, async (req, res) =>
 {
   try
@@ -132,40 +132,35 @@ router.get("/doctors/:id", async (req, res) =>
   }
 });
 
-// Doctor logout
-router.post("/doctors/logout", async (req, res) =>
+// Logout Route
+router.post("/doctor/logout", auth, async (req, res) =>
 {
   try
   {
-    // Check if the session exists
-    if (req.session)
-    {
-      const user = req.session.user;
+    req.doctor.tokens = req.doctor.tokens.filter((token) => { return token.token !== req.token; });
+    await req.doctor.save();
+    res.send({ message: "Logout successful" });
+  }
 
-      if (!user)
-      {
-        return res.status(401).send({ error: "User not authenticated" });
-      }
-
-      // Clear the session data
-      req.session.destroy((err) =>
-      {
-        if (err)
-        {
-          console.error(err);
-          res.status(500).send({ error: "Logout failed" });
-        } else
-        {
-          res.send("logout successfull");
-        }
-      });
-    } else
-    {
-      return res.status(401).send({ error: "User not authenticated" });
-    }
-  } catch (e)
+  catch (e)
   {
-    console.error(e);
+    // console.error("Logout error:", e);
+    res.status(500).send({ error: "Logout failed" });
+  }
+});
+
+// Logout All Route - Logout a doctor from all devices
+router.post("/doctor/logoutall", auth, async (req, res) =>
+{
+  try
+  {
+    req.doctor.tokens = [];
+    await req.doctor.save();
+    res.send({ message: "Logout successful from all instances." });
+  }
+  catch (error)
+  {
+    // console.error("Logout error:", error);
     res.status(500).send({ error: "Logout failed" });
   }
 });
