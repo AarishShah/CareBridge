@@ -70,6 +70,31 @@ router.post("/doctor/login", async (req, res) =>
   }
 });
 
+// Update a doctor by ID
+router.patch("/doctor/:id", auth, async (req, res) =>
+{
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ['name', 'email', 'password', 'gender', 'specialization', 'yearsOfExperience', 'qualifications'];
+  const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+
+  if (!isValidOperation)
+  {
+    return res.status(404).send({ error: 'Invalid updates!' });
+  }
+
+  try
+  {
+    updates.forEach((update) => req.doctor[update] = req.body[update]);
+    await req.doctor.save();
+    res.send(req.doctor);
+  }
+  catch (error)
+  {
+    // console.error("Update error:", error);
+    res.status(400).send({ error: "Update failed" });
+  }
+});
+
 // Retrieve a doctor by ID
 router.get("/doctors/:id", async (req, res) =>
 {
@@ -89,25 +114,6 @@ router.get("/doctors/:id", async (req, res) =>
     console.error("Retrieve error:", e);
     res.status(500).send({ error: "Retrieve failed" });
   }
-});
-
-// Update a doctor by ID
-router.patch("/doctors/:id", async (req, res) =>
-{
-  const doctorId = await Doctor.findById(req.params.id);
-
-  if (!doctorId)
-  {
-    return res.send({
-      statusCode: 404,
-      status: "Not Found",
-      error: "Doctor not found",
-    });
-  }
-  // replace the line below with proper code
-  // return res.send({message: "hi"});
-
-  // incomplete - fix it as per the items that user mentions and not all the items
 });
 
 // Delete a doctor by ID
