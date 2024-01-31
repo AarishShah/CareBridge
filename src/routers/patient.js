@@ -51,28 +51,19 @@ router.post("/patient/signup", async (req, res) =>
 });
 // `````````````````````````````````````````
 
-// readAccount() - Read patient by ID
-router.get("/patient/:id", async (req, res) =>
+// Login Route
+router.get("/patient/login", async (req, res) =>
 {
-  if (!req.session.isLoggedIn)
+  try
   {
-    return res.status(401).send({
-      statusCode: 401,
-      status: "Unauthorized",
-      message: "You must be logged-in",
-    });
+    const patient = await Patient.findByCredentials(req.body.email, req.body.password);
+    const token = await patient.generateAuthToken();
+    res.status(202).send({ patient, token });
+  } catch (error)
+  {
+    console.error("Login error:", error);
+    res.status(400).send({ error: "Login failed" });
   }
-
-  const patient = await Patient.findById(req.params.id);
-
-  if (!patient)
-    res.send({
-      statusCode: 404,
-      status: "Not Found",
-      message: "No records found",
-    });
-
-  res.status(200).send({ statusCode: 200, status: "OK", data: patient });
 });
 
 // updateAccount() - Update a patient by ID
