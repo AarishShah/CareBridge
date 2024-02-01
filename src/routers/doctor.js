@@ -68,7 +68,7 @@ router.post("/doctor/login", async (req, res) =>
 });
 
 // Update Route
-router.patch("/doctor/:id", auth, async (req, res) =>
+router.patch("/doctor/me", auth, async (req, res) =>
 {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password', 'gender', 'specialization', 'yearsOfExperience', 'qualifications'];

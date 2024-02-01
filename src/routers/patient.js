@@ -65,7 +65,7 @@ router.post("/patient/login", async (req, res) =>
 });
 
 // Update Route
-router.patch("/patient/:id", auth, async (req, res) =>
+router.patch("/patient/me", auth, async (req, res) =>
 {
   const updates = Object.keys(req.body); // returns the keys of the json object as an array
   const allowedUpdates = ['name', 'address', 'email', 'password', 'gender'];
