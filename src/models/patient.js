@@ -106,6 +106,9 @@ const patientSchema = new mongoose.Schema(
                     type: mongoose.Schema.Types.ObjectId,
                     ref: "doctor",
                 },
+                name: String, 
+                email: String
+                
             },
         ],
 

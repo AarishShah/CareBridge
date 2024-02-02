@@ -158,6 +158,8 @@ router.post("/patient/assignDoctor", auth, async (req, res) =>
     }
 
     const doctorId = doctor._id;
+    const doctorName = doctor.name;
+    const doctorEmail = doctor.email;
 
     // Check if the doctor is already assigned
     const isAlreadyAssigned = req.patient.assignedDoctors.some(
@@ -169,7 +171,7 @@ router.post("/patient/assignDoctor", auth, async (req, res) =>
       return res.status(400).send({ error: "Doctor already assigned" });
     }
 
-    req.patient.assignedDoctors = req.patient.assignedDoctors.concat({ doctor: doctorId });
+    req.patient.assignedDoctors = req.patient.assignedDoctors.concat({ doctor: doctorId, name: doctorName, email: doctorEmail });
     await req.patient.save();
 
     res.status(201).send({ message: "Doctor assigned successfully" });
