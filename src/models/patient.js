@@ -99,6 +99,16 @@ const patientSchema = new mongoose.Schema(
             default: "Prefer not to say",
         },
 
+        assignedDoctors: [
+            {
+                doctor:
+                {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "doctor",
+                },
+            },
+        ],
+
         tokens:
             [
                 {
@@ -225,5 +235,6 @@ module.exports = patient;
 //     "email": "alicesmith@example.com",
 //     "password": "securePassword123",
 //     "DOB": "12/05/1995",
-//     "gender": "Female"
+//     "gender": "Female",
+//     "assignedDoctors": []
 // }
