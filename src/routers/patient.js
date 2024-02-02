@@ -13,10 +13,11 @@ const router = new express.Router();
 // Logout Route
 // Logout All Route
 // Read Route
+// assignDoctor Route
+// removeDoctor Route
 
 // incomplete:
 
-// chooseDoctor() - @AarishShah
 // viewDiagnosisAndMed() - @AarishShah
 
 // Sign Up Route
@@ -145,7 +146,7 @@ router.get("/patient/me", auth, async (req, res) =>
   res.send(req.patient);
 });
 
-// assignDoctor() - find a doctor using doctor's email and assign the doctor to the patient
+// assignDoctor Route - assign a doctor to the patient's assigned doctors list using the doctor's email
 router.post("/patient/assignDoctor", auth, async (req, res) =>
 {
   try
@@ -180,6 +181,45 @@ router.post("/patient/assignDoctor", auth, async (req, res) =>
     res.status(400).send({ error: "Doctor assignment failed" });
   }
 });
+
+// removeDoctor Route - remove a doctor from the patient's assigned doctors list using the doctor's email
+router.delete("/patient/removeDoctor", auth, async (req, res) =>
+{
+  try
+  {
+    const doctor = await Doctor.findOne({ email: req.body.email });
+    if (!doctor)
+    {
+      return res.status(404).send({ error: "Doctor not found" });
+    }
+
+    const doctorId = doctor._id;
+
+    // Check if the doctor is already assigned
+    const isAssigned = req.patient.assignedDoctors.some(
+      assignedDoc => assignedDoc.doctor.toString() === doctorId.toString()
+    );
+
+    if (!isAssigned)
+    {
+      return res.status(400).send({ error: "Doctor not assigned" });
+    }
+
+    req.patient.assignedDoctors = req.patient.assignedDoctors.filter(
+      assignedDoc => assignedDoc.doctor.toString() !== doctorId.toString()
+    );
+    await req.patient.save();
+
+    res.status(200).send({ message: "Doctor removed successfully" });
+
+  }
+  catch (error)
+  {
+    // console.error("Doctor removal error:", error);
+    res.status(400).send({ error: "Doctor removal failed" });
+  }
+});
+
 
 // post?
 
