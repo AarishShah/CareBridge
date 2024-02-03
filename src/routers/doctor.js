@@ -1,189 +1,154 @@
 const express = require("express");
 const Doctor = require("../models/doctor");
-const { log } = require("console");
+const auth = require("../middleware/doctor");
 const router = express.Router();
 
-/*
-completed:
 
-createDoctor()
-getDoctorById()
-deleteDoctorById()
-loginDoctor()
-logoutDoctor()
+// completed:
 
-tested with postman and working
-*/
+// Sign Up Route
+// Login Route
+// Update Route
+// Delete Route
+// Logout Route
+// Logout All Route
+// Read Route
 
-/*
-incomplete:
+// incomplete:
 
-updateDoctor() 
-viewPatientHistory()
-provideDiagnosisAndMed()
-*/
+// viewPatientHistory()
+// provideDiagnosisAndMed()
 
-// Create a new doctor
-router.post("/doctors", async (req, res) => {
-  try {
-    console.log("Received POST request to /doctors");
-    const {
-      name,
-      email,
-      password,
-      gender,
-      specialization,
-      yearsOfExperience,
-      qualifications,
-    } = req.body;
 
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !gender ||
-      !specialization ||
-      !yearsOfExperience ||
-      !qualifications
-    ) {
-      return res
-        .status(400)
-        .send({
-          error:
-            "Name, email, password, gender, specialization, yearsOfExperience, qualifications are required",
-        });
+// Sign Up Route
+router.post("/doctor/signup", async (req, res) =>
+{
+  try
+  {
+    const { name, email, password, gender, specialization, yearsOfExperience, qualifications } = req.body;
+
+    const missingFields = [];
+    if (!name) missingFields.push('name');
+    if (!email) missingFields.push('email');
+    if (!password) missingFields.push('password');
+    if (!gender) missingFields.push('gender');
+    if (!specialization) missingFields.push('specialization');
+    if (!yearsOfExperience) missingFields.push('years of experience');
+    if (!qualifications) missingFields.push('qualifications');
+
+    if (missingFields.length > 0)
+    {
+      return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(', ')}. Please ensure all fields are filled out correctly.` });
     }
 
-    const newDoctor = await Doctor.create({
-      name,
-      email,
-      password,
-      gender,
-      specialization,
-      yearsOfExperience,
-      qualifications,
-    });
+    const newDoctor = await Doctor.create({ name, email, password, gender, specialization, yearsOfExperience, qualifications });
+    const token = await newDoctor.generateAuthToken();
 
-    res.status(201).send({ newDoctor });
-  } catch (e) {
-    console.error("Create error:", e);
+    res.status(201).send({ newDoctor, token });
+  } catch (e)
+  {
+    // console.error("Create error:", e);
     res.status(500).send({ error: "Create failed" });
   }
 });
 
-// Retrieve a doctor by ID
-router.get("/doctors/:id", async (req, res) => {
-  try {
-    const doctorId = req.params.id;
-    const doctor = await Doctor.findById(doctorId);
-
-    if (!doctor) {
-      return res.status(404).send({ error: "Doctor not found" });
-    }
-
-    res.send({ doctor });
-  } catch (e) {
-    console.error("Retrieve error:", e);
-    res.status(500).send({ error: "Retrieve failed" });
-  }
-});
-
-// Update a doctor by ID
-router.patch("/doctors/:id", async (req, res) => {
-  const doctorId = await Doctor.findById(req.params.id);
-
-  if (!doctorId) {
-    return res.send({
-      statusCode: 404,
-      status: "Not Found",
-      error: "Doctor not found",
-    });
-  }
-  // replace the line below with proper code
-  // return res.send({message: "hi"});
-
-  // incomplete - fix it as per the items that user mentions and not all the items
-});
-
-// Delete a doctor by ID
-router.delete("/doctors/:id", async (req, res) => {
-  try {
-    const doctorId = req.params.id;
-    const deletedDoctor = await Doctor.findByIdAndDelete(doctorId);
-
-    if (!deletedDoctor) {
-      return res.status(404).send({ error: "Doctor not found" });
-    }
-
-    res.send({ message: `Doctor with ID ${doctorId} deleted successfully` });
-  } catch (e) {
-    console.error("Delete error:", e);
-    res.status(500).send({ error: "Delete failed" });
-  }
-});
-
-// Doctor login
-router.post("/doctors/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).send({ error: "Email and password are required" });
-    }
-
-    const user1 = await Doctor.findByCredentials(email, password);
-
-    if (!user1) {
-      return res
-        .status(400)
-        .send({ error: "Login failed. Invalid email or password" });
-    }
-
-    // Set the user in the session
-    req.session.user = {
-      _id: user1._id,
-      email: user1.email,
-      // Add any other relevant user data you want to store in the session
-    };
-
-    res.send({ user1 });
-  } catch (e) {
-    console.error("Login error:", e);
+// Login Route
+router.post("/doctor/login", async (req, res) =>
+{
+  try
+  {
+    const doctor = await Doctor.findByCredentials(req.body.email, req.body.password);
+    const token = await doctor.generateAuthToken();
+    res.status(202).send({ doctor, token });
+  } catch (error)
+  {
+    // console.error("Login error:", error);
     res.status(400).send({ error: "Login failed" });
   }
 });
 
-// Doctor logout
-router.post("/doctors/logout", async (req, res) => {
-  try {
-    // Check if the session exists
-    if (req.session) {
-      const user = req.session.user;
+// Update Route
+router.patch("/doctor/me", auth, async (req, res) =>
+{
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ['name', 'email', 'password', 'gender', 'specialization', 'yearsOfExperience', 'qualifications'];
+  const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
 
-      if (!user) {
-        return res.status(401).send({ error: "User not authenticated" });
-      }
+  if (!isValidOperation)
+  {
+    return res.status(404).send({ error: 'Invalid updates!' });
+  }
 
-      // Clear the session data
-      req.session.destroy((err) => {
-        if (err) {
-          console.error(err);
-          res.status(500).send({ error: "Logout failed" });
-        } else {
-          res.send("logout successfull");
-        }
-      });
-    } else {
-      return res.status(401).send({ error: "User not authenticated" });
-    }
-  } catch (e) {
-    console.error(e);
+  try
+  {
+    updates.forEach((update) => req.doctor[update] = req.body[update]);
+    await req.doctor.save();
+    res.send(req.doctor);
+  }
+  catch (error)
+  {
+    // console.error("Update error:", error);
+    res.status(400).send({ error: "Update failed" });
+  }
+});
+
+// Delete Route
+router.delete("/doctor/me", auth, async (req, res) =>
+{
+  try
+  {
+    const doctorId = req.doctor._id;
+    const deletedDoctor = await Doctor.findByIdAndDelete(doctorId);
+
+    res.send({ message: 'Account deleted successfully.' });
+  } catch (error)
+  {
+    // console.error("Delete error:", e);
+    res.status(500).send({ error: "Delete failed" });
+  }
+});
+
+// Logout Route
+router.post("/doctor/logout", auth, async (req, res) =>
+{
+  try
+  {
+    req.doctor.tokens = req.doctor.tokens.filter((token) => { return token.token !== req.token; });
+    await req.doctor.save();
+    res.send({ message: "Logout successful" });
+  }
+
+  catch (e)
+  {
+    // console.error("Logout error:", e);
     res.status(500).send({ error: "Logout failed" });
   }
 });
 
-router.get("/doctors/viewPatientHistory", async (req, res) => {});
+// Logout All Route - Logout a doctor from all devices
+router.post("/doctor/logoutall", auth, async (req, res) =>
+{
+  try
+  {
+    req.doctor.tokens = [];
+    await req.doctor.save();
+    res.send({ message: "Logout successful from all instances." });
+  }
+  catch (error)
+  {
+    // console.error("Logout error:", error);
+    res.status(500).send({ error: "Logout failed" });
+  }
+});
 
-router.post("/doctors/provideDiagnosisAndMed", async (req, res) => {});
+// Read Doctor Route
+router.get("/doctor/me", auth, async (req, res) =>
+{
+  res.send(req.doctor);
+});
+
+router.get("/doctors/viewPatientHistory", async (req, res) => { });
+
+router.post("/doctors/provideDiagnosisAndMed", async (req, res) => { });
 
 module.exports = router;

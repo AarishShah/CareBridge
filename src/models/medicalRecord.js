@@ -97,5 +97,89 @@ Dummy data
     ]
 }
 
+// New Entry Data Example:
+
+{
+    "patient": "5f8d0d55b54764421b7156da",
+    "doctors": [
+        "5f8d0d55b54764421b7156db",
+        "5f8d0d55b54764421b7156dc",
+        "5f8d0d55b54764421b7156dd"
+    ],
+    "medicalHistory": [
+        {
+            "date": "2020-10-20T00:00:00.000Z",
+            "diagnosis": "Initial consultation and medical history review. Patient reports occasional chest pain.",
+            "doctor": "Dr. Jane Smith",
+            "treatment": "Prescribed medication for chest pain and advised to follow-up in 2 weeks.",
+            "notes": "Blood pressure and cholesterol levels to be checked in follow-up visit.",
+            "createdBy": "5f8d0d55b54764421b7156db",
+            "onModel": "Doctor"
+        },
+        {
+            "date": "2020-11-03T00:00:00.000Z",
+            "diagnosis": "Patient reports improved symptoms after medication adjustment.",
+            "doctor": "Dr. Jane Smith",
+            "treatment": "Prescribed medication adjustment and follow-up in 4 weeks.",
+            "notes": "Blood pressure and cholesterol levels to be checked in follow-up visit.",
+            "createdBy": "5f8d0d55b54764421b7156db",
+            "onModel": "Doctor"
+        },
+        {
+            "date": "2020-11-17T00:00:00.000Z",
+            "diagnosis": "Patient reports feeling better, but still slight dizziness occasionally.",
+            "doctor": "Dr. Romana",
+            "treatment": "Prescribed medication adjustment and follow-up in 4 weeks.",
+            "notes": "Blood pressure and cholesterol levels to be checked in follow-up visit.",
+            "createdBy": "5f8d0d55b54764421b7156da",
+            "onModel": "Patient"
+        }
+    ],
+    "allergies": [
+        "Peanuts",
+        "Penicillin"
+    ],
+    currentMedications: [
+        {
+            "name": "Lisinopril",
+            "dosage": "10mg",
+            "frequency": "Once daily",
+            "startDate": "2020-10-20T00:00:00.000Z",
+            preescriedUntil: "2021-10-20T00:00:00.000Z",
+            "notes": "Take with food"
+        }, 
+        {
+            "name": "Atorvastatin",
+            "dosage": "20mg",
+            "frequency": "Once daily",
+            "startDate": "2020-10-20T00:00:00.000Z",
+            preescriedUntil: "2021-10-20T00:00:00.000Z",
+            "notes": "Take before bed"
+        }
+    ],
+    previousMedications: [
+        {
+            "name": "Aspirin",
+            "dosage": "81mg",
+            "frequency": "Once daily",
+            "startDate": "2020-10-20T00:00:00.000Z",
+            "endDate": "2020-11-03T00:00:00.000Z",
+            "notes": "Take with food"
+        },
+        {
+            "name": "Atorvastatin",
+            "dosage": "20mg",
+            "frequency": "Once daily",
+            "startDate": "2020-10-20T00:00:00.000Z",
+            "endDate": "2020-11-03T00:00:00.000Z",
+            "notes": "Take before bed"
+        }
+    ],
+    "prescriptions": [
+        "5f8d0d55b54764421b7156dc",
+        "5f8d0d55b54764421b7156dd",
+        "5f8d0d55b54764421b7156de"
+    ]
+}
 
 */

@@ -1,195 +1,231 @@
 const express = require("express");
 const Patient = require("../models/patient");
-
-// const auth = require('../middleware/auth');
+const Doctor = require("../models/doctor");
+const auth = require("../middleware/patient");
 const router = new express.Router();
 
 // completed:
 
-// createAccount() - Completed
-// readAccount() - Completed
-// Logging in() - Completed
-// logging out() - Completed
-// deleteAccount() - Completed
-// updateAccount() - Completed
+// Sign Up Route
+// Login Route
+// Update Route
+// Delete Route // make sure to delete all prescriptions and medical records associated with the patient
+// Logout Route
+// Logout All Route
+// Read Route
+// assignDoctor Route
+// removeDoctor Route
 
 // incomplete:
 
-// logout-all() - @KhushbooHamid
-// chooseDoctor() - @AarishShah
 // viewDiagnosisAndMed() - @AarishShah
 
-// ```````````````````````````````````````````
-// Create a new patient
-router.post("/patient/signup", async (req, res) => {
-  try {
+// Sign Up Route
+router.post("/patient/signup", async (req, res) =>
+{
+  try
+  {
     const { name, address, email, password, DOB, gender } = req.body;
 
-    if (!name || !address || !email || !password || !DOB || !gender) {
-      return res.status(400).send({
-        error: "Name, address, email, password, dob, gender are required",
-      });
+    const missingFields = [];
+    if (!name) missingFields.push('name');
+    if (!address) missingFields.push('address');
+    if (!email) missingFields.push('email');
+    if (!password) missingFields.push('password');
+    if (!DOB) missingFields.push('date of birth (DOB)');
+    if (!gender) missingFields.push('gender');
+
+    if (missingFields.length > 0)
+    {
+      return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(', ')}. Please ensure all fields are filled out correctly.` });
     }
 
-    const newPatient = await Patient.create({
-      name,
-      address,
-      email,
-      password,
-      DOB,
-      gender,
-    });
+    const newPatient = await Patient.create({ name, address, email, password, DOB, gender });
+    const token = await newPatient.generateAuthToken();
 
-    res.status(201).send({ newPatient });
-  } catch (e) {
-    console.error("Create error:", e);
-    res.status(500).send({ error: "Create failed" });
+    res.status(201).send({ newPatient, token });
+  } catch (e)
+  {
+    // console.error("Signup error:", e);
+    res.status(500).send({ error: "Failed to create a new user." });
   }
 });
-// `````````````````````````````````````````
 
-// readAccount() - Read patient by ID
-router.get("/patient/:id", async (req, res) => {
-  if (!req.session.isLoggedIn) {
-    return res.status(401).send({
-      statusCode: 401,
-      status: "Unauthorized",
-      message: "You must be logged-in",
-    });
-  }
-
-  const patient = await Patient.findById(req.params.id);
-
-  if (!patient)
-    res.send({
-      statusCode: 404,
-      status: "Not Found",
-      message: "No records found",
-    });
-
-  res.status(200).send({ statusCode: 200, status: "OK", data: patient });
-});
-
-// updateAccount() - Update a patient by ID
-router.patch("/patient/:id", async (req, res) => {
-  if (!req.session.isLoggedIn) {
-    return res.status(401).send({
-      statusCode: 401,
-      status: "Unauthorized",
-      message: "You must be logged-in",
-    });
-  }
-
-  const patient = await Patient.findById(req.params.id);
-
-  // we wont need this because we would have already checked for the patient's existence in the auth middleware
-  if (!patient) {
-    return res.status(404).send({
-      statusCode: 404,
-      status: "Not Found",
-      message: "Patient with that id doesn't exist",
-    });
-  }
-
-  if (req.body.age || req.body.DOB) {
-    return res.status(400).send({
-      statusCode: 400,
-      status: "Bad Request",
-      message: "Can't update age or DOB",
-    });
-  }
-
-  // incomplete - fix it as per the items that user mentions and not all the items
-  await patient.updateOne({
-    name: req.body.name,
-    address: req.body.address,
-    gender: req.body.gender,
-    email: req.body.email,
-    password: req.body.password,
-  });
-
-  return res.status(200).send({
-    statusCode: 200,
-    status: "Success",
-    message: "Resouce update successful",
-    data: patient,
-  });
-});
-
-// Login() - Login a patient from a single device
-
-router.post("/patient/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).send({ error: "Email and password are required" });
-    }
-
-    const patient = await Patient.findByCredentials(email, password);
-
-    if (!patient) {
-      return res
-        .status(400)
-        .send({ error: "Login failed. Invalid email or password" });
-    }
-
-    req.session.isLoggedIn = true;
-    req.session.patient = patient;
-
-    res.send({ patient });
-  } catch (e) {
-    console.error("Login error:", e);
+// Login Route
+router.post("/patient/login", async (req, res) =>
+{
+  try
+  {
+    const patient = await Patient.findByCredentials(req.body.email, req.body.password);
+    const token = await patient.generateAuthToken();
+    res.status(202).send({ patient, token });
+  } catch (error)
+  {
+    // console.error("Login error:", error);
     res.status(400).send({ error: "Login failed" });
   }
 });
 
-// Logout() - Logout a patient from a single device
-router.post("/patient/logout", async (req, res) => {
-  req.session.destroy((error) => {
-    console.log(error);
-  });
+// Update Route
+router.patch("/patient/me", auth, async (req, res) =>
+{
+  const updates = Object.keys(req.body); // returns the keys of the json object as an array
+  const allowedUpdates = ['name', 'address', 'email', 'password', 'gender'];
+  const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
 
-  return res.send(204);
-});
+  if (!isValidOperation)
+  {
+    return res.status(404).send({ error: 'Invalid updates!' });
+  }
 
-// logout-all() - Logout a patient from all devices
-router.post("/patient/logoutall", async (req, res) => {});
-
-// deleteAccount() - Delete a patient by ID
-router.delete("/patient/:id", async (req, res) => {
-  try {
-    if (!req.session.isLoggedIn) {
-      return res.status(401).send({
-        statusCode: 401,
-        status: "Unauthorized",
-        message: "You must be logged-in",
-      });
-    }
-
-    const patientId = req.params.id;
-
-    const deletedpatient = await Patient.findByIdAndDelete(patientId);
-
-    if (!deletedpatient) {
-      return res
-        .status(404)
-        .send({ statusCode: 404, message: "patient not found" });
-    }
-
-    req.session.destroy();
-    // when deleting a resource only a status code of 204 is sent
-    res.status(204);
-  } catch (e) {
-    console.error("Delete error:", e);
-    res.status(500).send({ message: "Delete failed" });
+  try
+  {
+    updates.forEach((update) => req.patient[update] = req.body[update]);
+    await req.patient.save();
+    res.status(200).send(req.patient);
+  }
+  catch (error)
+  {
+    // console.error("Update error:", error);
+    res.status(400).send({ error: "Update failed" });
   }
 });
 
-// chooseDoctor()
+// Delete Route
+router.delete("/patient/me", auth, async (req, res) =>
+{
+  try
+  {
+    const patientId = req.patient._id;
+    const deletedPatient = await Patient.findByIdAndDelete(patientId);
+    // make sure to delete all prescriptions and medical records associated with the patient
+    res.send({ message: 'Account deleted successfully.' });
+  } catch (error)
+  {
+    // console.error("Delete error:", error);
+    res.status(500).send({ error: "Delete failed" });
+  }
+});
+
+// Logout Route
+router.post("/patient/logout", auth, async (req, res) =>
+{
+  try
+  {
+    req.patient.tokens = req.patient.tokens.filter((token) => { return token.token !== req.token; });
+    await req.patient.save();
+    res.send({ message: "Logout successful" });
+  }
+
+  catch (e)
+  {
+    // console.error("Logout error:", e);
+    res.status(500).send({ error: "Logout failed" });
+  }
+});
+
+// Logout All Route - Logout a patient from all devices
+router.post("/patient/logoutall", auth, async (req, res) =>
+{
+  try
+  {
+    req.patient.tokens = [];
+    await req.patient.save();
+    res.send({ message: "Logout successful from all instances." });
+  }
+  catch (error)
+  {
+    // console.error("Logout error:", error);
+    res.status(500).send({ error: "Logout failed" });
+  }
+});
+
+// Read Patient Route
+router.get("/patient/me", auth, async (req, res) =>
+{
+  res.send(req.patient);
+});
+
+// assignDoctor Route - assign a doctor to the patient's assigned doctors list using the doctor's email
+router.post("/patient/assignDoctor", auth, async (req, res) =>
+{
+  try
+  {
+    const doctor = await Doctor.findOne({ email: req.body.email });
+    if (!doctor)
+    {
+      return res.status(404).send({ error: "Doctor not found" });
+    }
+
+    const doctorId = doctor._id;
+    const doctorName = doctor.name;
+    const doctorEmail = doctor.email;
+
+    // Check if the doctor is already assigned
+    const isAlreadyAssigned = req.patient.assignedDoctors.some(
+      assignedDoc => assignedDoc.doctor.toString() === doctorId.toString()
+    );
+
+    if (isAlreadyAssigned)
+    {
+      return res.status(400).send({ error: "Doctor already assigned" });
+    }
+
+    req.patient.assignedDoctors = req.patient.assignedDoctors.concat({ doctor: doctorId, name: doctorName, email: doctorEmail });
+    await req.patient.save();
+
+    res.status(201).send({ message: "Doctor assigned successfully" });
+
+  }
+  catch (error)
+  {
+    // console.error("Doctor assignment error:", error);
+    res.status(400).send({ error: "Doctor assignment failed" });
+  }
+});
+
+// removeDoctor Route - remove a doctor from the patient's assigned doctors list using the doctor's email
+router.delete("/patient/removeDoctor", auth, async (req, res) =>
+{
+  try
+  {
+    const doctor = await Doctor.findOne({ email: req.body.email });
+    if (!doctor)
+    {
+      return res.status(404).send({ error: "Doctor not found" });
+    }
+
+    const doctorId = doctor._id;
+
+    // Check if the doctor is already assigned
+    const isAssigned = req.patient.assignedDoctors.some(
+      assignedDoc => assignedDoc.doctor.toString() === doctorId.toString()
+    );
+
+    if (!isAssigned)
+    {
+      return res.status(400).send({ error: "Doctor not assigned" });
+    }
+
+    req.patient.assignedDoctors = req.patient.assignedDoctors.filter(
+      assignedDoc => assignedDoc.doctor.toString() !== doctorId.toString()
+    );
+    await req.patient.save();
+
+    res.status(200).send({ message: "Doctor removed successfully" });
+
+  }
+  catch (error)
+  {
+    // console.error("Doctor removal error:", error);
+    res.status(400).send({ error: "Doctor removal failed" });
+  }
+});
+
+
 // post?
 
 // viewDiagnosisAndMed()
-router.get("/patient/:id", async (req, res) => {});
+router.get("/patient/:id", async (req, res) => { });
 
 module.exports = router;

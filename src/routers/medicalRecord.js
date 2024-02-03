@@ -1,6 +1,6 @@
 const express = require('express');
 const MedicalRecord = require('../models/medicalRecord');
-const auth = require('../middleware/auth'); // disbale auth for testing
+const auth = require('../middleware/patient');
 const router = new express.Router();
 
 // POST route to create a medical record
@@ -9,7 +9,7 @@ router.post('/medicalRecords', auth, async (req, res) =>
     try
     {
         const medicalRecord = new MedicalRecord({
-            patient: req.user._id,
+            patient: req.patient._id,
             doctor: req.user._id, // Assuming the doctor is creating the record
             entries: [] // Start with an empty array of entries
         });
