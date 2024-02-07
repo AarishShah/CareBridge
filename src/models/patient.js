@@ -99,8 +99,8 @@ const patientSchema = new mongoose.Schema(
         {
             type: String,
             required: true,
-            enum: ["Single", "Engaged", "Married"],
-            default: "Single",
+            enum: ["Unmarried", "Married"],
+            default: "Unmarried",
         },
 
         occupation:
@@ -114,13 +114,6 @@ const patientSchema = new mongoose.Schema(
         {
             type: addressSchema,
             required: true,
-        },
-
-        religion:
-        {
-            type: String,
-            required: true,
-            default: "None",
         },
 
         assignedDoctors:
