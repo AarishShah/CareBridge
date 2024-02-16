@@ -1,128 +1,135 @@
 const mongoose = require('mongoose');
 
 const patientHistorySchema = new mongoose.Schema(
+  {
+    biodata:
     {
-        biodata:
-        {
-            id:
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                required: true,
-                ref: 'Patient'
-            },
+      id:
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Patient'
+      },
 
-            name:
-            {
-                type: String,
-                required: true,
-                ref: 'Patient'
-            },
+      name:
+      {
+        type: String,
+        required: true
+      },
 
-            email:
-            {
-                type: String,
-                required: true,
-                ref: 'Patient'
-            },
+      email:
+      {
+        type: String,
+        required: true
+      },
 
-            gender: 
-            {
-                type: String,
-                required: true,
-                ref: 'Patient'
-            },
+      gender:
+      {
+        type: String,
+        required: true
+      },
 
-            age: 
-            {
-                type: String, // check if this is the right type
-                required: true,
-                ref: 'Patient'
-            },
+      age:
+      {
+        type: String, // check if this is the right type
+        required: true
+      },
 
-            address:
-            {
-                type: String,
-                required: true,
-                ref: 'Patient'
-            },
+      address:
+      {
+        type: String,
+        required: true
+      },
 
-            occupation:
-            {
-                type: String,
-                required: true,
-                ref: 'Patient'
-            },
+      occupation:
+      {
+        type: String,
+        required: true
+      },
 
-            modeOfAdmission: String,
-            dateOfAdmission: Date,
+      modeOfAdmission:
+      {
+        type: String,
+        required: true,
+        enum: ['Emergency', 'Outpatient']
+      },
 
-            maritalStatus:
-            {
-                type: String,
-                required: true,
-                ref: 'Patient'
-            },
-        },
-        historyOfPresentingComplaints: String,
-        historyOfPresentingIllness: String,
+      dateOfAdmission: {
+        type: Date,
+        default: Date.now
+      },
 
-        systemicHistory:
-        {
-            centralNervousSystem: String,
-            cardiovascularSystem: String,
-            gastrointestinalSystem: String,
-            genitourinarySystem: String,
-            musculoskeletalSystem: String,
-        },
-        pastSurgicalHistory: String,
-        pastMedicalHistory: String,
-        familyHistory: String,
-        drugHistory: String,
-        allergies: String,
-        gynecologicalHistory: String,
-        occupationalHistory: String,
-        travelHistory: String,
-        socioeconomicHistory: String,
+      maritalStatus:
+      {
+        type: String,
+        required: true
+      },
+    },
+    historyOfPresentingComplaints: String,
+    historyOfPresentingIllness: String,
 
-        examination:
-        {
-            generalPhysicalExamination:
-            {
-                bloodPressure: String,
-                pulse: Number,
-                temperature: String,
-                respiratoryRate: Number,
-                bloodSugarLevel: String,
-                notes: String,
-            },
-            respiratorySystem: String,
-            centralNervousSystem: String,
-            cardiovascularSystem: String,
-            gastrointestinalSystem: String,
-        },
+    systemicHistory:
+    {
+      centralNervousSystem: String,
+      cardiovascularSystem: String,
+      gastrointestinalSystem: String,
+      genitourinarySystem: String,
+      musculoskeletalSystem: String,
+    },
+    pastSurgicalHistory: String,
+    pastMedicalHistory: String,
+    familyHistory: String,
+    drugHistory: String,
+    allergies: String,
+    gynecologicalHistory: String,
+    occupationalHistory: String,
+    travelHistory: String,
+    socioeconomicHistory: String,
 
-        investigations:
-        {
-            completeBloodCount: String,
-            liverFunctionTests: String,
-            renalFunctionTests: String,
-            vitalMarkers: String,
-            serumElectrolytes: String,
-            prothrombinTime: String,
-            activatedPartialThromboplastinTime: String,
-            electrocardiogram: String,
-            chestXRay: String,
-        },
+    examination:
+    {
+      generalPhysicalExamination:
+      {
+        bloodPressure: String,
+        pulse: Number,
+        temperature: String,
+        respiratoryRate: Number,
+        bloodSugarLevel: String,
+        notes: String,
+      },
+      respiratorySystem: String,
+      centralNervousSystem: String,
+      cardiovascularSystem: String,
+      gastrointestinalSystem: String,
+    },
 
-        treatment:
-        {
-            prescribedDrug: String,
-            dosage: String,
-            administrationRoute: String,
-            dosageFrequency: String,
-            doctorSignature: String,
-        },
-    });
+    investigations:
+    {
+      completeBloodCount: String,
+      liverFunctionTests: String,
+      renalFunctionTests: String,
+      vitalMarkers: String,
+      serumElectrolytes: String,
+      prothrombinTime: String,
+      activatedPartialThromboplastinTime: String,
+      electrocardiogram: String,
+      chestXRay: String,
+    },
+
+    treatment:
+    {
+      prescribedDrug: String,
+      dosage: String,
+      administrationRoute: String,
+      dosageFrequency: String,
+      doctorSignature:
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Doctor'
+      }
+    },
+  });
 
 const PatientHistoryModel = mongoose.model('PatientHistory', patientHistorySchema);
 
