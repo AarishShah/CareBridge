@@ -136,7 +136,6 @@ const PatientHistoryModel = mongoose.model('PatientHistory', patientHistorySchem
 module.exports = PatientHistoryModel;
 
 /*
-User
 {
   "patientHistory": {
     "biodata": {
