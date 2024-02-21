@@ -1,5 +1,57 @@
 const mongoose = require('mongoose');
 
+// Defining a new schema for address information, same as in Patient.js for better reusability
+const addressSchema = new mongoose.Schema(
+  {
+
+    state:
+    {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    city:
+    {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    street:
+    {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    pinCode:
+    {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  });
+
+// Defining a new schema for doctor information
+const doctorInfoSchema = new mongoose.Schema(
+  {
+    doctorSignature:
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'Doctor'
+    },
+
+    doctorName:
+    {
+      type: String,
+      required: true
+    },
+
+    doctorEmail:
+    {
+      type: String,
+      required: true
+    }
+  });
 const patientHistorySchema = new mongoose.Schema(
   {
     biodata:
@@ -31,14 +83,26 @@ const patientHistorySchema = new mongoose.Schema(
 
       age:
       {
-        type: String, // check if this is the right type
-        required: true
+        years:
+        {
+          type: Number,
+          required: true
+        },
+        months:
+        {
+          type: Number,
+          required: true
+        },
+        days:
+        {
+          type: Number,
+          required: true
+        },
       },
 
-      address:
-      {
-        type: String,
-        required: true
+      address: {
+        type: addressSchema, // Use addressSchema here
+        required: true,
       },
 
       occupation:
@@ -122,13 +186,8 @@ const patientHistorySchema = new mongoose.Schema(
       dosage: String,
       administrationRoute: String,
       dosageFrequency: String,
-      doctorSignature:
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'Doctor'
-      }
     },
+    doctorInfo: doctorInfoSchema,
   });
 
 const PatientHistoryModel = mongoose.model('PatientHistory', patientHistorySchema);

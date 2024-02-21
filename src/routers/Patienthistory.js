@@ -6,7 +6,7 @@
 const express = require('express');
 const Patienthistory = require('../models/Patienthistory');
 const Patient = require('../models/patient');
-const DoctorAuth = require('../middleware/doctor'); 
+const DoctorAuth = require('../middleware/doctor');
 const router = express.Router();
 
 // Create patient's medical history
@@ -32,6 +32,8 @@ router.post('/patienthistory/:id', DoctorAuth, async (req, res) =>
             return res.status(403).send({ error: 'Doctor not authorized to add history for this patient' });
         }
 
+        const modeOfAdmission = req.body.patientHistory.biodata.modeOfAdmission;
+
         const patienthistory = new Patienthistory({
             biodata: {
                 id: patientId,
@@ -42,9 +44,15 @@ router.post('/patienthistory/:id', DoctorAuth, async (req, res) =>
                 address: patient.address,
                 occupation: patient.occupation,
                 maritalStatus: patient.maritalStatus,
+                modeOfAdmission: modeOfAdmission
             },
-            ...req.body,
-            doctor: doctorID
+            ...req.body, // All other fields from the request body
+            doctorInfo: { // Set the doctor information in its dedicated section
+                doctorSignature: doctorID, // ID from authenticated doctor
+                doctorName: req.doctor.name, // Name from authenticated doctor
+                doctorEmail: req.doctor.email // Email from authenticated doctor
+            }
+
         });
 
         await patienthistory.save();
