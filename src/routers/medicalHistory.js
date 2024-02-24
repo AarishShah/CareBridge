@@ -1,8 +1,3 @@
-// Patient's medical history
-// Only doctor that is present in Patient's assignedDoctors array can create patient's medical history
-// Any doctor can read patient's medical history. Patient can read his/her own medical history.
-// No one can update or delete patient's medical history
-
 const express = require('express');
 const MedicalHistory = require('../models/medicalHistory');
 const Patient = require('../models/patient');
@@ -37,26 +32,29 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
         }
 
         const modeOfAdmission = req.body.medicalHistory.biodata.modeOfAdmission;
-        const medicalHistory = new MedicalHistory({
-            biodata: {
-                id: patientId,
-                name: patient.name,
-                email: patient.email,
-                gender: patient.gender,
-                age: patient.age,
-                address: patient.address,
-                occupation: patient.occupation,
-                maritalStatus: patient.maritalStatus,
-                modeOfAdmission: modeOfAdmission
-            },
-            ...req.body, // All other fields from the request body
-            doctorInfo: { // Set the doctor information in its dedicated section
-                doctorSignature: doctorId, // ID from authenticated doctor
-                doctorName: req.user.name, // Name from authenticated doctor
-                doctorEmail: req.user.email // Email from authenticated doctor
-            }
+        const medicalHistory = new MedicalHistory(
+            {
+                biodata:
+                {
+                    id: patientId,
+                    name: patient.name,
+                    email: patient.email,
+                    gender: patient.gender,
+                    age: patient.age,
+                    address: patient.address,
+                    occupation: patient.occupation,
+                    maritalStatus: patient.maritalStatus,
+                    modeOfAdmission: modeOfAdmission
+                },
+                ...req.body,
+                doctorInfo:
+                {
+                    doctorSignature: doctorId,
+                    doctorName: req.user.name,
+                    doctorEmail: req.user.email
+                }
 
-        });
+            });
 
         await medicalHistory.save();
         res.status(201).send(medicalHistory);
@@ -82,10 +80,10 @@ router.get('/medicalHistory/:id', auth, async (req, res) =>
         }
 
         // Only the patient can view his/her own medical history
-        if (req.user.role === 'patient' && req.user._id.toString() === medicalRecord.biodata.id.toString())
+        if (req.user.role === 'patient' && req.user._id.toString() === patientId.toString())
         {
             return res.send(medicalRecord);
-        } 
+        }
         // Only the assigned doctor can view the patient's medical history
         else if (req.user.role === 'doctor')
         {
