@@ -36,23 +36,23 @@ const doctorInfoSchema = new mongoose.Schema(
     doctorSignature:
     {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
+      // required: true,
       ref: 'Doctor'
     },
 
     doctorName:
     {
       type: String,
-      required: true
+      // required: true
     },
 
     doctorEmail:
     {
       type: String,
-      required: true
+      // required: true
     }
   });
-const patientHistorySchema = new mongoose.Schema(
+const medicalHistorySchema = new mongoose.Schema(
   {
     biodata:
     {
@@ -190,74 +190,7 @@ const patientHistorySchema = new mongoose.Schema(
     doctorInfo: doctorInfoSchema,
   });
 
-const PatientHistoryModel = mongoose.model('PatientHistory', patientHistorySchema);
+const medicalHistoryModel = mongoose.model('medicalHistory', medicalHistorySchema);
 
-module.exports = PatientHistoryModel;
+module.exports = medicalHistoryModel;
 
-/*
-{
-  "patientHistory": {
-    "biodata": {
-      "name": "John Doe",
-      "gender": "Male",
-      "age": 35,
-      "address": "123 Main Street, Cityville, State, Zip Code",
-      "occupation": "Software Engineer",
-      "modeOfAdmission": "Emergency",
-      "dateOfAdmission": "2024-02-03",
-      "maritalStatus": "Single"
-    },
-    "historyOfPresentingComplaints": "The patient presents with severe abdominal pain and vomiting for the past 24 hours.",
-    "historyOfPresentingIllness": "Mr. Doe reports that the abdominal pain started suddenly yesterday evening...",
-    "systemicHistory": {
-      "centralNervousSystem": "Clear and alert. No signs of neurological deficits.",
-      "cardiovascularSystem": "Regular rhythm, no murmurs.",
-      "gastrointestinalSystem": "Abdomen tender on palpation in the right lower quadrant. No rebound tenderness or guarding.",
-      "genitourinarySystem": "No complaints of urinary frequency or urgency. No hematuria.",
-      "musculoskeletalSystem": "No joint swelling or deformities."
-    },
-    "pastSurgicalHistory": "No previous surgical interventions reported.",
-    "pastMedicalHistory": "The patient has a history of hypertension controlled with medication.",
-    "familyHistory": "No significant family history reported.",
-    "drugHistory": "The patient is currently taking Amlodipine 5mg daily for hypertension.",
-    "allergies": "No known drug allergies reported.",
-    "gynecologicalHistory": "N/A for male patient.",
-    "occupationalHistory": "The patient works as a software engineer with prolonged sitting hours.",
-    "travelHistory": "No recent travel history reported.",
-    "socioeconomicHistory": "Middle-class socioeconomic status reported."
-  },
-  "examination": {
-    "generalPhysicalExamination": {
-      "bloodPressure": "120/80 mmHg",
-      "pulse": 78,
-      "temperature": "98.6°F",
-      "respiratoryRate": 16,
-      "bloodSugarLevel": "Normal",
-      "Notes": "Overall the patient has mild headache"
-    },
-    "respiratorySystem": "Clear breath sounds bilaterally.",
-    "centralNervousSystem": "Alert and oriented to person, place, and time.",
-    "cardiovascularSystem": "Regular rhythm, no murmurs.",
-    "gastrointestinalSystem": "Abdomen tender on palpation in the right lower quadrant. No rebound tenderness or guarding."
-  },
-  "investigations": {
-    "completeBloodCount": "Complete Blood Count",
-    "liverFunctionTests": "Liver Function Tests",
-    "renalFunctionTests": "Renal Function Tests",
-    "vitalMarkers": "Vital Markers",
-    "serumElectrolytes": "Serum Electrolytes",
-    "prothrombinTime": "Prothrombin Time",
-    "activatedPartialThromboplastinTime": "Activated Partial Thromboplastin Time",
-    "electrocardiogram": "Electrocardiogram",
-    "chestXRay": "Chest X-ray"
-  },
-  "treatment": {
-    "prescribedDrug": "Ibuprofen",
-    "dosage": "400mg",
-    "administrationRoute": "Oral",
-    "dosageFrequency": "Every 6 hours",
-    "doctorSignature": "Dr. Smith"
-  }
-}
-
-*/
