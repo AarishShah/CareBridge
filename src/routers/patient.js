@@ -1,7 +1,7 @@
 const express = require("express");
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
-const auth = require("../middleware/patient");
+const auth = require("../middleware/auth");
 const router = new express.Router();
 
 // completed:
@@ -36,7 +36,6 @@ router.post("/patient/signup", async (req, res) =>
         if (!maritalStatus) missingFields.push("maritalStatus");
         if (!occupation) missingFields.push("occupation");
         if (!address) missingFields.push("address");
-        if (!religion) missingFields.push("religion");
 
         if (missingFields.length > 0)
         {
@@ -74,7 +73,7 @@ router.post("/patient/login", async (req, res) =>
 router.patch("/patient/me", auth, async (req, res) =>
 {
     const updates = Object.keys(req.body); // returns the keys of the json object as an array
-    const allowedUpdates = ["name", "email", "password", "gender", "maritalStatus", "occupation", "address", "religion",];
+    const allowedUpdates = ["name", "email", "password", "gender", "maritalStatus", "occupation", "address",];
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
 
     if (!isValidOperation)
@@ -84,9 +83,9 @@ router.patch("/patient/me", auth, async (req, res) =>
 
     try
     {
-        updates.forEach((update) => (req.patient[update] = req.body[update]));
-        await req.patient.save();
-        res.status(200).send(req.patient);
+        updates.forEach((update) => (req.user[update] = req.body[update]));
+        await req.user.save();
+        res.status(200).send(req.user);
     }
     catch (error)
     {
@@ -100,7 +99,7 @@ router.delete("/patient/me", auth, async (req, res) =>
 {
     try
     {
-        const patientId = req.patient._id;
+        const patientId = req.user._id;
         const deletedPatient = await Patient.findByIdAndDelete(patientId);
         // make sure to delete all prescriptions and medical records associated with the patient
         res.send({ message: "Account deleted successfully." });
@@ -117,11 +116,11 @@ router.post("/patient/logout", auth, async (req, res) =>
 {
     try
     {
-        req.patient.tokens = req.patient.tokens.filter((token) =>
+        req.user.tokens = req.user.tokens.filter((token) =>
         {
             return token.token !== req.token;
         });
-        await req.patient.save();
+        await req.user.save();
         res.send({ message: "Logout successful" });
     } catch (e)
     {
@@ -135,8 +134,8 @@ router.post("/patient/logoutall", auth, async (req, res) =>
 {
     try
     {
-        req.patient.tokens = [];
-        await req.patient.save();
+        req.user.tokens = [];
+        await req.user.save();
         res.send({ message: "Logout successful from all instances." });
     }
     catch (error)
@@ -149,7 +148,7 @@ router.post("/patient/logoutall", auth, async (req, res) =>
 // Read Patient Route
 router.get("/patient/me", auth, async (req, res) =>
 {
-    res.send(req.patient);
+    res.send(req.user);
 });
 
 // assignDoctor Route - assign a doctor to the patient's assigned doctors list using the doctor's email
@@ -168,7 +167,7 @@ router.post("/patient/assignDoctor", auth, async (req, res) =>
         const doctorEmail = doctor.email;
 
         // Check if the doctor is already assigned
-        const isAlreadyAssigned = req.patient.assignedDoctors.some(
+        const isAlreadyAssigned = req.user.assignedDoctors.some(
             (assignedDoc) => assignedDoc.doctor.toString() === doctorId.toString()
         );
 
@@ -177,8 +176,8 @@ router.post("/patient/assignDoctor", auth, async (req, res) =>
             return res.status(400).send({ error: "Doctor already assigned" });
         }
 
-        req.patient.assignedDoctors = req.patient.assignedDoctors.concat({ doctor: doctorId, name: doctorName, email: doctorEmail, });
-        await req.patient.save();
+        req.user.assignedDoctors = req.user.assignedDoctors.concat({ doctor: doctorId, name: doctorName, email: doctorEmail, });
+        await req.user.save();
 
         res.status(201).send({ message: "Doctor assigned successfully" });
     }
@@ -203,7 +202,7 @@ router.delete("/patient/removeDoctor", auth, async (req, res) =>
         const doctorId = doctor._id;
 
         // Check if the doctor is already assigned
-        const isAssigned = req.patient.assignedDoctors.some(
+        const isAssigned = req.user.assignedDoctors.some(
             (assignedDoc) => assignedDoc.doctor.toString() === doctorId.toString()
         );
 
@@ -212,21 +211,19 @@ router.delete("/patient/removeDoctor", auth, async (req, res) =>
             return res.status(400).send({ error: "Doctor not assigned" });
         }
 
-        req.patient.assignedDoctors = req.patient.assignedDoctors.filter(
+        req.user.assignedDoctors = req.user.assignedDoctors.filter(
             (assignedDoc) => assignedDoc.doctor.toString() !== doctorId.toString()
         );
-        await req.patient.save();
+        await req.user.save();
 
         res.status(200).send({ message: "Doctor removed successfully" });
     }
     catch (error)
     {
-        // console.error("Doctor removal error:", error);
+        console.error("Doctor removal error:", error);
         res.status(400).send({ error: "Doctor removal failed" });
     }
 });
-
-// post?
 
 // viewDiagnosisAndMed()
 router.get("/patient/:id", async (req, res) => { });
