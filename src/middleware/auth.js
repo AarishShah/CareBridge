@@ -26,12 +26,12 @@ const auth = async (req, res, next) =>
         }
 
         req.token = token;
-        req.user = user; // Using a generic name 'user' to accommodate both doctors and patients
-        req.role = decoded.role; // You might want to use the role in your route handlers for further role-based logic
+        req.user = user;
+        req.role = decoded.role;
         next();
     } catch (e)
     {
-        console.error("Error authenticating:", e);
+        // console.error("Error authenticating:", e);
         res.status(401).send({ error: "Please authenticate." });
     }
 };
