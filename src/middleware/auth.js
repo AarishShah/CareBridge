@@ -11,7 +11,6 @@ const auth = async (req, res, next) =>
 
         let user;
 
-        // Determine the model based on the role in the decoded token
         if (decoded.role === 'doctor')
         {
             user = await Doctor.findOne({ _id: decoded._id, "tokens.token": token });
