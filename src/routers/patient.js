@@ -15,10 +15,10 @@ const router = new express.Router();
 // Read Route
 // assignDoctor Route
 // removeDoctor Route
+// read patient's medical history (this is common to both patient and doctor)
 
-// incomplete:
-
-// viewDiagnosisAndMed() - @AarishShah
+// Incomplete:
+// when a patient assigns a doctor, the doctor should get a notification which when accepted, the doctor is added to the patient's assignedDoctors array
 
 // Sign Up Route
 router.post("/patient/signup", async (req, res) =>

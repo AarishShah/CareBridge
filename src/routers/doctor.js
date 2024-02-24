@@ -13,12 +13,14 @@ const router = express.Router();
 // Logout Route
 // Logout All Route
 // Read Route
+// Create patient's medical history
+// Read patient's medical history (this is common to both patient and doctor)
 
-// incomplete:
+// Incomplete:
+// add doctor to patient's assignedDoctors array
+// remove doctor from patient's assignedDoctors array
 
-// viewPatientHistory()
-// provideDiagnosisAndMed()
-
+// when a doctor is assigned himself/herself to a patient, the patient should get a notification which when accepted, the doctor is added to the patient's assignedDoctors array
 
 // Sign Up Route
 router.post("/doctor/signup", async (req, res) =>
@@ -146,9 +148,5 @@ router.get("/doctor/me", auth, async (req, res) =>
 {
   res.send(req.user);
 });
-
-router.get("/doctors/viewPatientHistory", async (req, res) => { });
-
-router.post("/doctors/provideDiagnosisAndMed", async (req, res) => { });
 
 module.exports = router;
