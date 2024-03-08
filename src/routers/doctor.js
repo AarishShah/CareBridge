@@ -1,7 +1,9 @@
 const express = require("express");
+const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
-const auth = require("../middleware/doctor");
+const auth = require("../middleware/auth");
 const router = express.Router();
+const { assignDoctor, removeDoctor } = require('../utils/assignment');
 
 
 // completed:
@@ -13,12 +15,14 @@ const router = express.Router();
 // Logout Route
 // Logout All Route
 // Read Route
+// Create patient's medical history
+// Read patient's medical history (this is common to both patient and doctor)
 
-// incomplete:
+// Incomplete:
+// add doctor to patient's assignedDoctors array
+// remove doctor from patient's assignedDoctors array
 
-// viewPatientHistory()
-// provideDiagnosisAndMed()
-
+// when a doctor is assigned himself/herself to a patient, the patient should get a notification which when accepted, the doctor is added to the patient's assignedDoctors array
 
 // Sign Up Route
 router.post("/doctor/signup", async (req, res) =>
@@ -81,9 +85,9 @@ router.patch("/doctor/me", auth, async (req, res) =>
 
   try
   {
-    updates.forEach((update) => req.doctor[update] = req.body[update]);
-    await req.doctor.save();
-    res.send(req.doctor);
+    updates.forEach((update) => req.user[update] = req.body[update]);
+    await req.user.save();
+    res.send(req.user);
   }
   catch (error)
   {
@@ -97,7 +101,7 @@ router.delete("/doctor/me", auth, async (req, res) =>
 {
   try
   {
-    const doctorId = req.doctor._id;
+    const doctorId = req.user._id;
     const deletedDoctor = await Doctor.findByIdAndDelete(doctorId);
 
     res.send({ message: 'Account deleted successfully.' });
@@ -113,8 +117,8 @@ router.post("/doctor/logout", auth, async (req, res) =>
 {
   try
   {
-    req.doctor.tokens = req.doctor.tokens.filter((token) => { return token.token !== req.token; });
-    await req.doctor.save();
+    req.user.tokens = req.user.tokens.filter((token) => { return token.token !== req.token; });
+    await req.user.save();
     res.send({ message: "Logout successful" });
   }
 
@@ -130,8 +134,8 @@ router.post("/doctor/logoutall", auth, async (req, res) =>
 {
   try
   {
-    req.doctor.tokens = [];
-    await req.doctor.save();
+    req.user.tokens = [];
+    await req.user.save();
     res.send({ message: "Logout successful from all instances." });
   }
   catch (error)
@@ -144,11 +148,66 @@ router.post("/doctor/logoutall", auth, async (req, res) =>
 // Read Doctor Route
 router.get("/doctor/me", auth, async (req, res) =>
 {
-  res.send(req.doctor);
+  res.send(req.user);
 });
 
-router.get("/doctors/viewPatientHistory", async (req, res) => { });
+// assignDoctor Route
+router.post("/doctor/assignDoctor", auth, async (req, res) =>
+{
+  try
+  {
+    const doctorId = req.user._id;
+    const patientEmail = req.body.email;
 
-router.post("/doctors/provideDiagnosisAndMed", async (req, res) => { });
+    const patient = await Patient.findOne({ email: patientEmail });
+
+    if (!patient)
+    {
+      return res.status(404).send({ error: "Patient not found" });
+    }
+
+    const result = await assignDoctor(patient._id, doctorId);
+    if (result.error)
+    {
+      return res.status(400).send({ error: result.message });
+    }
+
+    res.status(201).send({ message: "Doctor assigned successfully" });
+  }
+  catch (error)
+  {
+    // console.error("Assign doctor error:", error);
+    res.status(500).send({ error: "Doctor assignment failed" });
+  }
+});
+
+// removeDoctor Route
+router.delete("/doctor/removeDoctor", auth, async (req, res) =>
+{
+  try
+  {
+    const doctorId = req.user._id;
+    const patientEmail = req.body.email;
+
+    const patient = await Patient.findOne({ email: patientEmail });
+    if (!patient)
+    {
+      return res.status(404).send({ error: "Patient not found" });
+    }
+
+    const result = await removeDoctor(patient._id, doctorId);
+    if (result.error)
+    {
+      return res.status(400).send({ error: result.message });
+    }
+
+    res.status(200).send({ message: "Doctor removed successfully" });
+  }
+  catch (error)
+  {
+    // console.error("Remove doctor error:", error);
+    res.status(400).send({ error: "Doctor removal failed" });
+  }
+});
 
 module.exports = router;

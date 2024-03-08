@@ -65,15 +65,33 @@ const doctorSchema = new mongoose.Schema({
     },
 
     tokens:
-    [
-        {
-            token:
+        [
             {
-                type: String,
-                required: true,
+                token:
+                {
+                    type: String,
+                    required: true,
+                },
+            }
+        ],
+    assignedPatients:
+        [
+            {
+                patient:
+                {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "patient",
+                },
+                name: String,
+                email: String,
             },
-        }
-    ],
+        ],
+    role:
+    {
+        type: String,
+        default: "doctor",
+        enum: ["doctor"],
+    },
 },
     {
         timestamps: true,
@@ -88,25 +106,25 @@ const doctorSchema = new mongoose.Schema({
 // hide private data when sending doctor object
 doctorSchema.methods.toJSON = function ()
 {
-  const doctor = this;
-  const doctorObject = doctor.toObject();
+    const doctor = this;
+    const doctorObject = doctor.toObject();
 
-  delete doctorObject.password;
-  delete doctorObject.tokens;
+    delete doctorObject.password;
+    delete doctorObject.tokens;
 
-  return doctorObject;
+    return doctorObject;
 };
 
 doctorSchema.methods.generateAuthToken = async function (next)
 {
-  const doctor = this;
-  const token = jwt.sign({ _id: doctor.id.toString() }, 'thisismynewcourse')
+    const doctor = this;
+    const token = jwt.sign({ _id: doctor.id.toString(), role: 'doctor' }, 'thisismynewcourse')
 
-  doctor.tokens = doctor.tokens.concat({ token })
+    doctor.tokens = doctor.tokens.concat({ token })
 
-  await doctor.save()
+    await doctor.save()
 
-  return token;
+    return token;
 }
 
 doctorSchema.statics.findByCredentials = async function (email, password)

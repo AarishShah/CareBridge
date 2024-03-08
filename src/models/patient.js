@@ -99,28 +99,19 @@ const patientSchema = new mongoose.Schema(
         {
             type: String,
             required: true,
-            enum: ["Single", "Engaged", "Married"],
-            default: "Single",
+            enum: ["Unmarried", "Married"]
         },
 
         occupation:
         {
             type: String,
             required: true,
-            default: "Unemployed",
         },
 
         address:
         {
             type: addressSchema,
             required: true,
-        },
-
-        religion:
-        {
-            type: String,
-            required: true,
-            default: "None",
         },
 
         assignedDoctors:
@@ -145,6 +136,13 @@ const patientSchema = new mongoose.Schema(
                     },
                 },
             ],
+
+        role:
+        {
+            type: String,
+            default: "patient",
+            enum: ["patient"],
+        },
     },
 
     {
@@ -198,7 +196,7 @@ patientSchema.methods.toJSON = function ()
 patientSchema.methods.generateAuthToken = async function (next)
 {
     const patient = this;
-    const token = jwt.sign({ _id: patient.id.toString() }, "thisismynewcourse");
+    const token = jwt.sign({ _id: patient.id.toString(), role: 'patient' }, "thisismynewcourse");
 
     patient.tokens = patient.tokens.concat({ token });
 
