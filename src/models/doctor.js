@@ -74,7 +74,18 @@ const doctorSchema = new mongoose.Schema({
                 },
             }
         ],
-
+    assignedPatients:
+        [
+            {
+                patient:
+                {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "patient",
+                },
+                name: String,
+                email: String,
+            },
+        ],
     role:
     {
         type: String,
