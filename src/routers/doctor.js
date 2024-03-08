@@ -1,7 +1,9 @@
 const express = require("express");
+const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
 const router = express.Router();
+const { assignDoctor, removeDoctor } = require('../models/helper');
 
 
 // completed:
@@ -147,6 +149,65 @@ router.post("/doctor/logoutall", auth, async (req, res) =>
 router.get("/doctor/me", auth, async (req, res) =>
 {
   res.send(req.user);
+});
+
+// assignDoctor Route
+router.post("/doctor/assignDoctor", auth, async (req, res) =>
+{
+  try
+  {
+    const doctorId = req.user._id;
+    const patientEmail = req.body.email;
+
+    const patient = await Patient.findOne({ email: patientEmail });
+
+    if (!patient)
+    {
+      return res.status(404).send({ error: "Patient not found" });
+    }
+
+    const result = await assignDoctor(patient._id, doctorId);
+    if (result.error)
+    {
+      return res.status(400).send({ error: result.message });
+    }
+
+    res.status(201).send({ message: "Doctor assigned successfully" });
+  }
+  catch (error)
+  {
+    // console.error("Assign doctor error:", error);
+    res.status(500).send({ error: "Doctor assignment failed" });
+  }
+});
+
+// removeDoctor Route
+router.delete("/doctor/removeDoctor", auth, async (req, res) =>
+{
+  try
+  {
+    const doctorId = req.user._id;
+    const patientEmail = req.body.email;
+
+    const patient = await Patient.findOne({ email: patientEmail });
+    if (!patient)
+    {
+      return res.status(404).send({ error: "Patient not found" });
+    }
+
+    const result = await removeDoctor(patient._id, doctorId);
+    if (result.error)
+    {
+      return res.status(400).send({ error: result.message });
+    }
+
+    res.status(200).send({ message: "Doctor removed successfully" });
+  }
+  catch (error)
+  {
+    // console.error("Remove doctor error:", error);
+    res.status(400).send({ error: "Doctor removal failed" });
+  }
 });
 
 module.exports = router;
