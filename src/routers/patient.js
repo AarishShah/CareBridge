@@ -3,6 +3,7 @@ const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
 const router = new express.Router();
+const { assignDoctor, removeDoctor } = require('../models/helper');
 
 // completed:
 
@@ -151,33 +152,25 @@ router.get("/patient/me", auth, async (req, res) =>
     res.send(req.user);
 });
 
-// assignDoctor Route - assign a doctor to the patient's assigned doctors list using the doctor's email
+// assignDoctor Route
 router.post("/patient/assignDoctor", auth, async (req, res) =>
 {
     try
     {
-        const doctor = await Doctor.findOne({ email: req.body.email });
+        const patientId = req.user._id;
+        const doctorEmail = req.body.email;
+
+        const doctor = await Doctor.findOne({ email: doctorEmail });
         if (!doctor)
         {
             return res.status(404).send({ error: "Doctor not found" });
         }
 
-        const doctorId = doctor._id;
-        const doctorName = doctor.name;
-        const doctorEmail = doctor.email;
-
-        // Check if the doctor is already assigned
-        const isAlreadyAssigned = req.user.assignedDoctors.some(
-            (assignedDoc) => assignedDoc.doctor.toString() === doctorId.toString()
-        );
-
-        if (isAlreadyAssigned)
+        const result = await assignDoctor(patientId, doctor._id);
+        if (result.error)
         {
-            return res.status(400).send({ error: "Doctor already assigned" });
+            return res.status(400).send(result.message);
         }
-
-        req.user.assignedDoctors = req.user.assignedDoctors.concat({ doctor: doctorId, name: doctorName, email: doctorEmail, });
-        await req.user.save();
 
         res.status(201).send({ message: "Doctor assigned successfully" });
     }
@@ -188,44 +181,33 @@ router.post("/patient/assignDoctor", auth, async (req, res) =>
     }
 });
 
-// removeDoctor Route - remove a doctor from the patient's assigned doctors list using the doctor's email
+// removeDoctor Route
 router.delete("/patient/removeDoctor", auth, async (req, res) =>
 {
     try
     {
-        const doctor = await Doctor.findOne({ email: req.body.email });
+        const patientId = req.user._id;
+        const doctorEmail = req.body.email;
+
+        const doctor = await Doctor.findOne({ email: doctorEmail });
         if (!doctor)
         {
             return res.status(404).send({ error: "Doctor not found" });
         }
 
-        const doctorId = doctor._id;
-
-        // Check if the doctor is already assigned
-        const isAssigned = req.user.assignedDoctors.some(
-            (assignedDoc) => assignedDoc.doctor.toString() === doctorId.toString()
-        );
-
-        if (!isAssigned)
+       const result = await removeDoctor(patientId, doctor._id);
+        if (result.error)
         {
-            return res.status(400).send({ error: "Doctor not assigned" });
+            return res.status(400).send(result.message);
         }
-
-        req.user.assignedDoctors = req.user.assignedDoctors.filter(
-            (assignedDoc) => assignedDoc.doctor.toString() !== doctorId.toString()
-        );
-        await req.user.save();
 
         res.status(200).send({ message: "Doctor removed successfully" });
     }
     catch (error)
     {
-        console.error("Doctor removal error:", error);
+        // console.error("Doctor removal error:", error);
         res.status(400).send({ error: "Doctor removal failed" });
     }
 });
-
-// viewDiagnosisAndMed()
-router.get("/patient/:id", async (req, res) => { });
 
 module.exports = router;
