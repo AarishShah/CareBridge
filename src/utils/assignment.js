@@ -1,5 +1,5 @@
-const Patient = require('./patient');
-const Doctor = require('./doctor');
+const Patient = require('../models/patient');
+const Doctor = require('../models/doctor');
 
 const assignDoctor = async (patientId, doctorId) =>
 {
