@@ -3,7 +3,7 @@ const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
 const router = new express.Router();
-const { assignDoctor, removeDoctor } = require('../models/helper');
+const { assignDoctor, removeDoctor } = require('../utils/assignment');
 
 // completed:
 
