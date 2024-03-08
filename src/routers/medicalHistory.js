@@ -31,9 +31,11 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
             return res.status(403).send({ error: 'Doctor not authorized to add history for this patient' });
         }
 
+        const title = req.body.medicalHistory.title;
         const modeOfAdmission = req.body.medicalHistory.biodata.modeOfAdmission;
         const medicalHistory = new MedicalHistory(
             {
+                title,
                 biodata:
                 {
                     id: patientId,
@@ -62,6 +64,53 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
     {
         console.error("Error creating patient history:", e);
         res.status(400).send({ error: 'Failed to create patient history' });
+    }
+});
+
+// Route to fetch paginated medical histories (only title and ID) with authorization
+router.get('/medicalhistories', auth, async (req, res) =>
+{
+    const page = parseInt(req.query.page) || 1; // Default to first page
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+    const skip = (page - 1) * limit;
+
+    try
+    {
+
+        let filter = {};
+
+        // For patients, only fetch their own medical histories
+        if (req.user.role === 'patient')
+        {
+            filter['biodata.id'] = req.user._id;
+        }
+
+        // For doctors, fetch medical histories of patients assigned to them
+        else if (req.user.role === 'doctor')
+        {
+            const assignedPatientIds = await Patient.find({ 'assignedDoctors.doctor': req.user._id }, '_id');
+            filter['biodata.id'] = { $in: assignedPatientIds.map(doc => doc._id) };
+        }
+
+        const medicalHistories = await MedicalHistory.find(filter, 'title _id')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        const totalCount = await MedicalHistory.countDocuments(filter);
+
+        res.status(200).send(
+            {
+                totalPages: Math.ceil(totalCount / limit),
+                currentPage: page,
+                totalItems: totalCount,
+                items: medicalHistories
+            });
+    }
+    catch (error)
+    {
+        // console.error('Error fetching medical histories:', error);
+        res.status(500).send({ error: 'Error fetching medical histories' });
     }
 });
 

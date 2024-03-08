@@ -54,6 +54,13 @@ const doctorInfoSchema = new mongoose.Schema(
   });
 const medicalHistorySchema = new mongoose.Schema(
   {
+    title:
+    {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 100
+    },
     biodata:
     {
       id:
@@ -188,7 +195,13 @@ const medicalHistorySchema = new mongoose.Schema(
       dosageFrequency: String,
     },
     doctorInfo: doctorInfoSchema,
-  });
+  },
+
+  {
+    timestamps: true,
+  }
+
+);
 
 const medicalHistoryModel = mongoose.model('medicalHistory', medicalHistorySchema);
 
