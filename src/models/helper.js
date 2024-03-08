@@ -1,20 +1,19 @@
-
 const Patient = require('./patient');
 const Doctor = require('./doctor');
 
-const assignDoctorToPatient = async (patientId, doctorId) =>
+const assignDoctor = async (patientId, doctorId) =>
 {
     const patient = await Patient.findById(patientId);
     const doctor = await Doctor.findById(doctorId);
 
     if (!patient)
     {
-        throw new Error('Patient not found');
+        return { error: true, message: 'Patient not found' };
     }
 
     if (!doctor)
     {
-        throw new Error('Doctor not found');
+        return { error: true, message: 'Doctor not found' };
     }
 
     // Check if the doctor is already assigned to the patient
@@ -23,7 +22,7 @@ const assignDoctorToPatient = async (patientId, doctorId) =>
 
     if (doctorAssigned)
     {
-        throw new Error('Doctor already assigned to the patient');
+        return { error: true, message: 'Doctor already assigned to the patient' };
     }
 
     else (!doctorAssigned)
@@ -34,28 +33,30 @@ const assignDoctorToPatient = async (patientId, doctorId) =>
 
     if (patientAssigned)
     {
-        throw new Error('Patient already assigned to the doctor');
+        return { error: true, message: 'Patient already assigned to the doctor' };
     }
     else (!patientAssigned)
     {
         doctor.assignedPatients.push({ patient: patientId, name: patient.name, email: patient.email });
         await doctor.save();
     }
+    
+    return { error: false };
 };
 
-const removeDoctorFromPatient = async (patientId, doctorId) =>
+const removeDoctor = async (patientId, doctorId) =>
 {
     const patient = await Patient.findById(patientId);
     const doctor = await Doctor.findById(doctorId);
 
     if (!patient)
     {
-        throw new Error('Patient not found');
+        return { error: true, message: 'Patient not found' };
     }
 
     if (!doctor)
     {
-        throw new Error('Doctor not found')
+        return { error: true, message: 'Doctor not found' };
     }
 
     const doctorAssigned = patient.assignedDoctors.some(doc => doc.doctor.toString() === doctorId.toString());
@@ -64,7 +65,7 @@ const removeDoctorFromPatient = async (patientId, doctorId) =>
 
     if (!doctorAssigned)
     {
-        throw new Error('Doctor not assigned to the patient');
+        return { error: true, message: 'Doctor not assigned to the patient' };
     }
 
     else 
@@ -75,7 +76,7 @@ const removeDoctorFromPatient = async (patientId, doctorId) =>
 
     if (!patientAssigned)
     {
-        throw new Error('Patient not assigned to the doctor');
+        return { error: true, message: 'Patient not assigned to the doctor' };
     }
 
     else
@@ -83,6 +84,8 @@ const removeDoctorFromPatient = async (patientId, doctorId) =>
         doctor.assignedPatients = doctor.assignedPatients.filter(pat => pat.patient.toString() !== patientId.toString());
         await doctor.save();
     }
+
+    return { error: false };
 };
 
-module.exports = { assignDoctorToPatient, removeDoctorFromPatient };
+module.exports = { assignDoctor, removeDoctor };
