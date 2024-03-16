@@ -58,6 +58,9 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
 
             });
 
+            const summary = "This will be from a new fnction that will be created in the future"
+            medicalHistory.summary = summary;
+
         await medicalHistory.save();
         res.status(201).send(medicalHistory);
     } catch (e)
