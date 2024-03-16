@@ -195,6 +195,13 @@ const medicalHistorySchema = new mongoose.Schema(
       dosageFrequency: String,
     },
     doctorInfo: doctorInfoSchema,
+    
+    summary:
+    {
+      type: String,
+      required: false,
+      default: null,
+    },
   },
 
   {
