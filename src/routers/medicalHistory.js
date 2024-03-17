@@ -15,7 +15,7 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
     }
 
     const patientId = req.params.id;
-    const doctorId = req.user._id; // =req.user is set by the auth middleware
+    const doctorId = req.user._id; // req.user is set by the auth middleware
 
     try
     {
