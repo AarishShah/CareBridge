@@ -2,6 +2,8 @@ const express = require('express');
 const MedicalHistory = require('../models/medicalHistory');
 const Patient = require('../models/patient');
 const auth = require('../middleware/auth');
+const openai = require('../utils/openai');
+// const { openai } = require('../utils/openai');
 const router = express.Router();
 
 // Create patient's medical history
@@ -13,7 +15,7 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
     }
 
     const patientId = req.params.id;
-    const doctorId = req.user._id; // Assuming req.user is set by the auth middleware
+    const doctorId = req.user._id; // =req.user is set by the auth middleware
 
     try
     {
@@ -58,8 +60,8 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
 
             });
 
-            const summary = "This will be from a new fnction that will be created in the future"
-            medicalHistory.summary = summary;
+            const AISummary = await openai.summarize(medicalHistory)
+            medicalHistory.summary = AISummary;
 
         await medicalHistory.save();
         res.status(201).send(medicalHistory);
