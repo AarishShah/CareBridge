@@ -76,7 +76,7 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
 router.get('/medicalhistories', auth, async (req, res) =>
 {
     const page = parseInt(req.query.page) || 1; // Default to first page
-    const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+    const limit = parseInt(req.query.limit) || 6; // Default to 6 items per page
     const skip = (page - 1) * limit;
 
     try
@@ -97,7 +97,7 @@ router.get('/medicalhistories', auth, async (req, res) =>
             filter['biodata.id'] = { $in: assignedPatientIds.map(doc => doc._id) };
         }
 
-        const medicalHistories = await MedicalHistory.find(filter, 'title _id')
+        const medicalHistories = await MedicalHistory.find(filter, 'title _id summary biodata.name doctorInfo.doctorName')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
