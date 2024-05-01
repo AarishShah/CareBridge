@@ -1,0 +1,41 @@
+.abtcontainer {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    box-sizing: border-box; /* Include padding in the width calculation */
+    text-align: center;
+    background-color: #fff; /* White background for the container */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    margin: 60px; /* Margin to ensure it doesn't touch the edges of the viewport */
+    margin-left: 230px;
+}
+
+.abtheader {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.abttext-box {
+    background-color: #f9f9f9; /* Light gray background for the text box */
+    padding: 15px;
+    margin: 10px 0; /* Vertical margins for spacing, no horizontal */
+    border-radius: 5px; /* Rounded corners for the text box */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.abttext {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.abtlink {
+    color: #0077cc;
+    text-decoration: none;
+}
+
+.abtlink:hover {
+    text-decoration: underline;
+}

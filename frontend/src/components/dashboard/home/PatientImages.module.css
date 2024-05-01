@@ -1,0 +1,33 @@
+.imageGridContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start; 
+    padding-right: 250px;
+    padding-left: 70px;
+    padding-top: 40px;
+    row-gap: 40px;
+    background-color: #4DBFC6;
+  }
+  
+  .imageItem {
+    width: calc(33.33% - 5px);
+    margin: 1px;  
+    text-align: center;
+   }
+  
+  .imageItem img {
+    display: inline;
+    width: 80%;
+    height: 40vh;
+    border-radius: 20px;
+  }
+
+  .imageItem:hover{
+    cursor: pointer;
+    text-decoration: underline;
+    color: azure;
+  }
+
+
+  

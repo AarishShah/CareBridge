@@ -1,0 +1,30 @@
+.landing {
+  display: flex;
+  flex-direction: column;
+  background-image: url("../../assets/scope.jpg");
+  background-size: cover;
+  min-width: 100vw;
+  min-height: 100vh;
+}
+
+header h2 {
+  display: inline-block;
+  margin-left: 2.88rem;
+}
+
+header nav {
+  display: inline-flex;
+  margin-left: 40rem;
+}
+
+.links {
+  display: block;
+  padding: 3px;
+  color: #000;
+} 
+
+.content {
+  padding-top: 4.5rem;
+  margin: 4rem;
+  font-size: 20px;
+}
