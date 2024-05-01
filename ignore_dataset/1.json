@@ -1,0 +1,58 @@
+{
+    "medicalHistory": {
+      "title": "Patient reports increased thirst and frequent urination",
+      "biodata": {
+        "modeOfAdmission": "Outpatient"
+      },
+      "historyOfPresentingComplaints": "Patient has been experiencing increased thirst, frequent urination, and unexpected weight loss for the last three months.",
+      "historyOfPresentingIllness": "Mrs. Smith noticed the onset of her symptoms approximately three months ago, with a gradual increase in severity. She also reports occasional blurred vision and slow healing of cuts.",
+      "systemicHistory": {
+        "centralNervousSystem": "No signs of sensory or motor deficits. Cognitive function appears intact.",
+        "cardiovascularSystem": "Blood pressure elevated at 145/95 mmHg. Heart sounds are normal.",
+        "gastrointestinalSystem": "Normal bowel sounds, no abdominal pain, nausea, or vomiting reported.",
+        "genitourinarySystem": "Frequent urination noted, no dysuria or hematuria.",
+        "musculoskeletalSystem": "No abnormalities noted. Patient denies any muscle pain or joint stiffness."
+      },
+      "pastSurgicalHistory": "Underwent a cholecystectomy 10 years ago.",
+      "pastMedicalHistory": "Diagnosed with Type 2 Diabetes five years ago, poorly controlled.",
+      "familyHistory": "Father had diabetes and hypertension. Mother has a history of breast cancer.",
+      "drugHistory": "Metformin 500 mg twice daily, occasionally takes over-the-counter ibuprofen for headaches.",
+      "allergies": "Allergic to penicillin - causes rash.",
+      "gynecologicalHistory": "Postmenopausal since age 52.",
+      "occupationalHistory": "High school teacher, mostly sedentary job.",
+      "travelHistory": "No travel outside the country in the last two years.",
+      "socioeconomicHistory": "Lives with spouse, two adult children. Middle-class, owns her home."
+    },
+    "examination": {
+      "generalPhysicalExamination": {
+        "bloodPressure": "145/95 mmHg",
+        "pulse": 88,
+        "temperature": "98.6°F",
+        "respiratoryRate": 18,
+        "bloodSugarLevel": "Elevated",
+        "Notes": "Patient appears mildly dehydrated"
+      },
+      "respiratorySystem": "No abnormalities in lung auscultation, clear breath sounds.",
+      "centralNervousSystem": "Alert and oriented x3, no focal neurological deficits.",
+      "cardiovascularSystem": "Heart rate regular, no murmurs or gallops.",
+      "gastrointestinalSystem": "Abdomen soft, non-tender, no hepatosplenomegaly."
+    },
+    "investigations": {
+      "completeBloodCount": "Pending results",
+      "liverFunctionTests": "Pending results",
+      "renalFunctionTests": "Pending results",
+      "vitalMarkers": "Pending results",
+      "serumElectrolytes": "Pending results",
+      "prothrombinTime": "Pending results",
+      "activatedPartialThromboplastinTime": "Pending results",
+      "electrocardiogram": "Scheduled",
+      "chestXRay": "Scheduled"
+    },
+    "treatment": {
+      "prescribedDrug": "Increase Metformin dosage",
+      "dosage": "1000mg",
+      "administrationRoute": "Oral",
+      "dosageFrequency": "Twice daily"
+    }
+  }
+  

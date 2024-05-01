@@ -1,0 +1,58 @@
+{
+    "medicalHistory": {
+      "title": "Patient experiences severe diarrhea and vomiting",
+      "biodata": {
+        "modeOfAdmission": "Walk-in"
+      },
+      "historyOfPresentingComplaints": "Patient reports sudden onset of watery diarrhea and vomiting, occurring multiple times over the past 12 hours, accompanied by mild abdominal cramps.",
+      "historyOfPresentingIllness": "Ms. Green began feeling unwell after eating out at a local restaurant yesterday evening.",
+      "systemicHistory": {
+        "centralNervousSystem": "Patient is alert, slightly lethargic.",
+        "cardiovascularSystem": "Heart rate slightly elevated, blood pressure normal.",
+        "gastrointestinalSystem": "Abdomen soft, diffusely tender, no guarding.",
+        "genitourinarySystem": "No urinary complaints.",
+        "musculoskeletalSystem": "No abnormalities reported."
+      },
+      "pastSurgicalHistory": "No previous surgeries.",
+      "pastMedicalHistory": "No chronic illnesses.",
+      "familyHistory": "No significant family health issues.",
+      "drugHistory": "No regular medications.",
+      "allergies": "No known allergies.",
+      "gynecologicalHistory": "Uses oral contraceptives.",
+      "occupationalHistory": "Graphic designer.",
+      "travelHistory": "Recently returned from a vacation in Mexico.",
+      "socioeconomicHistory": "Lives in a shared apartment, financially stable."
+    },
+    "examination": {
+      "generalPhysicalExamination": {
+        "bloodPressure": "100/70 mmHg",
+        "pulse": 98,
+        "temperature": "99.2°F",
+        "respiratoryRate": 16,
+        "bloodSugarLevel": "Normal",
+        "Notes": "Patient appears dehydrated"
+      },
+      "respiratorySystem": "Clear breath sounds.",
+      "centralNervousSystem": "No focal deficits, alert but fatigued.",
+      "cardiovascularSystem": "Tachycardia, no murmurs.",
+      "gastrointestinalSystem": "Abdominal tenderness without rebound."
+    },
+    "investigations": {
+      "completeBloodCount": "Scheduled",
+      "liverFunctionTests": "Scheduled",
+      "renalFunctionTests": "Scheduled",
+      "vitalMarkers": "Monitored",
+      "serumElectrolytes": "Scheduled",
+      "prothrombinTime": "Not indicated",
+      "activatedPartialThromboplastinTime": "Not indicated",
+      "electrocardiogram": "Not indicated",
+      "chestXRay": "Not indicated"
+    },
+    "treatment": {
+      "prescribedDrug": "Oral Rehydration Salts",
+      "dosage": "As needed",
+      "administrationRoute": "Oral",
+      "dosageFrequency": "After each episode of diarrhea or vomiting"
+    }
+  }
+  

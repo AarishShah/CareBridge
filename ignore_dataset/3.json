@@ -1,0 +1,58 @@
+{
+    "medicalHistory": {
+      "title": "Patient reports difficulty breathing and wheezing",
+      "biodata": {
+        "modeOfAdmission": "Emergency"
+      },
+      "historyOfPresentingComplaints": "The patient complains of increasing shortness of breath and wheezing throughout the day, exacerbated by a known allergen exposure earlier in the morning.",
+      "historyOfPresentingIllness": "Ms. Jones has a known history of asthma, typically well-controlled with medication. Symptoms worsened today after exposure to pollen.",
+      "systemicHistory": {
+        "centralNervousSystem": "Patient is alert and oriented.",
+        "cardiovascularSystem": "Heart rate elevated, no murmurs.",
+        "gastrointestinalSystem": "No gastrointestinal symptoms.",
+        "genitourinarySystem": "No complaints.",
+        "musculoskeletalSystem": "No issues reported."
+      },
+      "pastSurgicalHistory": "Appendectomy at age 12.",
+      "pastMedicalHistory": "Asthma diagnosed in childhood.",
+      "familyHistory": "Mother has asthma, brother has eczema.",
+      "drugHistory": "Uses inhaled corticosteroid daily, salbutamol as needed.",
+      "allergies": "Allergic to pollen and dust mites.",
+      "gynecologicalHistory": "Regular menstrual cycles.",
+      "occupationalHistory": "Elementary school teacher.",
+      "travelHistory": "No recent travel.",
+      "socioeconomicHistory": "Lives with her husband and two children."
+    },
+    "examination": {
+      "generalPhysicalExamination": {
+        "bloodPressure": "130/85 mmHg",
+        "pulse": 102,
+        "temperature": "98.7°F",
+        "respiratoryRate": 24,
+        "bloodSugarLevel": "Normal",
+        "Notes": "Patient using accessory muscles to breathe"
+      },
+      "respiratorySystem": "Audible wheezes, decreased air entry bilaterally.",
+      "centralNervousSystem": "Alert, no neurological deficits.",
+      "cardiovascularSystem": "Tachycardic, rhythm regular.",
+      "gastrointestinalSystem": "Abdomen soft and non-tender."
+    },
+    "investigations": {
+      "completeBloodCount": "Scheduled",
+      "liverFunctionTests": "Not indicated",
+      "renalFunctionTests": "Not indicated",
+      "vitalMarkers": "Monitored",
+      "serumElectrolytes": "Scheduled",
+      "prothrombinTime": "Not indicated",
+      "activatedPartialThromboplastinTime": "Not indicated",
+      "electrocardiogram": "Not indicated",
+      "chestXRay": "Performed, shows hyperinflation"
+    },
+    "treatment": {
+      "prescribedDrug": "Prednisone",
+      "dosage": "40mg",
+      "administrationRoute": "Oral",
+      "dosageFrequency": "Daily for 5 days"
+    }
+  }
+  

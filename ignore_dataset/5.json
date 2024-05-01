@@ -1,0 +1,58 @@
+{
+    "medicalHistory": {
+      "title": "Patient reports fatigue and leg swelling",
+      "biodata": {
+        "modeOfAdmission": "Outpatient referral"
+      },
+      "historyOfPresentingComplaints": "Patient describes chronic fatigue, increased leg swelling, and a decreased urine output over the past several months, worsening in the last two weeks.",
+      "historyOfPresentingIllness": "Mr. Thompson has a history of diabetes and hypertension, both of which have been poorly controlled over the years.",
+      "systemicHistory": {
+        "centralNervousSystem": "Alert, oriented, no sensory or motor deficits.",
+        "cardiovascularSystem": "Blood pressure elevated at 160/90 mmHg, pulses are strong.",
+        "gastrointestinalSystem": "No gastrointestinal symptoms.",
+        "genitourinarySystem": "Reduced urine output, anuria occasionally.",
+        "musculoskeletalSystem": "No complaints of joint pain or stiffness."
+      },
+      "pastSurgicalHistory": "Coronary artery bypass graft 5 years ago.",
+      "pastMedicalHistory": "Type 2 diabetes mellitus, hypertension, coronary artery disease.",
+      "familyHistory": "Mother had chronic kidney disease, father had heart disease.",
+      "drugHistory": "Insulin, lisinopril, atorvastatin.",
+      "allergies": "No known drug allergies.",
+      "gynecologicalHistory": "N/A for male patient.",
+      "occupationalHistory": "Retired postal worker.",
+      "travelHistory": "No travel for the last year.",
+      "socioeconomicHistory": "Lives with spouse, pensioner."
+    },
+    "examination": {
+      "generalPhysicalExamination": {
+        "bloodPressure": "160/90 mmHg",
+        "pulse": 88,
+        "temperature": "98.6°F",
+        "respiratoryRate": 20,
+        "bloodSugarLevel": "Elevated",
+        "Notes": "Patient has noticeable pitting edema in both legs"
+      },
+      "respiratorySystem": "Clear, no wheezes or crackles.",
+      "centralNervousSystem": "Neurologically intact.",
+      "cardiovascularSystem": "No murmurs, regular rhythm.",
+      "gastrointestinalSystem": "No abnormalities."
+    },
+    "investigations": {
+      "completeBloodCount": "Scheduled",
+      "liverFunctionTests": "Not indicated",
+      "renalFunctionTests": "Scheduled",
+      "vitalMarkers": "Monitored",
+      "serumElectrolytes": "Scheduled",
+      "prothrombinTime": "Not indicated",
+      "activatedPartialThromboplastinTime": "Not indicated",
+      "electrocardiogram": "Performed, normal",
+      "chestXRay": "Not indicated"
+    },
+    "treatment": {
+      "prescribedDrug": "Furosemide",
+      "dosage": "40mg",
+      "administrationRoute": "Oral",
+      "dosageFrequency": "Once daily in the morning"
+    }
+  }
+  

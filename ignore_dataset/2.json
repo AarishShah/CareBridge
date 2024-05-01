@@ -1,0 +1,58 @@
+{
+    "medicalHistory": {
+      "title": "Patient experiences chest pain and shortness of breath",
+      "biodata": {
+        "modeOfAdmission": "Emergency"
+      },
+      "historyOfPresentingComplaints": "The patient presents with acute onset of chest pain radiating to the left arm, accompanied by shortness of breath, sweating, and nausea, starting approximately 30 minutes prior to admission.",
+      "historyOfPresentingIllness": "Mr. Brown has been experiencing episodic chest pains over the past week, which he initially attributed to indigestion.",
+      "systemicHistory": {
+        "centralNervousSystem": "Patient is alert but anxious.",
+        "cardiovascularSystem": "Irregular heartbeats noted, palpitations present.",
+        "gastrointestinalSystem": "No abdominal pain or vomiting. Some nausea present.",
+        "genitourinarySystem": "Normal urination, no complaints.",
+        "musculoskeletalSystem": "No muscular pain or stiffness noted."
+      },
+      "pastSurgicalHistory": "No surgeries reported.",
+      "pastMedicalHistory": "High cholesterol, smoker for 20 years.",
+      "familyHistory": "Father died of heart attack at age 60.",
+      "drugHistory": "Occasional over-the-counter antacids for heartburn.",
+      "allergies": "No known allergies.",
+      "gynecologicalHistory": "N/A for male patient.",
+      "occupationalHistory": "Works as an automotive technician.",
+      "travelHistory": "No recent travel.",
+      "socioeconomicHistory": "Lives alone, has moderate stress levels."
+    },
+    "examination": {
+      "generalPhysicalExamination": {
+        "bloodPressure": "160/100 mmHg",
+        "pulse": 110,
+        "temperature": "98.6°F",
+        "respiratoryRate": 22,
+        "bloodSugarLevel": "Normal",
+        "Notes": "Patient appears pale and sweaty"
+      },
+      "respiratorySystem": "Mild wheezing in both lungs, likely stress-related.",
+      "centralNervousSystem": "Patient is coherent but anxious.",
+      "cardiovascularSystem": "Tachycardia with irregular rhythm.",
+      "gastrointestinalSystem": "No abnormalities detected."
+    },
+    "investigations": {
+      "completeBloodCount": "Scheduled",
+      "liverFunctionTests": "Scheduled",
+      "renalFunctionTests": "Scheduled",
+      "vitalMarkers": "Monitored",
+      "serumElectrolytes": "Scheduled",
+      "prothrombinTime": "Scheduled",
+      "activatedPartialThromboplastinTime": "Scheduled",
+      "electrocardiogram": "Performed - shows signs of ischemia",
+      "chestXRay": "Scheduled"
+    },
+    "treatment": {
+      "prescribedDrug": "Aspirin",
+      "dosage": "325mg",
+      "administrationRoute": "Oral",
+      "dosageFrequency": "Once, as a loading dose"
+    }
+  }
+  
