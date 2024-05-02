@@ -26,7 +26,7 @@ const doctorSidebarLinks = [
     title: "Read Medical Record",
     link: "/medicalHistory",
   },
-  { id: 3, title: "Read Medical History", link: "read/medicalhistory" },
+  { id: 3, title: "Read Medical History", link: "/medicalHistory" },
   {
     id: 4,
     title: "Assign Patient",
