@@ -196,7 +196,7 @@ patientSchema.methods.toJSON = function ()
 patientSchema.methods.generateAuthToken = async function (next)
 {
     const patient = this;
-    const token = jwt.sign({ _id: patient.id.toString(), role: 'patient' }, "thisismynewcourse");
+    const token = jwt.sign({ _id: patient.id.toString(), role: 'patient' }, "thisismynewcourse", { expiresIn: '14d' });
 
     patient.tokens = patient.tokens.concat({ token });
 
@@ -241,9 +241,9 @@ patientSchema.pre("save", async function (next)
 // Delete patient medical record and prescription when patient is removed
 // Add after defining medical record and prescription models
 
-const patient = mongoose.model("patient", patientSchema);
+const Patient = mongoose.model("patient", patientSchema);
 
-module.exports = patient;
+module.exports = Patient;
 
 // Test data
 
