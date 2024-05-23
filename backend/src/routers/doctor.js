@@ -2,7 +2,6 @@ const express = require("express");
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
-const checkExpiration = require("../middleware/check-expiration");
 const router = express.Router();
 const { assignDoctor, removeDoctor } = require("../utils/assignment");
 
@@ -88,7 +87,7 @@ router.post("/doctor/login", async (req, res) => {
 });
 
 // Update Route
-router.patch("/doctor/me", checkExpiration, auth, async (req, res) => {
+router.patch("/doctor/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = [
     "name",
@@ -118,7 +117,7 @@ router.patch("/doctor/me", checkExpiration, auth, async (req, res) => {
 });
 
 // Delete Route
-router.delete("/doctor/me", checkExpiration, auth, async (req, res) => {
+router.delete("/doctor/me", auth, async (req, res) => {
   try {
     const doctorId = req.user._id;
 
@@ -143,7 +142,7 @@ router.post("/doctor/logout", auth, async (req, res) => {
 });
 
 // Logout All Route - Logout a doctor from all devices
-router.post("/doctor/logoutall", checkExpiration, auth, async (req, res) => {
+router.post("/doctor/logoutall", auth, async (req, res) => {
   try {
     req.user.tokens = [];
     await req.user.save();
@@ -155,12 +154,12 @@ router.post("/doctor/logoutall", checkExpiration, auth, async (req, res) => {
 });
 
 // Read Doctor Route
-router.get("/doctor/me", checkExpiration, auth, async (req, res) => {
+router.get("/doctor/me", auth, async (req, res) => {
   res.send(req.user);
 });
 
 // assignDoctor Route
-router.post("/doctor/assignDoctor", checkExpiration, auth, async (req, res) => {
+router.post("/doctor/assignDoctor", auth, async (req, res) => {
   try {
     const doctorId = req.user._id;
     const patientEmail = req.body.email;
@@ -184,7 +183,7 @@ router.post("/doctor/assignDoctor", checkExpiration, auth, async (req, res) => {
 });
 
 // removeDoctor Route
-router.delete("/doctor/removeDoctor", checkExpiration, auth, async (req, res) => {
+router.delete("/doctor/removeDoctor", auth, async (req, res) => {
   try {
     const doctorId = req.user._id;
     const patientEmail = req.body.email;
