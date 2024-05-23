@@ -159,9 +159,9 @@ doctorSchema.pre('save', async function (next)
     next();
 });
 
-const doctor = mongoose.model('doctor', doctorSchema);
+const Doctor = mongoose.model('doctor', doctorSchema);
 
-module.exports = doctor;
+module.exports = Doctor;
 
 /*
 Test data:
