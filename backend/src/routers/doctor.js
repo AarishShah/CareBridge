@@ -72,7 +72,8 @@ router.post("/doctor/login", async (req, res) =>
 });
 
 // Update Route
-router.patch("/doctor/me", checkExpiration, auth, async (req, res) => {
+router.patch("/doctor/me", auth, async (req, res) =>
+{
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password', 'gender', 'specialization', 'yearsOfExperience', 'qualifications'];
   const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
@@ -96,8 +97,10 @@ router.patch("/doctor/me", checkExpiration, auth, async (req, res) => {
 });
 
 // Delete Route
-router.delete("/doctor/me", checkExpiration, auth, async (req, res) => {
-  try {
+router.delete("/doctor/me", auth, async (req, res) =>
+{
+  try
+  {
     const doctorId = req.user._id;
     const deletedDoctor = await Doctor.findByIdAndDelete(doctorId);
 
@@ -110,7 +113,7 @@ router.delete("/doctor/me", checkExpiration, auth, async (req, res) => {
 });
 
 // Logout Route
-router.post("/doctor/logout", checkExpiration, auth, async (req, res) =>
+router.post("/doctor/logout", auth, async (req, res) =>
 {
   try
   {
@@ -127,8 +130,10 @@ router.post("/doctor/logout", checkExpiration, auth, async (req, res) =>
 });
 
 // Logout All Route - Logout a doctor from all devices
-router.post("/doctor/logoutall", checkExpiration, auth, async (req, res) => {
-  try {
+router.post("/doctor/logoutall", auth, async (req, res) =>
+{
+  try
+  {
     req.user.tokens = [];
     await req.user.save();
     res.send({ message: "Logout successful from all instances." });
@@ -141,13 +146,16 @@ router.post("/doctor/logoutall", checkExpiration, auth, async (req, res) => {
 });
 
 // Read Doctor Route
-router.get("/doctor/me", checkExpiration, auth, async (req, res) => {
+router.get("/doctor/me", auth, async (req, res) =>
+{
   res.send(req.user);
 });
 
 // assignDoctor Route
-router.post("/doctor/assignDoctor", checkExpiration, auth, async (req, res) => {
-  try {
+router.post("/doctor/assignDoctor", auth, async (req, res) =>
+{
+  try
+  {
     const doctorId = req.user._id;
     const patientEmail = req.body.email;
 
@@ -174,8 +182,10 @@ router.post("/doctor/assignDoctor", checkExpiration, auth, async (req, res) => {
 });
 
 // removeDoctor Route
-router.delete("/doctor/removeDoctor", checkExpiration, auth, async (req, res) => {
-  try {
+router.delete("/doctor/removeDoctor", auth, async (req, res) =>
+{
+  try
+  {
     const doctorId = req.user._id;
     const patientEmail = req.body.email;
 
