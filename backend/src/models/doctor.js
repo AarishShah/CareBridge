@@ -118,7 +118,7 @@ doctorSchema.methods.toJSON = function ()
 doctorSchema.methods.generateAuthToken = async function (next)
 {
     const doctor = this;
-    const token = jwt.sign({ _id: doctor.id.toString(), role: 'doctor' }, 'thisismynewcourse')
+    const token = jwt.sign({ _id: doctor.id.toString(), role: 'doctor' }, 'thisismynewcourse', { expiresIn: '14d' })
 
     doctor.tokens = doctor.tokens.concat({ token })
 
