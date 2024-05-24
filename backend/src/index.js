@@ -3,6 +3,7 @@
 
 const express = require("express");
 require("./db/mongoose");
+require("../src/utils/cleanup-token")
 
 // const adminRouter = require("./routers/admin");
 const patientRouter = require("./routers/patient");
