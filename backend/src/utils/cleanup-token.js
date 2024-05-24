@@ -2,7 +2,7 @@ const cron = require("node-cron");
 const jwt = require("jsonwebtoken");
 const Doctor = require("../models/doctor");
 const Patient = require("../models/patient");
-X
+
 const cleanupExpiredTokens = async () => {
   try {
     const models = [Doctor, Patient];
