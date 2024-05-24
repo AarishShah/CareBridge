@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 
 import useMultiStepForm from "../../../../hooks/use-multistep";
 import PersonalInfo from "./PersonalInfo";
 import ProfessionalInfo from "./ProfessionalInfo";
 import AccountDetails from "./AccountDetails";
-import styles from "../Signup.module.css";
+import image from '../../../../assets/7.png';
+import image1 from '../../../../assets/2.png';
+
 
 const INIT_DATA = {
   name: "",
@@ -70,25 +72,37 @@ function DoctorSignup() {
   }
 
   return (
-    <div className={styles.main}>
-      <form onSubmit={handleSubmit}>
+    <div className="flex h-screen">
+      <img src={image} alt="" className="hidden md:block w-1/2 object-cover"/>
+      <form onSubmit={handleSubmit}  className="w-full md:w-1/2 flex flex-col items-center  p-8">
         {error && (
           <div style={{ color: "crimson" }}>Could not register. Try again?</div>
         )}
-        <div>
+        <img src={image1} alt="" className="h-16 w-16 rounded-full mt-12"/>
+        <h1 className="text-2xl font-bold mt-8">Signup to CareBridge</h1>
+        
+        {/* <div className="p-8">
           {currentStep + 1} / {steps.length}
+        </div> */}
+        <div className="w-full flex flex-col items-center">
+          {step}
         </div>
-        {step}
 
-        <div className={styles.action}>
+        <div className="">
           {currentStep !== 0 && (
-            <button type="button" onClick={back}>
+            <button type="button" onClick={back} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold h-10 w-24 rounded mr-60">
               Back
             </button>
           )}
-          <button>
+          <button  type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold h-10 w-24 rounded">
             {currentStep !== steps.length - 1 ? "Next" : "Finish"}
           </button>
+        </div>
+        <div className="text-center mt-16 font-normal text-sm">
+          <span>Already have an Account? </span>
+          <a href="#" className="text-blue-500 font-semibold hover:underline">
+            Sign in
+          </a>
         </div>
       </form>
     </div>

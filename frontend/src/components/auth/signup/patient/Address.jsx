@@ -11,37 +11,68 @@ function Address({ address, updateField }) {
   };
 
   return (
-    <>
-      <label>State</label>
+    <div className="flex flex-col items-center mt-16 mb-2 w-full">
+    <h1 className="text-xl font-bold mb-12 mr-72">Address Details</h1>
+
+      <div className="w-2/3 mb-4">
+
+      <label className="block text-gray-700 text-sm font-bold mb-2">State</label>
       <input
         type="text"
         value={address.state}
         onChange={(e) => handleChange("state", e.target.value)}
         autoFocus
-        required
+        // required
+        className=" border-gray-600 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        placeholder="Your state..."
       />
-      <label>City</label>
+
+      </div>
+      
+      <div className="w-2/3 mb-4">
+
+      <label className="block text-gray-700 text-sm font-bold mb-2">City</label>
       <input
         type="text"
         value={address.city}
         onChange={(e) => handleChange("city", e.target.value)}
-        required
+        // required
+        className=" border-gray-600 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        placeholder="Your city..."
       />
-      <label>Street</label>
+
+      </div>
+
+      <div className="w-2/3 mb-4">
+
+      <label className="block text-gray-700 text-sm font-bold mb-2">Street</label>
       <input
         type="text"
         value={address.street}
         onChange={(e) => handleChange("street", e.target.value)}
-        required
+        // required
+        className=" border-gray-600 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        placeholder="Your street..."
       />
-      <label>Pincode</label>
+
+      </div>
+
+      <div className="w-2/3 mb-4">
+
+      <label className="block text-gray-700 text-sm font-bold mb-2">Pincode</label>
       <input
         type="text"
         value={address.pinCode}
         onChange={(e) => handleChange("pinCode", e.target.value)}
-        required
+        // required
+        className=" border-gray-600 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        placeholder="Your pincode..."
       />
-    </>
+
+      </div>
+     
+     
+    </div>
   );
 }
 
