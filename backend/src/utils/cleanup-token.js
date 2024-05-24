@@ -2,7 +2,7 @@ const cron = require("node-cron");
 const jwt = require("jsonwebtoken");
 const Doctor = require("../models/doctor");
 const Patient = require("../models/patient");
-
+X
 const cleanupExpiredTokens = async () => {
   try {
     const models = [Doctor, Patient];
@@ -32,3 +32,8 @@ const cleanupExpiredTokens = async () => {
 cron.schedule("0 0 */7 * *", cleanupExpiredTokens, {
   timezone: "Asia/Kolkata",
 });
+
+// // Schedule the task to run every 5 seconds for testing
+// cron.schedule("*/5 * * * * *", cleanupExpiredTokens, {
+//   timezone: "Asia/Kolkata",
+// });
