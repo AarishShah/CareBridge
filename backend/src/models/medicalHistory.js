@@ -160,7 +160,7 @@ const medicalHistorySchema = new mongoose.Schema(
 
 );
 
-const medicalHistoryModel = mongoose.model('medicalHistory', medicalHistorySchema);
+const MedicalHistoryModel = mongoose.model('medicalHistory', medicalHistorySchema);
 
-module.exports = medicalHistoryModel;
+module.exports = MedicalHistoryModel;
 

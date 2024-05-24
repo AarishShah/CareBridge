@@ -3,12 +3,12 @@
 
 const express = require("express");
 require("./db/mongoose");
+require("../src/utils/cleanup-token")
 
 // const adminRouter = require("./routers/admin");
 const patientRouter = require("./routers/patient");
 const doctorRouter = require("./routers/doctor");
 const medicalHistoryRouter = require("./routers/medicalHistory");
-const router = require("./routers/patient");
 
 const app = express();
 const port = process.env.PORT || 5000;

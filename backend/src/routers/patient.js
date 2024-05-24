@@ -195,7 +195,7 @@ router.delete("/patient/removeDoctor", auth, async (req, res) =>
             return res.status(404).send({ error: "Doctor not found" });
         }
 
-       const result = await removeDoctor(patientId, doctor._id);
+        const result = await removeDoctor(patientId, doctor._id);
         if (result.error)
         {
             return res.status(400).send(result.message);
