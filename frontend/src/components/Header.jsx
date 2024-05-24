@@ -12,16 +12,16 @@ export default function Header() {
       {/* Left navigation links */}
       <div className="flex space-x-8 text-xl">
         <img src={image} alt="logo" className="h-12 w-12 rounded-full" />
-        <button className="transition ease-in-out delay-150 hover:-translate-y-1 hover:underline">Home</button>
-        <button className="transition ease-in-out delay-150 hover:-translate-y-1 hover:underline">Contact</button>
-        <button className="transition ease-in-out delay-150 hover:-translate-y-1 hover:underline">Team</button>
-        <button className="transition ease-in-out delay-150 hover:-translate-y-1 hover:underline">About</button>
+        <button className="transition ease-in-out delay-15 hover:-translate-y-1 hover:underline">Home</button>
+        <button className="transition ease-in-out delay-15 hover:-translate-y-1 hover:underline">Contact</button>
+        <button className="transition ease-in-out delay-15 hover:-translate-y-1 hover:underline">Team</button>
+        <button className="transition ease-in-out delay-15 hover:-translate-y-1 hover:underline">About</button>
       </div>
 
       <div className="flex space-x-4 mr-6 text-xl relative">
         <div className="relative">
           <button
-            className="h-9 w-20 bg-gray-200 rounded transition ease-in-out delay-150 hover:-translate-y-1 hover:bg-gray-300"
+            className="h-9 w-20 bg-gray-200 rounded transition ease-in-out delay-15 hover:-translate-y-1 hover:bg-gray-300"
             onClick={() => setShowLoginDropdown(!showLoginDropdown)}
           >
             Log in
@@ -35,7 +35,7 @@ export default function Header() {
         </div>
         <div className="relative">
           <button
-            className="h-9 w-20 bg-gray-200 rounded transition ease-in-out delay-150 hover:-translate-y-1 hover:bg-gray-300"
+            className="h-9 w-20 bg-gray-200 rounded transition ease-in-out delay-15 hover:-translate-y-1 hover:bg-gray-300"
             onClick={() => setShowSignupDropdown(!showSignupDropdown)}
           >
             Sign up
