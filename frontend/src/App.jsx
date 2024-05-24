@@ -1,19 +1,18 @@
-import React from 'react';
-import Header from './components/Header';
-import Moto from './components/Moto';
-import DynamicSection from './components/DynamicSection';
-import GetStarted from './components/GetStarted';
-import Footer from './components/Footer';
+import {createBrowserRouter, RouterProvider} from 'react-router-dom'
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+
+const router = createBrowserRouter([
+  {path: '/', element: <LandingPage />},
+  {path: '/login/patient', element: <LoginPage/>},
+  {path: '/login/doctor', element: <LoginPage/>},
+  {path: '/signup/doctor', element: <SignupPage/>}
+])
 
 function App() {
   return (
-    <div>
-    <Header/>
-    <Moto/>
-    <DynamicSection/>
-    <GetStarted/>
-    <Footer/>
-    </div>
+    <RouterProvider router={router}/>
   );
 }
 

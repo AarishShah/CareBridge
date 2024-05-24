@@ -6,8 +6,8 @@ export default function DynamicSection() {
     <div className="px-40 py-24">
       {/* First Section */}
       <div className="flex items-center mb-24 bg-white rounded-lg shadow-lg p-8">
-        <img src={image} alt="Healthcare" className="h-80 w-112 rounded-lg object-cover" />
-        <div className="ml-16 text-left">
+        <img src={image} alt="Healthcare" className="mr-16 h-80 w-112 rounded-lg object-cover" />
+        <div className="ml-auto text-left">
           <h2 className="text-2xl font-semibold mb-4">
             Discover Informed Healthcare Decisions
           </h2>
