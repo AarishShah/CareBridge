@@ -1,41 +1,52 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import { useMutation, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import axios from "axios";
 import AuthForm from "../AuthForm";
-// import axios from "axios";
 
-let url = "http://localhost:5000";
+const url = "http://localhost:5000";
 
-function Login() {
-  const { pathname } = useLocation();
+const loginRequest = async (user, userType) => {
+  const response = await axios.post(`${url}/${userType}/login`, user);
+  return response.data;
+};
+
+function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
 
+  const mutation = useMutation({
+    mutationFn: ({ user, userType }) => loginRequest(user, userType),
+    onSuccess: (data) => {
+      console.log("Response Data is as:", data);
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      if (location.pathname.includes("doctor")) {
+        navigate("/doctor/dashboard");
+      } else {
+        navigate("/");
+      }
+    },
+    onError: (error) => {
+      console.error("Error occurred:", error.response || error.message);
+      setError(true);
+    },
+  });
+
   const handleSubmit = async (event) => {
-    // event.preventDefault();
-    // try {
-    //   const response = await axios.post(`${url}${pathname}`, {
-    //     email,
-    //     password,
-    //   });
-    //   if (response.data.token) {
-    //     localStorage.setItem("token", response.data.token);
-    //   }
-    //   if (pathname.includes("doctor")) {
-    //     navigate("/doctor/dashboard");
-    //   } else {
-    //     navigate("/patient/dashboard");
-    //   }
-    // } catch (error) {
-    //   setError(true);
-    // }
+    event.preventDefault();
+    const userType = location.pathname.includes("doctor") ? "doctor" : "patient";
+    mutation.mutate({ user: { email, password }, userType });
   };
 
   return (
-    <AuthForm heading="Login to CareBridge">
+    <AuthForm heading="Login to CareBridge" onSubmit={handleSubmit}>
       {error && <div style={{ color: "crimson" }}>Could not authenticate</div>}
       <label htmlFor="email" className="mb-2">
         Username or Email
@@ -48,7 +59,7 @@ function Login() {
         onChange={(event) => setEmail(event.target.value)}
         className="border rounded h-10 text-sm placeholder-gray-400 placeholder:ml-5 border-gray-600 mb-6 p-2"
       />
-      <label htmlFor="password" className="mb-2">Password</label>
+      <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">Password</label>
       <input
         id="password"
         type="password"
@@ -62,13 +73,12 @@ function Login() {
         <label htmlFor="rememberMe" className="font-normal text-sm mr-2">
           Remember me
         </label>
-        <a href="#" className="ml-auto  font-normal text-sm text-[10px] hover:underline">
+        <a href="#" className="ml-auto font-normal text-sm text-[10px] hover:underline">
           Forgot Password?
         </a>
       </div>
       <button
         type="submit"
-        onClick={handleSubmit}
         className="h-10 w-1/3 bg-blue-400 text-white rounded ml-32 mb-8 hover:underline font-semibold"
       >
         Log in
@@ -91,7 +101,7 @@ function Login() {
       </button>
       <div className="text-center mt-8 font-normal text-sm ml-2">
         <span>Don't have an Account? </span>
-        <a href="#" className="text-blue-500 font-semibold hover:underline ">
+        <a href="#" className="text-blue-500 font-semibold hover:underline">
           Sign up
         </a>
       </div>
@@ -99,4 +109,14 @@ function Login() {
   );
 }
 
-export default Login;
+const queryClient = new QueryClient();
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <LoginPage />
+    </QueryClientProvider>
+  );
+}
+
+export default App;
