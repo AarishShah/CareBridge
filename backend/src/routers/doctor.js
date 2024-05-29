@@ -1,10 +1,11 @@
 const express = require("express");
+const path = require("path");
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
 const router = express.Router();
-const { assignDoctor, removeDoctor } = require('../utils/assignment');
-
+const { assignDoctor, removeDoctor } = require("../utils/assignment");
+const { profileUpload } = require("../utils/multer-config");
 
 // completed:
 
@@ -25,27 +26,52 @@ const { assignDoctor, removeDoctor } = require('../utils/assignment');
 // when a doctor is assigned himself/herself to a patient, the patient should get a notification which when accepted, the doctor is added to the patient's assignedDoctors array
 
 // Sign Up Route
-router.post("/doctor/signup", async (req, res) =>
+router.post("/doctor/signup", profileUpload, async (req, res) =>
 {
   try
   {
-    const { name, email, password, gender, specialization, yearsOfExperience, qualifications } = req.body;
+    const {
+      name,
+      email,
+      password,
+      gender,
+      specialization,
+      yearsOfExperience,
+      qualifications,
+    } = req.body;
+
+    const profile = req.file;
+    const profilePicturePath = profile 
+    ? path.relative(path.join(__dirname, "../../"), req.file.path) : null;
 
     const missingFields = [];
-    if (!name) missingFields.push('name');
-    if (!email) missingFields.push('email');
-    if (!password) missingFields.push('password');
-    if (!gender) missingFields.push('gender');
-    if (!specialization) missingFields.push('specialization');
-    if (!yearsOfExperience) missingFields.push('years of experience');
-    if (!qualifications) missingFields.push('qualifications');
+    if (!name) missingFields.push("name");
+    if (!email) missingFields.push("email");
+    if (!password) missingFields.push("password");
+    if (!gender) missingFields.push("gender");
+    if (!specialization) missingFields.push("specialization");
+    if (!yearsOfExperience) missingFields.push("years of experience");
+    if (!qualifications) missingFields.push("qualifications");
 
     if (missingFields.length > 0)
     {
-      return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(', ')}. Please ensure all fields are filled out correctly.` });
+      return res.status(400).send({
+        error: `The following field(s) are required and missing: ${missingFields.join(
+          ", "
+        )}. Please ensure all fields are filled out correctly.`,
+      });
     }
 
-    const newDoctor = await Doctor.create({ name, email, password, gender, specialization, yearsOfExperience, qualifications });
+    const newDoctor = await Doctor.create({
+      name,
+      email,
+      password,
+      profilePicturePath,
+      gender,
+      specialization,
+      yearsOfExperience,
+      qualifications,
+    });
     const token = await newDoctor.generateAuthToken();
 
     res.status(201).send({ newDoctor, token });
