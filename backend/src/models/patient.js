@@ -66,6 +66,11 @@ const patientSchema = new mongoose.Schema(
             trim: true,
         },
 
+        profilePicturePath: {
+            type: String,
+            requied: true,
+        },
+
         DOB:
         {
             type: Date,

@@ -35,6 +35,11 @@ const doctorSchema = new mongoose.Schema({
         trim: true,
     },
 
+    profilePicturePath: {
+        type: String,
+        required: false,
+    },
+
     gender:
     {
         type: String,
