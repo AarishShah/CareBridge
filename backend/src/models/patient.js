@@ -68,7 +68,7 @@ const patientSchema = new mongoose.Schema(
 
         profilePicturePath: {
             type: String,
-            requied: true,
+            requied: false,
         },
 
         DOB:
