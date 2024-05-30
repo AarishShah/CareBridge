@@ -98,11 +98,14 @@ router.post("/doctor/login", async (req, res) =>
 });
 
 // Update Route
-router.patch("/doctor/me", auth, async (req, res) =>
+router.patch("/doctor/me", auth, profileUpload, async (req, res) =>
 {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ['name', 'email', 'password', 'gender', 'specialization', 'yearsOfExperience', 'qualifications'];
+  const allowedUpdates = ['name', 'email', 'password', 'profile', 'gender', 'specialization', 'yearsOfExperience', 'qualifications'];
   const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+
+  const profile = req.file;
+  const profilePicturePath = profile ? path.relative(path.join(__dirname, "../../"), req.file.path) : null;
 
   if (!isValidOperation)
   {
@@ -111,7 +114,16 @@ router.patch("/doctor/me", auth, async (req, res) =>
 
   try
   {
-    updates.forEach((update) => req.user[update] = req.body[update]);
+    if (profile)
+    {
+        updates.push("profile");
+    }
+
+    updates.forEach((update) => 
+    {
+        req.user[update] = req.body[update];
+        req.user.profilePicturePath = profilePicturePath;
+    });
     await req.user.save();
     res.send(req.user);
   }

@@ -4,6 +4,7 @@ const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
 const router = new express.Router();
 const { assignDoctor, removeDoctor } = require('../utils/assignment');
+const { profileUpload } = require("../utils/multer-config");
 
 // completed:
 
@@ -74,11 +75,14 @@ router.post("/patient/login", async (req, res) =>
 });
 
 // Update Route
-router.patch("/patient/me", auth, async (req, res) =>
+router.patch("/patient/me", auth, profileUpload, async (req, res) =>
 {
     const updates = Object.keys(req.body); // returns the keys of the json object as an array
-    const allowedUpdates = ["name", "email", "password", "gender", "maritalStatus", "occupation", "address",];
+    const allowedUpdates = ["name", "email", "password", "profile", "gender", "maritalStatus", "occupation", "address",];
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+
+     const profile = req.file;
+     const profilePicturePath = profile ? path.relative(path.join(__dirname, "../../"), req.file.path) : null;
 
     if (!isValidOperation)
     {
@@ -87,7 +91,16 @@ router.patch("/patient/me", auth, async (req, res) =>
 
     try
     {
-        updates.forEach((update) => (req.user[update] = req.body[update]));
+        if (profile)
+        {
+          updates.push("profile");
+        }
+
+        updates.forEach((update) =>
+        {
+            req.user[update] = req.body[update];
+            req.user.profilePicturePath = profilePicturePath;
+        });
         await req.user.save();
         res.status(200).send(req.user);
     }
