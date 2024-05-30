@@ -14,7 +14,13 @@ mongoose.connect
         {}
     ).catch(error =>
     {
-        console.error("Database connection failed:", error);
+        if (error.name === 'MongooseServerSelectionError')
+        {
+            console.error("Database connection failed: IP not registered");
+        } else
+        {
+            console.error("Database connection failed:", error);
+        }
         process.exit(1); // Optionally exit the process if unable to connect
     });
 
