@@ -10,6 +10,7 @@ require("../src/utils/cleanup-token")
 const patientRouter = require("./routers/patient");
 const doctorRouter = require("./routers/doctor");
 const medicalHistoryRouter = require("./routers/medicalHistory");
+const medicalFileRouter = require("./routers/medicalFile");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -24,6 +25,7 @@ app.use(express.static(profileDir));
 app.use(patientRouter); // to register patient router
 app.use(doctorRouter); // to register doctor router
 app.use(medicalHistoryRouter); // to register patient history router
+app.use(medicalFileRouter);
 
 app.listen(port, () => {
   console.log("Server is up on port " + port);
