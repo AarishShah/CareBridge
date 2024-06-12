@@ -1,5 +1,4 @@
 const { join } = require("path")
-const { format } = require("date-fns");
 const fs = require("fs");
 const multer = require("multer");
 
@@ -38,40 +37,5 @@ const profileUpload = multer({
   	fileFilter: imageFilter,
   	limits: { fileSize: 1000000 }, // 1MB limit
 }).single("profile");
-
-// For medical documents
-const documentsDir = join(__dirname, "../../uploads/documents");
-if (!fs.existsSync(documentsDir))
-{
-	fs.mkdirSync(documentsDir, { recursive: true });
-}
-
-const documentsStorage = multer.diskStorage({
-	destination: (_, __, callback) =>
-		{
-			callback(null, documentsDir);
-		},
-	filename: (_, file, callback) =>
-		{
-            const formattedDate = format(new Date(), "dd-MM-yyyy")
-			callback(null, `${formattedDate}-${file.originalname}`);
-		}
-})
-
-const documentsFilter = (_, file,  callback) =>
-{
-	if (!file.originalname.match(/\.(pdf)$/))
-	{
-		return callback(new Error("Only .pdf files are supported"), false);
-	}
-
-	callback(null, true);
-}
-
-const documentUpload = multer({
-	storage: documentsStorage,
-	fileFilter: documentsFilter,
-	limits: { fileSize: 5000000 }, // 5MB limit
-}).single("document");
 
 module.exports = { profileUpload, documentUpload };

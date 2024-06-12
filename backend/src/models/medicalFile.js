@@ -9,9 +9,11 @@ const medicalFileSchema = mongoose.Schema(
             ref: "Patient"
         },
 
-        title: { type: String, required: true },
+        bucket: { type: String, required: true },
 
-        path: { type: String, required: true },
+        key: { type: String, required: true },
+
+        region: { type: String, required: true }
     },
 
     { timestamps: true, }
