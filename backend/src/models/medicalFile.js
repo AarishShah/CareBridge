@@ -6,6 +6,12 @@ const medicalFileSchema = mongoose.Schema(
         {
             type: mongoose.Schema.Types.ObjectId,
             require: true,
+        },
+
+        patientId:
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            require: true,
             ref: "Patient"
         },
 

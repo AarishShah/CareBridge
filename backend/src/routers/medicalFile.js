@@ -1,8 +1,12 @@
 const express = require("express");
 const path = require("path");
 const { randomUUID } = require("crypto");
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3")
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { HttpRequest } = require("@aws-sdk/protocol-http");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl, S3RequestPresigner } = require("@aws-sdk/s3-request-presigner");
+const { parseUrl } = require("@aws-sdk/url-parser");
+const { Hash } = require("@aws-sdk/hash-node")
+const { formatUrl } = require("@aws-sdk/util-format-url");
 
 const auth = require("../middleware/auth");
 const Patient = require("../models/patient");
@@ -22,6 +26,58 @@ const s3 = new S3Client(
     }
 )
 
+const presigner = new S3RequestPresigner({
+    credentials: {
+    accessKeyId: process.env.ACCESS_KEY,
+    secretAccessKey: process.env.SECRET_KEY,
+  },
+  region: process.env.REGION,
+  sha256: Hash.bind(null, "sha256"),
+});
+
+router.get("/medical-record", auth, async (req, res) =>
+{
+    try
+    {
+        let patientId;
+        if (req.user.role === "doctor")
+        {
+            patientId = await Patient.find({ "assignedDoctors.doctor": req.user._id });
+        } else
+        {
+            patientId = req.user._id;
+        }
+
+        if (!patientId)
+        {
+            return res.status(404).send({ error: "Patient record not found" });
+        }
+
+        const medicalFile = await MedicalFileModel.find({ patientId });
+
+        if (!medicalFile)
+        {
+            return res.status(404).send({ error: "Medical record not found" });
+        }
+
+        let formattedUrl = [];
+        const presignedUrls = medicalFile.map(async (file) =>
+            {
+                const s3ObjectUrl = parseUrl(`https://${file.bucket}.s3.${file.region}.amazonaws.com/${file.key}`);
+                const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
+                return formattedUrl.push(formatUrl(url));
+            }
+        )
+
+        await Promise.all(presignedUrls);
+
+        res.status(200).json({ presignedUrl: formattedUrl });
+    } catch (e)
+    {
+        res.status(400).send({ error: "Error fetching medical file(s)" });   
+    }
+});
+
 router.get("/medical-record/:id", auth, async (req, res) =>
 {
     if (req.role !== "patient")
@@ -40,17 +96,12 @@ router.get("/medical-record/:id", auth, async (req, res) =>
         }
 
         
-        const ext = req.query.fileType.split("/")[1];
+        const ext = req.query.fileType.split(".")[1];
         const key = `document/${randomUUID()}.${ext}`;
 
         if (!key)
         {
             res.status(404).send({ error: "File not provided" });
-        }
-
-        if (!key.includes(".pdf"))
-        {
-            res.status(400).send({ error: "Only .pdf files are supported" });
         }
 
         const putObjectCommands =
