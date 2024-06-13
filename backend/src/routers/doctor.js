@@ -30,15 +30,7 @@ router.post("/doctor/signup", profileUpload, async (req, res) =>
 {
   try
   {
-    const {
-      name,
-      email,
-      password,
-      gender,
-      specialization,
-      yearsOfExperience,
-      qualifications,
-    } = req.body;
+    const { name, email, password, gender, specialization, yearsOfExperience, qualifications, } = req.body;
 
     const profile = req.file;
     const profilePicturePath = profile 
@@ -62,16 +54,7 @@ router.post("/doctor/signup", profileUpload, async (req, res) =>
       });
     }
 
-    const newDoctor = await Doctor.create({
-      name,
-      email,
-      password,
-      profilePicturePath,
-      gender,
-      specialization,
-      yearsOfExperience,
-      qualifications,
-    });
+    const newDoctor = await Doctor.create({ name, email, password, profilePicturePath,gender, specialization, yearsOfExperience, qualifications });
     const token = await newDoctor.generateAuthToken();
 
     res.status(201).send({ newDoctor, token });
