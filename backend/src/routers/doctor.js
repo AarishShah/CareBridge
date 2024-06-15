@@ -47,11 +47,7 @@ router.post("/doctor/signup", profileUpload, async (req, res) =>
 
     if (missingFields.length > 0)
     {
-      return res.status(400).send({
-        error: `The following field(s) are required and missing: ${missingFields.join(
-          ", "
-        )}. Please ensure all fields are filled out correctly.`,
-      });
+      return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(', ')}. Please ensure all fields are filled out correctly.` });
     }
 
     const newDoctor = await Doctor.create({ name, email, password, profilePicturePath,gender, specialization, yearsOfExperience, qualifications });
