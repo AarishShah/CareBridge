@@ -2,12 +2,13 @@ const express = require("express");
 const path = require("path");
 const { randomUUID } = require("crypto");
 const { HttpRequest } = require("@aws-sdk/protocol-http");
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { PutObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl, S3RequestPresigner } = require("@aws-sdk/s3-request-presigner");
 const { parseUrl } = require("@aws-sdk/url-parser");
 const { Hash } = require("@aws-sdk/hash-node")
 const { formatUrl } = require("@aws-sdk/util-format-url");
 
+const s3 = require("../utils/s3Client");
 const auth = require("../middleware/auth");
 const Patient = require("../models/patient");
 const MedicalFileModel = require("../models/medicalFile");
@@ -15,16 +16,6 @@ const MedicalFileModel = require("../models/medicalFile");
 require('dotenv').config({path: path.join(__dirname, '../.env')});
 
 const router = express.Router();
-
-const s3 = new S3Client(
-    {
-        region: process.env.REGION,
-        credentials: {
-            accessKeyId: process.env.ACCESS_KEY,
-            secretAccessKey: process.env.SECRET_KEY,
-        }
-    }
-)
 
 const presigner = new S3RequestPresigner({
     credentials: {
@@ -112,7 +103,7 @@ router.get("/medical-record/:id", auth, async (req, res) =>
         };
 
         const command = new PutObjectCommand(putObjectCommands);
-        const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 4000 });
 
         const medicalFileData = new MedicalFileModel({ patientId, bucket: process.env.BUCKET_NAME, key, region: process.env.REGION })
         

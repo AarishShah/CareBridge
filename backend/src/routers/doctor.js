@@ -1,11 +1,23 @@
 const express = require("express");
 const path = require("path");
+const { randomUUID } = require("crypto");
+const { PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
 const router = express.Router();
 const { assignDoctor, removeDoctor } = require("../utils/assignment");
-const { profileUpload } = require("../utils/multer-config");
+const s3 = require("../utils/s3Client");
+
+require('dotenv').config({path: path.join(__dirname, '../.env')});
+
+const getProfileUrl = async (bucket, profileKey) =>
+{
+    if (!bucket || !profileKey) return "";
+    const command = new GetObjectCommand({ Bucket: bucket, Key: profileKey });
+    return await getSignedUrl(s3, command, { expiresIn: 4000 });
+};
 
 // completed:
 
@@ -26,23 +38,24 @@ const { profileUpload } = require("../utils/multer-config");
 // when a doctor is assigned himself/herself to a patient, the patient should get a notification which when accepted, the doctor is added to the patient's assignedDoctors array
 
 // Sign Up Route
-router.post("/doctor/signup", profileUpload, async (req, res) =>
+router.post("/doctor/signup", async (req, res) =>
 {
   try
   {
-    const {
-      name,
-      email,
-      password,
-      gender,
-      specialization,
-      yearsOfExperience,
-      qualifications,
-    } = req.body;
+    const { name, email, password, gender, specialization, yearsOfExperience, qualifications } = req.body;
 
-    const profile = req.file;
-    const profilePicturePath = profile 
-    ? path.relative(path.join(__dirname, "../../"), req.file.path) : null;
+    const ext = req.query.fileType.split(".")[1];
+    const key = `profile/${randomUUID()}.${ext}`;
+
+    const putObjectCommands =
+    {
+        Bucket: process.env.BUCKET_NAME,
+        Key: key,
+        ContentType: "image/jpeg",
+    };
+
+    const command = new PutObjectCommand(putObjectCommands);
+    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 4000 });
 
     const missingFields = [];
     if (!name) missingFields.push("name");
@@ -62,19 +75,11 @@ router.post("/doctor/signup", profileUpload, async (req, res) =>
       });
     }
 
-    const newDoctor = await Doctor.create({
-      name,
-      email,
-      password,
-      profilePicturePath,
-      gender,
-      specialization,
-      yearsOfExperience,
-      qualifications,
-    });
+    const newDoctor = await Doctor.create({ name, email, password, profileKey: key,bucket: process.env.BUCKET_NAME, region: process.env.REGION, gender, specialization,yearsOfExperience, qualifications });
+
     const token = await newDoctor.generateAuthToken();
 
-    res.status(201).send({ newDoctor, token });
+    res.status(201).send({ newDoctor, token, uploadUrl });
   } catch (e)
   {
     // console.error("Create error:", e);
@@ -88,44 +93,57 @@ router.post("/doctor/login", async (req, res) =>
   try
   {
     const doctor = await Doctor.findByCredentials(req.body.email, req.body.password);
+
+    const { bucket, profileKey } = doctor;
+    const profileUrl = await getProfileUrl(bucket, profileKey);
+
     const token = await doctor.generateAuthToken();
-    res.status(202).send({ doctor, token });
+
+    res.status(200).send({ doctor, profileUrl, token });
   } catch (error)
   {
-    // console.error("Login error:", error);
+    console.error("Login error:", error);
     res.status(400).send({ error: "Login failed" });
   }
 });
 
 // Update Route
-router.patch("/doctor/me", auth, profileUpload, async (req, res) =>
+router.patch("/doctor/me", auth, async (req, res) =>
 {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ['name', 'email', 'password', 'profile', 'gender', 'specialization', 'yearsOfExperience', 'qualifications'];
+  const allowedUpdates = ['name', 'email', 'password', 'gender', 'specialization', 'yearsOfExperience', 'qualifications'];
   const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
 
-  const profile = req.file;
-  const profilePicturePath = profile ? path.relative(path.join(__dirname, "../../"), req.file.path) : null;
-
+  const ext = req.query.fileType.split(".")[1];
+  const key = `profile/${randomUUID()}.${ext}`;
+  
   if (!isValidOperation)
   {
     return res.status(404).send({ error: 'Invalid updates!' });
   }
 
+  const putObjectCommands =
+    {
+        Bucket: process.env.BUCKET_NAME,
+        Key: key,
+        ContentType: "image/jpeg",
+    };
+
+    const command = new PutObjectCommand(putObjectCommands);
+    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
   try
   {
-    if (profile)
-    {
-        updates.push("profile");
-    }
-
     updates.forEach((update) => 
     {
         req.user[update] = req.body[update];
-        req.user.profilePicturePath = profilePicturePath;
+        req.user.profileKey = key;
+        req.user.bucket = process.env.BUCKET_NAME;
+        req.user.region = process.env.REGION;
     });
+
     await req.user.save();
-    res.send(req.user);
+    res.send({ updatedDoctor: req.user, uploadUrl });
   }
   catch (error)
   {

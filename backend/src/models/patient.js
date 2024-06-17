@@ -66,7 +66,20 @@ const patientSchema = new mongoose.Schema(
             trim: true,
         },
 
-        profilePicturePath: {
+        profileKey:
+        {
+            type: String,
+            requied: false,
+        },
+
+        bucket:
+        {
+            type: String,
+            requied: false,
+        },
+
+        region:
+        {
             type: String,
             requied: false,
         },
