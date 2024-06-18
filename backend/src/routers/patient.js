@@ -1,7 +1,9 @@
 const express = require("express");
+const passport = require("passport");
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
+require("../middleware/passport");
 const router = new express.Router();
 const { assignDoctor, removeDoctor } = require('../utils/assignment');
 
@@ -43,7 +45,7 @@ router.post("/patient/signup", async (req, res) =>
             return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(", ")}. Please ensure all fields are filled out correctly.`, });
         }
 
-        const newPatient = await Patient.create({ name, email, password, DOB, gender, maritalStatus, occupation, address, religion });
+        const newPatient = await Patient.create({ name, email, password, DOB, gender, maritalStatus, occupation, address });
         const token = await newPatient.generateAuthToken();
 
         res.status(201).send({ newPatient, token });
@@ -53,6 +55,9 @@ router.post("/patient/signup", async (req, res) =>
         res.status(500).send({ error: "Failed to create a new user." });
     }
 });
+
+// Redirect to Google for authentication
+router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // Login Route
 router.post("/patient/login", async (req, res) =>
