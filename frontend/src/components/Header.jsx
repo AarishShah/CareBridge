@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link } from 'react-router-dom';
 import { useAuth } from '../components/context/AuthContext';
+import useLogout from '../hooks/useLogout'; 
 import logo from "../assets/2.png";
 
 const Header = () => {
-  const { isAuthenticated, login, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const logout = useLogout(); // Use the custom hook
   const [showLoginDropdown, setShowLoginDropdown] = useState(false);
   const [showSignupDropdown, setShowSignupDropdown] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);

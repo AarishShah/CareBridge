@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 const AuthContext = createContext();
 
@@ -9,12 +9,11 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
     };
 
-    const logout = () => {
+    const logout = useCallback((navigate) => {
         setIsAuthenticated(false);
         localStorage.removeItem("token");
-        
-
-    };
+        navigate('/'); // Navigate to the landing page on logout
+    }, []);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
