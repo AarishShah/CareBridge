@@ -1,13 +1,14 @@
-import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import logo from "../assets/2.png";
-import { navItems } from "../constants/index.jsx";
+import { Menu, X } from "lucide-react";
 import { Link } from 'react-router-dom';
+import { useAuth } from '../components/context/AuthContext';
+import logo from "../assets/2.png";
 
 const Header = () => {
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-  const [showSignupDropdown, setShowSignupDropdown] = useState(false);
+  const { isAuthenticated, login, logout } = useAuth();
   const [showLoginDropdown, setShowLoginDropdown] = useState(false);
+  const [showSignupDropdown, setShowSignupDropdown] = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   const toggleNavbar = () => {
     setMobileDrawerOpen(!mobileDrawerOpen);
@@ -26,7 +27,7 @@ const Header = () => {
   );
 
   return (
-    <nav className="sticky top-0 z-50 py-3 backdrop-blur-lg  border-neutral-700/80">
+    <nav className="sticky top-0 z-50 py-3 backdrop-blur-lg border-neutral-700/80">
       <div className="container px-4 mx-auto relative text-sm">
         <div className="flex justify-between items-center">
           <div className="flex items-center flex-shrink-0">
@@ -34,37 +35,43 @@ const Header = () => {
             <span className="text-xl tracking-tight">CareBridge</span>
           </div>
           <ul className="hidden lg:flex ml-14 space-x-12">
-            {navItems.map((item, index) => (
-              <li key={index}>
-                <a href={item.href}>{item.label}</a>
-              </li>
-            ))}
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
+            <li><Link to="/team">Team</Link></li>
+            <li><Link to="/about">About</Link></li>
           </ul>
           <div className="hidden lg:flex justify-center space-x-6 items-center">
-            <div className="relative">
-              <button 
-                className="py-2 px-3 border rounded-md" 
-                onClick={() => setShowLoginDropdown(!showLoginDropdown)}
-              >
-                Sign In
-              </button>
-              {renderDropdown(showLoginDropdown, [
-                { label: 'As Patient', to: '/login/patient' },
-                { label: 'As Doctor', to: '/login/doctor' }
-              ])}
-            </div>
-            <div className="relative">
-              <button 
-                className="py-2 px-3 border rounded-md text-white bg-gradient-to-r from-blue-500 to-blue-800" 
-                onClick={() => setShowSignupDropdown(!showSignupDropdown)}
-              >
-                Create an account
-              </button>
-              {renderDropdown(showSignupDropdown, [
-                { label: 'As Patient', to: '/signup/patient' },
-                { label: 'As Doctor', to: '/signup/doctor' }
-              ])}
-            </div>
+            {isAuthenticated ? (
+              <>
+                <button className="py-2 px-3 border rounded-md" onClick={logout}>
+                  Log Out
+                </button>
+                <button className="py-2 px-3 border rounded-md">
+                  My Account
+                </button>
+              </>
+            ) : (
+              <div className="flex space-x-2 relative">
+                <div className="relative">
+                  <button className="py-2 px-3 border rounded-md" onClick={() => setShowLoginDropdown(!showLoginDropdown)}>
+                    Sign In
+                  </button>
+                  {renderDropdown(showLoginDropdown, [
+                    { label: 'As Patient', to: '/login/patient' },
+                    { label: 'As Doctor', to: '/login/doctor' }
+                  ])}
+                </div>
+                <div className="relative">
+                  <button className="py-2 px-3 border rounded-md" onClick={() => setShowSignupDropdown(!showSignupDropdown)}>
+                    Create an account
+                  </button>
+                  {renderDropdown(showSignupDropdown, [
+                    { label: 'As Patient', to: '/signup/patient' },
+                    { label: 'As Doctor', to: '/signup/doctor' }
+                  ])}
+                </div>
+              </div>
+            )}
           </div>
           <div className="lg:hidden md:flex flex-col justify-end">
             <button onClick={toggleNavbar}>
@@ -75,31 +82,43 @@ const Header = () => {
         {mobileDrawerOpen && (
           <div className="fixed right-0 z-20 bg-neutral-100 w-full p-12 flex flex-col justify-center items-center lg:hidden">
             <ul className="w-full">
-              {navItems.map((item, index) => (
-                <li key={index} className="py-4">
-                  <a href={item.href}>{item.label}</a>
-                </li>
-              ))}
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="/contact">Contact</Link></li>
+              <li><Link to="/team">Team</Link></li>
+              <li><Link to="/about">About</Link></li>
             </ul>
             <div className="flex space-x-2 relative">
-              <div className="relative">
-                <button className="py-2 px-3 border rounded-md" onClick={() => setShowLoginDropdown(!showLoginDropdown)}>
-                  Sign In
-                </button>
-                {renderDropdown(showLoginDropdown, [
-                  { label: 'As Patient', to: '/login/patient' },
-                  { label: 'As Doctor', to: '/login/doctor' }
-                ])}
-              </div>
-              <div className="relative">
-                <button className="py-2 px-3 border rounded-md" onClick={() => setShowSignupDropdown(!showSignupDropdown)}>
-                  Create an account
-                </button>
-                {renderDropdown(showSignupDropdown, [
-                  { label: 'As Patient', to: '/signup/patient' },
-                  { label: 'As Doctor', to: '/signup/doctor' }
-                ])}
-              </div>
+              {isAuthenticated ? (
+                <>
+                  <button className="py-2 px-3 border rounded-md" onClick={logout}>
+                    Log Out
+                  </button>
+                  <button className="py-2 px-3 border rounded-md">
+                    My Account
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="relative">
+                    <button className="py-2 px-3 border rounded-md" onClick={() => setShowLoginDropdown(!showLoginDropdown)}>
+                      Sign In
+                    </button>
+                    {renderDropdown(showLoginDropdown, [
+                      { label: 'As Patient', to: '/login/patient' },
+                      { label: 'As Doctor', to: '/login/doctor' }
+                    ])}
+                  </div>
+                  <div className="relative">
+                    <button className="py-2 px-3 border rounded-md" onClick={() => setShowSignupDropdown(!showSignupDropdown)}>
+                      Create an account
+                    </button>
+                    {renderDropdown(showSignupDropdown, [
+                      { label: 'As Patient', to: '/signup/patient' },
+                      { label: 'As Doctor', to: '/signup/doctor' }
+                    ])}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
