@@ -27,7 +27,7 @@ export default function DynamicSection() {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 10000, // Slow speed for continuous sliding
+    speed: 25000, // Slow speed for continuous sliding
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
