@@ -69,7 +69,7 @@ router.get('/auth/google/callback',
 
         if (isNewUser)
         {
-            res.redirect(`/patient/complete-profile`);
+            res.redirect(`http://localhost:5173/patient/complete-profile`);
         } else
         {
             res.redirect(`/patient/dashboard`); // User is already registered, redirect to dashboard
