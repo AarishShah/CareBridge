@@ -9,41 +9,56 @@ const FormTemp = () => {
     gender: '',
     maritalStatus: '',
     occupation: '',
-    state: '',
-    city: '',
-    street: '',
-    pinCode: ''
+    address: {
+      state: '',
+      city: '',
+      street: '',
+      pinCode: ''
+    }
   });
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  useEffect(() => {
-    // Fetch session data and prepopulate the form
-    const fetchSessionData = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/patient/session-data', { withCredentials: true });
-        const { name, email } = response.data;
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          name,
-          email
-        }));
-      } catch (err) {
-        console.error('Error fetching session data:', err);
-      }
-    };
+  // useEffect(() => {
+  //   // Fetch session data and prepopulate the form
+  //   const fetchSessionData = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:5000/patient/session-data', { withCredentials: true });
+  //       const { name, email } = response.data;
+  //       setFormData((prevFormData) => ({
+  //         ...prevFormData,
+  //         name,
+  //         email
+  //       }));
+  //     } catch (err) {
+  //       console.error('Error fetching session data:', err);
+  //     }
+  //   };
 
-    fetchSessionData();
-  }, []);
+  //   fetchSessionData();
+  // }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  if (name.includes("address")) {
+    const addressField = name.split(".")[1];
     setFormData({
       ...formData,
-      [name]: value
+      address: {
+        ...formData.address,
+        [addressField]: value,
+      },
     });
-  };
+  } else {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  }
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,26 +78,6 @@ const FormTemp = () => {
     <div className="container mx-auto p-8">
       <h1 className="text-2xl font-bold mb-4">Complete Profile</h1>
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700">Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            className="border rounded w-full py-2 px-3 text-gray-700"
-            readOnly
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            className="border rounded w-full py-2 px-3 text-gray-700"
-            readOnly
-          />
-        </div>
         <div className="mb-4">
           <label className="block text-gray-700">Date of Birth (DOB):</label>
           <input
@@ -135,8 +130,8 @@ const FormTemp = () => {
           <label className="block text-gray-700">State:</label>
           <input
             type="text"
-            name="state"
-            value={formData.state}
+            name="address.state"
+            value={formData.address.state}
             onChange={handleChange}
             className="border rounded w-full py-2 px-3 text-gray-700"
             required
@@ -146,8 +141,8 @@ const FormTemp = () => {
           <label className="block text-gray-700">City:</label>
           <input
             type="text"
-            name="city"
-            value={formData.city}
+            name="address.city"
+            value={formData.address.city}
             onChange={handleChange}
             className="border rounded w-full py-2 px-3 text-gray-700"
             required
@@ -157,8 +152,8 @@ const FormTemp = () => {
           <label className="block text-gray-700">Street:</label>
           <input
             type="text"
-            name="street"
-            value={formData.street}
+            name="address.street"
+            value={formData.address.street}
             onChange={handleChange}
             className="border rounded w-full py-2 px-3 text-gray-700"
             required
@@ -168,8 +163,8 @@ const FormTemp = () => {
           <label className="block text-gray-700">Pin Code:</label>
           <input
             type="text"
-            name="pinCode"
-            value={formData.pinCode}
+            name="address.pinCode"
+            value={formData.address.pinCode}
             onChange={handleChange}
             className="border rounded w-full py-2 px-3 text-gray-700"
             required

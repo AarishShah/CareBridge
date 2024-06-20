@@ -81,6 +81,7 @@ router.post("/patient/complete-profile", async (req, res) =>
 {
     try
     {
+        const tempUser = req.session.tempUser;
         const { DOB, gender, maritalStatus, occupation, address } = req.body;
 
         const missingFields = [];
@@ -90,15 +91,10 @@ router.post("/patient/complete-profile", async (req, res) =>
         if (!occupation) missingFields.push("occupation");
         if (!address) missingFields.push("address");
 
-        console.log(req.body);
-
         if (missingFields.length > 0)
         {
             return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(", ")}. Please ensure all fields are filled out correctly.`, });
         }
-
-        const tempUser = req.session.tempUser;
-
 
         const newPatient = await Patient.create(
             {
