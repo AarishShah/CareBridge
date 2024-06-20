@@ -8,6 +8,7 @@ import SignupPagePatient from './pages/SignupPagePatient';
 import Dashboard from './components/ui/Dashboard';
 import PatientDashboard from './components/dashboards/PatientDashboard';
 import DoctorDashboard from './components/dashboards/DoctorDashboard';
+import FormTemp from './components/auth/signup/FormTemp.jsx'
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
   { path: '/dashboard', element: <Dashboard /> },
   { path: '/patient/dashboard', element: <PatientDashboard /> },
   { path: '/doctor/dashboard', element: <DoctorDashboard /> },
+  { path: '/patient/complete-profile', element: <FormTemp /> },
 ]);
 
 function App() {

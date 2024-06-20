@@ -46,6 +46,10 @@ function LoginPage() {
     mutation.mutate({ user: { email, password }, userType });
   };
 
+  const handleSignin = () => {
+    window.location.href = "http://localhost:5000/auth/google";
+  }
+
   return (
     <AuthForm heading="Login to CareBridge" onSubmit={handleSubmit}>
       {error && <div style={{ color: "crimson" }}>Could not authenticate</div>}
@@ -78,7 +82,8 @@ function LoginPage() {
         <span className="mx-2 text-gray-400">or</span>
         <div className="flex-grow border-t border-gray-400"></div>
       </div>
-      <button type="button" className="h-10 w-1/2 border border-gray-400 text-gray-600 rounded mt-8 ml-24 flex items-center justify-evenly font-medium text-sm hover:underline">
+      <button type="button" className="h-10 w-1/2 border border-gray-400 text-gray-600 rounded mt-8 ml-24 flex items-center justify-evenly font-medium text-sm hover:underline"
+      onClick={handleSignin}>
         <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google logo" className="mr-1" />
         Sign in with Google
       </button>
