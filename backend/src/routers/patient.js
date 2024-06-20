@@ -77,6 +77,47 @@ router.get('/auth/google/callback',
     }
 );
 
+router.get('/patient/complete-profile', (req, res) => {
+    const { name, email, googleId, isGoogleSignUp } = req.query;
+
+    // Render a form with hidden fields for temp user data
+    res.send(`
+        <form action="/patient/complete-profile" method="POST">
+            <input type="hidden" name="name" value="${name}">
+            <input type="hidden" name="email" value="${email}">
+            <input type="hidden" name="googleId" value="${googleId}">
+            <input type="hidden" name="isGoogleSignUp" value="${isGoogleSignUp}">
+
+            <!-- Fields for additional profile data -->
+            <label for="DOB">Date of Birth:</label>
+            <input type="date" id="DOB" name="DOB" required><br>
+            
+            <label for="gender">Gender:</label>
+            <input type="text" id="gender" name="gender" required><br>
+            
+            <label for="maritalStatus">Marital Status:</label>
+            <input type="text" id="maritalStatus" name="maritalStatus" required><br>
+            
+            <label for="occupation">Occupation:</label>
+            <input type="text" id="occupation" name="occupation" required><br>
+            
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" required><br>
+            
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required><br>
+            
+            <label for="street">Street:</label>
+            <input type="text" id="street" name="street" required><br>
+            
+            <label for="pinCode">Pin Code:</label>
+            <input type="text" id="pinCode" name="pinCode" required><br>
+            
+            <button type="submit">Complete Profile</button>
+        </form>
+    `);
+});
+
 router.post("/patient/complete-profile", async (req, res) =>
 {
     try
