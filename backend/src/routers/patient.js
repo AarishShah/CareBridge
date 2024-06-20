@@ -59,6 +59,65 @@ router.post("/patient/signup", async (req, res) =>
 // Redirect to Google for authentication
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
+// Google callback URL
+router.get('/auth/google/callback',
+    passport.authenticate('google', { session: true, failureRedirect: '/' }), // remember to check if session is true by default, then remove it
+    async (req, res) =>
+    {
+        req.session.tempUser = req.user;
+        const isNewUser = !req.user.DOB || !req.user.gender || !req.user.maritalStatus || !req.user.occupation || !req.user.address;
+
+        if (isNewUser)
+        {
+            res.redirect(`/patient/complete-profile`);
+        } else
+        {
+            res.redirect(`/patient/dashboard`); // User is already registered, redirect to dashboard
+        }
+    }
+);
+
+router.post("/patient/complete-profile", async (req, res) =>
+{
+    try
+    {
+        const { DOB, gender, maritalStatus, occupation, address } = req.body;
+
+        const missingFields = [];
+        if (!DOB) missingFields.push("date of birth (DOB)");
+        if (!gender) missingFields.push("gender");
+        if (!maritalStatus) missingFields.push("maritalStatus");
+        if (!occupation) missingFields.push("occupation");
+        if (!address) missingFields.push("address");
+
+        if (missingFields.length > 0)
+        {
+            return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(", ")}. Please ensure all fields are filled out correctly.`, });
+        }
+
+        const tempUser = req.session.tempUser;
+
+
+        const newPatient = await Patient.create(
+            {
+                name: tempUser.name,
+                email: tempUser.email,
+                isGoogleSignUp: tempUser.isGoogleSignUp,
+                googleId: tempUser.googleId,
+                DOB, gender, maritalStatus, occupation, address
+            });
+        const token = await newPatient.generateAuthToken();
+        delete req.session.tempUser;
+
+        res.status(201).send({ newPatient, token });
+    } catch (e)
+    {
+        console.error("Signup error:", e);
+        res.status(500).send({ error: "Failed to create a new user." });
+    }
+});
+
+
 // Login Route
 router.post("/patient/login", async (req, res) =>
 {
