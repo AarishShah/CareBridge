@@ -51,6 +51,11 @@ router.post("/patient/signup", async (req, res) =>
         res.status(201).send({ newPatient, token });
     } catch (e)
     {
+        // Check for duplicate key error
+        if (e.code === 11000 && e.keyPattern.email)
+        {
+            return res.status(400).send({ error: `The email '${e.keyValue.email}' is already in use. Please use a different email.` });
+        }
         // console.error("Signup error:", e);
         res.status(500).send({ error: "Failed to create a new user." });
     }
@@ -72,7 +77,7 @@ router.get('/auth/google/callback',
             res.redirect(`http://localhost:5173/patient/complete-profile`);
         } else
         {
-            res.redirect(`/patient/dashboard`); // User is already registered, redirect to dashboard
+            res.redirect(`http://localhost:5173/`); // User is already registered, redirect to dashboard
         }
     }
 );
