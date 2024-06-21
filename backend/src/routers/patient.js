@@ -77,7 +77,7 @@ router.get('/auth/google/callback',
             res.redirect(`http://localhost:5173/patient/complete-profile`);
         } else
         {
-            res.redirect(`http://localhost:5173/`); // User is already registered, redirect to dashboard
+            res.redirect(`http://localhost:5173/`); // error page: http://localhost:5173/error (this page should be created) @KhushbooHamid
         }
     }
 );
