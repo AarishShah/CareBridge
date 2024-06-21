@@ -2,6 +2,7 @@
 // C:\'Program Files'\MongoDB\Server\7.0\bin\mongod.exe --dbpath C:\khushi\mongodb-data
 
 const express = require("express");
+const cors = require("cors");
 require("./db/mongoose");
 require("../src/utils/cleanup-token")
 
@@ -12,6 +13,12 @@ const medicalHistoryRouter = require("./routers/medicalHistory");
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+app.use(cors({
+  origin: 'http://localhost:5173', // Replace with your frontend URL
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(express.json());
 // app.use(adminRouter); // to register admin router

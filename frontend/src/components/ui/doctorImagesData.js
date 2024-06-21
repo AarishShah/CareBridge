@@ -13,7 +13,7 @@ const doctorImagesData = [
     button: { text: 'Create Prescription'}
    },
   { src: image4, heading: 'Medical Records', text: 'View and create detailed medical records<br/> to ensure comprehensive patient care<br/> and accurate documentation.',
-    buttons: [{ text: 'View Medical Records', path: "/all-medical-records"},{text: 'Create New Record'}]
+    buttons: [{ text: 'View Medical Records', path: "/all-medical-records"},{text: 'Create New Record', path: "/medical-record/create"}]
    },
   { src: image5, heading: 'Assigned Patients', text: 'Easily manage and assign patients<br/> for personalized healthcare support.',
     buttons: [{ text: 'Assign Patients'}, {text: 'View Assigned Patients'}],
