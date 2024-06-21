@@ -8,6 +8,8 @@ import SignupPagePatient from './pages/SignupPagePatient';
 import Dashboard from './components/ui/Dashboard';
 import PatientDashboard from './components/dashboards/PatientDashboard';
 import DoctorDashboard from './components/dashboards/DoctorDashboard';
+import ReadSingleMedicalRecord from './components/dashboards/medical-record/read/ReadSingleMedicalRecord';
+import ReadAllRecords from './components/dashboards/medical-record/read/ReadAllRecords';
 
 const queryClient = new QueryClient();
 
@@ -20,6 +22,8 @@ const router = createBrowserRouter([
   { path: '/dashboard', element: <Dashboard /> },
   { path: '/patient/dashboard', element: <PatientDashboard /> },
   { path: '/doctor/dashboard', element: <DoctorDashboard /> },
+  { path: '/all-medical-records/:id', element: <ReadSingleMedicalRecord /> },
+  { path: '/all-medical-records', element: <ReadAllRecords /> },
 ]);
 
 function App() {

@@ -25,7 +25,7 @@ const Dashboard = () => {
         }}
       >
         <Sidebar userType={userType} className="sticky top-0 h-full" />
-        <div className="flex-grow overflow-hidden h-full p-4 bg-transparent">
+        <div className="flex-grow no-scrollbar overflow-hidden hover:overflow-scroll h-full p-4 bg-transparent">
           <Images images={imagesData} />
         </div>
       </div>
