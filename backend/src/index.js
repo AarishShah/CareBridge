@@ -1,6 +1,3 @@
-// D:\InstalledSoftwares\mongodb\mongodb\bin\mongod.exe --dbpath=D:\InstalledSoftwares\mongodb\mongodb-data
-// C:\'Program Files'\MongoDB\Server\7.0\bin\mongod.exe --dbpath C:\khushi\mongodb-data
-
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
@@ -15,9 +12,7 @@ const medicalHistoryRouter = require("./routers/medicalHistory");
 const medicalFileRouter = require("./routers/medicalFile");
 
 const app = express();
-
 app.use(cors());
-
 app.use(session({
   secret: 'your_secret_key',
   resave: false,
