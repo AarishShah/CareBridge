@@ -1,20 +1,36 @@
-import {createBrowserRouter, RouterProvider} from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './components/context/AuthContext';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import SignupPagePatient from './pages/SignupPagePatient';
+import Dashboard from './components/ui/Dashboard';
+import PatientDashboard from './components/dashboards/PatientDashboard';
+import DoctorDashboard from './components/dashboards/DoctorDashboard';
+import FormTemp from './components/auth/signup/FormTemp.jsx'
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
-  {path: '/', element: <LandingPage />},
-  {path: '/login/patient', element: <LoginPage/>},
-  {path: '/login/doctor', element: <LoginPage/>},
-  {path: '/signup/doctor', element: <SignupPage/>},
-  {path: '/signup/patient', element: <SignupPagePatient/>}
-])
+  { path: '/', element: <LandingPage /> },
+  { path: '/login/patient', element: <LoginPage /> },
+  { path: '/login/doctor', element: <LoginPage /> },
+  { path: '/signup/doctor', element: <SignupPage /> },
+  { path: '/signup/patient', element: <SignupPagePatient /> },
+  { path: '/dashboard', element: <Dashboard /> },
+  { path: '/patient/dashboard', element: <PatientDashboard /> },
+  { path: '/doctor/dashboard', element: <DoctorDashboard /> },
+  { path: '/patient/complete-profile', element: <FormTemp /> },
+]);
 
 function App() {
   return (
-    <RouterProvider router={router}/>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

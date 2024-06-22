@@ -35,6 +35,24 @@ const doctorSchema = new mongoose.Schema({
         trim: true,
     },
 
+    bucket:
+    {
+        type: String,
+        required: false,
+    },
+
+    profileKey:
+    {
+        type: String,
+        required: false,
+    },
+
+    region:
+    {
+        type: String,
+        required: false,
+    },
+
     gender:
     {
         type: String,
