@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import image from '../../../../assets/8.png';
 
 function PatientList() {
   const [assignedPatients, setAssignedPatients] = useState([]);
@@ -12,17 +13,16 @@ function PatientList() {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
-
-      
-      if (response.data) {
-        setAssignedPatients([response.data]);
+      if (response.data && response.data.assignedPatients) {
+        console.log("Assigned Patients:", response.data.assignedPatients); // Debugging statement
+        setAssignedPatients(response.data.assignedPatients); // Ensure assignedPatients is populated correctly
       } else {
         console.warn("No patient data in response");
-        setAssignedPatients([]); 
+        setAssignedPatients([]);
       }
     } catch (error) {
       console.error("Error fetching assigned patients:", error);
-      setAssignedPatients([]); 
+      setAssignedPatients([]);
     }
   };
 
@@ -31,22 +31,32 @@ function PatientList() {
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-col items-center bg-cover bg-center bg-no-repeat min-h-screen" style={{ backgroundImage: `url(${image})`}}>
+      {assignedPatients.length > 0 && (
+        <h1 className="text-2xl font-semibold text-center text-gray-700 mt-2 mb-6">
+          Create Medical Record
+        </h1>
+      )}
+
       {assignedPatients.length === 0 ? (
         <h2 className="text-xl font-semibold text-center text-gray-700">
           No assigned patients found
         </h2>
       ) : (
         assignedPatients.map((assignedPatient, index) => (
-          <div key={index} className="bg-white shadow-md rounded-lg mb-6 p-6">
+          <div key={index} className="bg-transparent shadow-md rounded-lg mb-6 p-4 w-1/3">
             <ul>
-              <li className="text-lg font-medium text-gray-800">{assignedPatient.name}</li>
+            <li className="flex justify-center items-center">
               <button
-                className="mt-4 h-10 w-48 rounded bg-blue-500 text-white hover:bg-blue-600"
-                onClick={() => navigate(`${assignedPatient.patient}`)}
+                className="text-black text-lg font-semibold hover:text-blue-600"
+                onClick={() => {
+                  console.log("Navigating to create record for patient ID:", assignedPatient.patient); 
+                  navigate(`/medical-record/create/${assignedPatient.patient}`);
+                }}
               >
-                Create Medical Record
+                {assignedPatient.name}
               </button>
+              </li>
             </ul>
           </div>
         ))
