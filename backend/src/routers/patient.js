@@ -66,7 +66,7 @@ router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 
 
 // Google callback URL
 router.get('/auth/google/callback',
-    passport.authenticate('google', { session: true, failureRedirect: '/' }), // remember to check if session is true by default, then remove it
+    passport.authenticate('google', { failureRedirect: '/auth/google' }),
     async (req, res) =>
     {
         req.session.tempUser = req.user;
@@ -115,8 +115,8 @@ router.post("/patient/complete-profile", async (req, res) =>
         res.status(201).send({ newPatient, token });
     } catch (e)
     {
-        console.error("Signup error:", e);
-        console.log(req.body);
+        // console.error("Signup error:", e);
+        // console.log(req.body);
         res.status(500).send({ error: "Failed to create a new user." });
     }
 });
