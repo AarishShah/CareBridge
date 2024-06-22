@@ -19,6 +19,32 @@ const getProfileUrl = async (bucket, profileKey) =>
     return await getSignedUrl(s3, command, { expiresIn: 4000 });
 };
 
+const getUploadProfileUrl = async (fileType) =>
+{
+    let key;
+    if (fileType)
+    {
+        const ext = fileType.split(".")[1];
+        key = `profile/${randomUUID()}.${ext}`;
+    }
+
+    let uploadUrl = "";
+    if (key)
+    {
+        const putObjectCommands =
+        {
+            Bucket: process.env.BUCKET_NAME,
+            Key: key,
+            ContentType: "image/jpeg",
+        };
+        const command = new PutObjectCommand(putObjectCommands);
+
+        uploadUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    }
+
+    return { key, uploadUrl };
+}
+
 // completed:
 
 // Sign Up Route
@@ -42,20 +68,9 @@ router.post("/doctor/signup", async (req, res) =>
 {
   try
   {
+    const { key, uploadUrl } = await getUploadProfileUrl(req.query.fileType);
+
     const { name, email, password, gender, specialization, yearsOfExperience, qualifications } = req.body;
-
-    const ext = req.query.fileType.split(".")[1];
-    const key = `profile/${randomUUID()}.${ext}`;
-
-    const putObjectCommands =
-    {
-        Bucket: process.env.BUCKET_NAME,
-        Key: key,
-        ContentType: "image/jpeg",
-    };
-
-    const command = new PutObjectCommand(putObjectCommands);
-    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 4000 });
 
     const missingFields = [];
     if (!name) missingFields.push("name");
@@ -110,27 +125,16 @@ router.post("/doctor/login", async (req, res) =>
 // Update Route
 router.patch("/doctor/me", auth, async (req, res) =>
 {
+  const { key, uploadUrl } = await getUploadProfileUrl(req.query.fileType);
+
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password', 'gender', 'specialization', 'yearsOfExperience', 'qualifications'];
   const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
-
-  const ext = req.query.fileType.split(".")[1];
-  const key = `profile/${randomUUID()}.${ext}`;
   
   if (!isValidOperation)
   {
     return res.status(404).send({ error: 'Invalid updates!' });
   }
-
-  const putObjectCommands =
-    {
-        Bucket: process.env.BUCKET_NAME,
-        Key: key,
-        ContentType: "image/jpeg",
-    };
-
-    const command = new PutObjectCommand(putObjectCommands);
-    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
 
   try
   {

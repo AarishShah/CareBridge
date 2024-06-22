@@ -2,7 +2,7 @@
 // C:\'Program Files'\MongoDB\Server\7.0\bin\mongod.exe --dbpath C:\khushi\mongodb-data
 
 const express = require("express");
-const path = require('path');
+const cors = require("cors");
 const session = require("express-session");
 
 require("./db/mongoose");
@@ -16,6 +16,8 @@ const medicalFileRouter = require("./routers/medicalFile");
 
 const app = express();
 
+app.use(cors());
+
 app.use(session({
   secret: 'your_secret_key',
   resave: false,
@@ -26,10 +28,6 @@ app.use(session({
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
-
-// statically serve profile-pictures folder
-const profileDir = path.join(__dirname, "../uploads/profile-pictures");
-app.use(express.static(profileDir));
 
 // app.use(adminRouter); // to register admin router
 app.use(patientRouter); // to register patient router

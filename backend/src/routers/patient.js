@@ -23,6 +23,31 @@ const getProfileUrl = async (bucket, profileKey) =>
     return await getSignedUrl(s3, command, { expiresIn: 4000 });
 };
 
+const getUploadProfileUrl = async (fileType) => {
+    let key;
+    if (fileType)
+    {
+        const ext = fileType.split(".")[1];
+        key = `profile/${randomUUID()}.${ext}`;
+    }
+
+    let uploadUrl = "";
+    if (key)
+    {
+        const putObjectCommands =
+        {
+            Bucket: process.env.BUCKET_NAME,
+            Key: key,
+            ContentType: "image/jpeg",
+        };
+        const command = new PutObjectCommand(putObjectCommands);
+
+        uploadUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    }
+
+    return { key, uploadUrl };
+}
+
 // completed:
 
 // Sign Up Route
@@ -44,20 +69,9 @@ router.post("/patient/signup", async (req, res) =>
 {
     try
     {
-        const { name, email, password, DOB, gender, maritalStatus, occupation, address, religion } = req.body;
+        const { key, uploadUrl } = await getUploadProfileUrl(req.query.fileType);
 
-        const ext = req.query.fileType.split(".")[1];
-        const key = `profile/${randomUUID()}.${ext}`;
-
-        const putObjectCommands =
-        {
-            Bucket: process.env.BUCKET_NAME,
-            Key: key,
-            ContentType: "image/jpeg",
-        };
-
-        const command = new PutObjectCommand(putObjectCommands);
-        const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 3600, });
+        const { name, email, password, DOB, gender, maritalStatus, occupation, address } = req.body;
 
         const missingFields = [];
         if (!name) missingFields.push("name");
@@ -73,7 +87,6 @@ router.post("/patient/signup", async (req, res) =>
         {
             return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(", ")}. Please ensure all fields are filled out correctly.`, });
         }
-
 
         const newPatient = await Patient.create({ name, email, password, profileKey: key, bucket: process.env.BUCKET_NAME, region: process.env.REGION, DOB, gender, maritalStatus, occupation, address });
 
@@ -169,7 +182,7 @@ router.post("/patient/login", async (req, res) =>
     }
     catch (error)
     {
-        console.error("Login error:", error);
+        // console.error("Login error:", error);
         res.status(400).send({ error: "Login failed" });
     }
 });
@@ -177,6 +190,8 @@ router.post("/patient/login", async (req, res) =>
 // Update Route
 router.patch("/patient/me", auth, async (req, res) =>
 {
+    const { key, uploadUrl } = await getUploadProfileUrl(req.query.fileType);
+
     const updates = Object.keys(req.body); // returns the keys of the json object as an array
     const allowedUpdates = ["name", "email", "password", "gender", "maritalStatus", "occupation", "address",];
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
@@ -185,19 +200,6 @@ router.patch("/patient/me", auth, async (req, res) =>
     {
         return res.status(404).send({ error: "Invalid updates!" });
     }
-
-    const ext = req.query.fileType.split(".")[1];
-    const key = `profile/${randomUUID()}.${ext}`;
-
-    const putObjectCommands =
-    {
-        Bucket: process.env.BUCKET_NAME,
-        Key: key,
-        ContentType: "image/jpeg",
-    };
-
-    const command = new PutObjectCommand(putObjectCommands);
-    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 4000 });
 
     try
     {

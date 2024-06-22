@@ -1,11 +1,11 @@
 const express = require("express");
 const path = require("path");
 const { randomUUID } = require("crypto");
-const { HttpRequest } = require("@aws-sdk/protocol-http");
+const { HttpRequest } = require("@smithy/protocol-http");
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl, S3RequestPresigner } = require("@aws-sdk/s3-request-presigner");
-const { parseUrl } = require("@aws-sdk/url-parser");
-const { Hash } = require("@aws-sdk/hash-node")
+const { parseUrl } = require("@smithy/url-parser");
+const { Hash } = require("@smithy/hash-node")
 const { formatUrl } = require("@aws-sdk/util-format-url");
 
 const s3 = require("../utils/s3Client");
