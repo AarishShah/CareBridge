@@ -62,16 +62,19 @@ const patientSchema = new mongoose.Schema(
             type: String,
             minlength: 8,
             maxlength: 64,
-            // required: true,
+            required: function () { return !this.isGoogleSignUp; },
             trim: true,
             validate(value)
             {
-                if (!this.isGoogleSignUp && (!value || value.length < 8))
+                // Skip validation if the user signed up with Google
+                if (this.isGoogleSignUp) return;
+                if (!value || value.length < 8)
                 {
-                    throw new Error("Password is required and should be at least 8 characters long");
+                    throw new Error("Password is required and should be at between 8 to 64 characters long");
 
                 }
-            }
+            },
+            default: null,
         },
 
         isGoogleSignUp:
@@ -79,7 +82,7 @@ const patientSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
-        
+
         googleId:
         {
             type: String,
@@ -250,7 +253,7 @@ patientSchema.pre("save", async function (next)
 {
     const patient = this;
 
-    if (patient.isModified("password") && !patient.isGoogleSignUp)
+    if (patient.isModified("password") && patient.password)
     {
         patient.password = await bcrypt.hash(patient.password, 8);
     }
