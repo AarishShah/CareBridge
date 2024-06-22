@@ -1,11 +1,15 @@
 const express = require("express");
+
 const path = require("path");
 const { randomUUID } = require("crypto");
 const { GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const passport = require("passport");
+
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
+require("../middleware/passport");
 const router = new express.Router();
 const { assignDoctor, removeDoctor } = require('../utils/assignment');
 const s3 = require("../utils/s3Client");
@@ -70,16 +74,84 @@ router.post("/patient/signup", async (req, res) =>
             return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(", ")}. Please ensure all fields are filled out correctly.`, });
         }
 
-        const newPatient = await Patient.create({ name, email, password, profileKey: key, bucket: process.env.BUCKET_NAME, region: process.env.REGION, DOB, gender, maritalStatus, occupation, address, religion });
+
+        const newPatient = await Patient.create({ name, email, password, profileKey: key, bucket: process.env.BUCKET_NAME, region: process.env.REGION, DOB, gender, maritalStatus, occupation, address });
+
         const token = await newPatient.generateAuthToken();
 
         res.status(201).send({ newPatient, token, uploadUrl });
     } catch (e)
     {
+        // Check for duplicate key error
+        if (e.code === 11000 && e.keyPattern.email)
+        {
+            return res.status(400).send({ error: `The email '${e.keyValue.email}' is already in use. Please use a different email.` });
+        }
         // console.error("Signup error:", e);
         res.status(500).send({ error: "Failed to create a new user." });
     }
 });
+
+// Redirect to Google for authentication
+router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// Google callback URL
+router.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/auth/google' }),
+    async (req, res) =>
+    {
+        req.session.tempUser = req.user;
+        const isNewUser = !req.user.DOB || !req.user.gender || !req.user.maritalStatus || !req.user.occupation || !req.user.address;
+
+        if (isNewUser)
+        {
+            res.redirect(`http://localhost:5173/patient/complete-profile`);
+        } else
+        {
+            res.redirect(`http://localhost:5173/`); // error page: http://localhost:5173/error (this page should be created) @KhushbooHamid
+        }
+    }
+);
+
+router.post("/patient/complete-profile", async (req, res) =>
+{
+    try
+    {
+        const tempUser = req.session.tempUser;
+        const { DOB, gender, maritalStatus, occupation, address } = req.body;
+
+        const missingFields = [];
+        if (!DOB) missingFields.push("date of birth (DOB)");
+        if (!gender) missingFields.push("gender");
+        if (!maritalStatus) missingFields.push("maritalStatus");
+        if (!occupation) missingFields.push("occupation");
+        if (!address) missingFields.push("address");
+
+        if (missingFields.length > 0)
+        {
+            return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(", ")}. Please ensure all fields are filled out correctly.`, });
+        }
+
+        const newPatient = await Patient.create(
+            {
+                name: tempUser.name,
+                email: tempUser.email,
+                isGoogleSignUp: tempUser.isGoogleSignUp,
+                googleId: tempUser.googleId,
+                DOB, gender, maritalStatus, occupation, address
+            });
+        const token = await newPatient.generateAuthToken();
+        delete req.session.tempUser;
+
+        res.status(201).send({ newPatient, token });
+    } catch (e)
+    {
+        // console.error("Signup error:", e);
+        // console.log(req.body);
+        res.status(500).send({ error: "Failed to create a new user." });
+    }
+});
+
 
 // Login Route
 router.post("/patient/login", async (req, res) =>

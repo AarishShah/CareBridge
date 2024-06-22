@@ -3,6 +3,8 @@
 
 const express = require("express");
 const path = require('path');
+const session = require("express-session");
+
 require("./db/mongoose");
 require("../src/utils/cleanup-token")
 
@@ -13,6 +15,14 @@ const medicalHistoryRouter = require("./routers/medicalHistory");
 const medicalFileRouter = require("./routers/medicalFile");
 
 const app = express();
+
+app.use(session({
+  secret: 'your_secret_key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set secure to true if using HTTPS
+}));
+
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
