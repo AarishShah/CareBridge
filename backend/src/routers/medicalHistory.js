@@ -7,71 +7,68 @@ const openai = require('../utils/openai');
 const router = express.Router();
 
 // Create patient's medical history
-router.post('/medicalhistory/:id', auth, async (req, res) => 
-{
-    if (req.role !== 'doctor')
-    {
+router.post('/medicalhistory/:id', auth, async (req, res) => {
+    console.log("Request received to create medical history");
+    console.log("User Role:", req.role);
+    console.log("Patient ID:", req.params.id);
+    console.log("Doctor ID:", req.user._id);
+
+    if (req.role !== 'doctor') {
+        console.log("Unauthorized access: Only doctors are authorized to add patient history");
         return res.status(403).send({ error: 'Only doctors are authorized to add patient history' });
     }
 
     const patientId = req.params.id;
     const doctorId = req.user._id; // req.user is set by the auth middleware
 
-    try
-    {
+    try {
         const patient = await Patient.findById(patientId);
+        console.log("Patient found:", patient);
 
-        if (!patient)
-        {
+        if (!patient) {
+            console.log("Patient not found with ID:", patientId);
             return res.status(404).send({ error: 'Patient not found' });
         }
 
         const isAssignedDoctor = patient.assignedDoctors.some(doc => doc.doctor.toString() === doctorId.toString());
 
-        if (!isAssignedDoctor)
-        {
+        if (!isAssignedDoctor) {
             return res.status(403).send({ error: 'Doctor not authorized to add history for this patient' });
         }
 
         const title = req.body.medicalHistory.title;
         const modeOfAdmission = req.body.medicalHistory.biodata.modeOfAdmission;
-        const medicalHistory = new MedicalHistory(
-            {
-                title,
-                biodata:
-                {
-                    id: patientId,
-                    name: patient.name,
-                    email: patient.email,
-                    gender: patient.gender,
-                    age: patient.age,
-                    address: patient.address,
-                    occupation: patient.occupation,
-                    maritalStatus: patient.maritalStatus,
-                    modeOfAdmission: modeOfAdmission
-                },
-                ...req.body,
-                doctorInfo:
-                {
-                    doctorSignature: doctorId,
-                    doctorName: req.user.name,
-                    doctorEmail: req.user.email
-                }
+        const medicalHistory = new MedicalHistory({
+            title,
+            biodata: {
+                id: patientId,
+                name: patient.name,
+                email: patient.email,
+                gender: patient.gender,
+                age: patient.age,
+                address: patient.address,
+                occupation: patient.occupation,
+                maritalStatus: patient.maritalStatus,
+                modeOfAdmission: modeOfAdmission
+            },
+            ...req.body,
+            doctorInfo: {
+                doctorSignature: doctorId,
+                doctorName: req.user.name,
+                doctorEmail: req.user.email
+            }
+        });
 
-            });
-
-            const AISummary = await openai.summarize(medicalHistory)
-            medicalHistory.summary = AISummary;
+        const AISummary = await openai.summarize(medicalHistory);
+        medicalHistory.summary = AISummary;
 
         await medicalHistory.save();
         res.status(201).send(medicalHistory);
-    } catch (e)
-    {
+    } catch (e) {
         console.error("Error creating patient history:", e);
         res.status(400).send({ error: 'Failed to create patient history' });
     }
 });
-
 // Route to fetch paginated medical histories (only title and ID) with authorization
 router.get('/medicalhistories', auth, async (req, res) =>
 {

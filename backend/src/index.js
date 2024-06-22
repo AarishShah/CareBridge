@@ -22,6 +22,12 @@ app.use(session({
 
 const port = process.env.PORT || 5000;
 
+app.use(cors({
+  origin: 'http://localhost:5173', // Replace with your frontend URL
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
 // app.use(adminRouter); // to register admin router

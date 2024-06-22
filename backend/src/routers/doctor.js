@@ -206,11 +206,15 @@ router.post("/doctor/logoutall", auth, async (req, res) =>
 });
 
 // Read Doctor Route
-router.get("/doctor/me", auth, async (req, res) =>
-{
-  res.send(req.user);
+router.get("/doctor/me", auth, async (req, res) => {
+  try {
+    // Populate assigned patients in the response
+    const doctor = await Doctor.findById(req.user._id).populate('assignedPatients');
+    res.send(doctor);
+  } catch (error) {
+    res.status(500).send({ error: "Failed to fetch doctor details" });
+  }
 });
-
 // assignDoctor Route
 router.post("/doctor/assignDoctor", auth, async (req, res) =>
 {
