@@ -2,6 +2,7 @@
 // C:\'Program Files'\MongoDB\Server\7.0\bin\mongod.exe --dbpath C:\khushi\mongodb-data
 
 const express = require("express");
+const session = require("express-session");
 require("./db/mongoose");
 require("../src/utils/cleanup-token")
 
@@ -11,6 +12,14 @@ const doctorRouter = require("./routers/doctor");
 const medicalHistoryRouter = require("./routers/medicalHistory");
 
 const app = express();
+
+app.use(session({
+  secret: 'your_secret_key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set secure to true if using HTTPS
+}));
+
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
