@@ -89,6 +89,24 @@ const patientSchema = new mongoose.Schema(
             default: null,
         },
 
+        profileKey:
+        {
+            type: String,
+            requied: false,
+        },
+
+        bucket:
+        {
+            type: String,
+            requied: false,
+        },
+
+        region:
+        {
+            type: String,
+            requied: false,
+        },
+
         DOB:
         {
             type: Date,

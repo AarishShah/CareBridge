@@ -1,11 +1,27 @@
 const express = require("express");
+
+const path = require("path");
+const { randomUUID } = require("crypto");
+const { GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const passport = require("passport");
+
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
 require("../middleware/passport");
 const router = new express.Router();
 const { assignDoctor, removeDoctor } = require('../utils/assignment');
+const s3 = require("../utils/s3Client");
+
+require("dotenv").config({ path: path.join(__dirname, "../.env") });
+
+const getProfileUrl = async (bucket, profileKey) =>
+{
+    if (!bucket || !profileKey) return "";
+    const command = new GetObjectCommand({ Bucket: bucket, Key: profileKey });
+    return await getSignedUrl(s3, command, { expiresIn: 4000 });
+};
 
 // completed:
 
@@ -30,6 +46,19 @@ router.post("/patient/signup", async (req, res) =>
     {
         const { name, email, password, DOB, gender, maritalStatus, occupation, address, religion } = req.body;
 
+        const ext = req.query.fileType.split(".")[1];
+        const key = `profile/${randomUUID()}.${ext}`;
+
+        const putObjectCommands =
+        {
+            Bucket: process.env.BUCKET_NAME,
+            Key: key,
+            ContentType: "image/jpeg",
+        };
+
+        const command = new PutObjectCommand(putObjectCommands);
+        const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 3600, });
+
         const missingFields = [];
         if (!name) missingFields.push("name");
         if (!email) missingFields.push("email");
@@ -45,10 +74,12 @@ router.post("/patient/signup", async (req, res) =>
             return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(", ")}. Please ensure all fields are filled out correctly.`, });
         }
 
-        const newPatient = await Patient.create({ name, email, password, DOB, gender, maritalStatus, occupation, address });
+
+        const newPatient = await Patient.create({ name, email, password, profileKey: key, bucket: process.env.BUCKET_NAME, region: process.env.REGION, DOB, gender, maritalStatus, occupation, address });
+
         const token = await newPatient.generateAuthToken();
 
-        res.status(201).send({ newPatient, token });
+        res.status(201).send({ newPatient, token, uploadUrl });
     } catch (e)
     {
         // Check for duplicate key error
@@ -128,12 +159,17 @@ router.post("/patient/login", async (req, res) =>
     try
     {
         const patient = await Patient.findByCredentials(req.body.email, req.body.password);
+
+        const { bucket, profileKey } = patient;
+        const profileUrl = await getProfileUrl(bucket, profileKey);
+
         const token = await patient.generateAuthToken();
-        res.status(202).send({ patient, token });
+
+        res.status(202).send({ patient, profileUrl, token });
     }
     catch (error)
     {
-        // console.error("Login error:", error);
+        console.error("Login error:", error);
         res.status(400).send({ error: "Login failed" });
     }
 });
@@ -150,11 +186,31 @@ router.patch("/patient/me", auth, async (req, res) =>
         return res.status(404).send({ error: "Invalid updates!" });
     }
 
+    const ext = req.query.fileType.split(".")[1];
+    const key = `profile/${randomUUID()}.${ext}`;
+
+    const putObjectCommands =
+    {
+        Bucket: process.env.BUCKET_NAME,
+        Key: key,
+        ContentType: "image/jpeg",
+    };
+
+    const command = new PutObjectCommand(putObjectCommands);
+    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 4000 });
+
     try
     {
-        updates.forEach((update) => (req.user[update] = req.body[update]));
+        updates.forEach((update) =>
+        {
+            req.user[update] = req.body[update];
+            req.user.profileKey = key;
+            req.user.bucket = process.env.BUCKET_NAME;
+            req.user.region = process.env.REGION;
+        });
+
         await req.user.save();
-        res.status(200).send(req.user);
+        res.status(200).send({ updatedPatient: req.user, uploadUrl });
     }
     catch (error)
     {
