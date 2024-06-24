@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import image from '../../../assets/8.png';
@@ -32,9 +32,9 @@ function DoctorSignup() {
     });
   }
   const { steps, step, currentStep, back, next } = useMultiStepForm([
-    <PersonalInfo {...data} updateField={updateFields} />,
-    <ProfessionalInfo {...data} updateField={updateFields} />,
-    <AccountDetails {...data} updateField={updateFields} />,
+    <PersonalInfo key="personal" {...data} updateField={updateFields} />,
+    <ProfessionalInfo key="professional" {...data} updateField={updateFields} />,
+    <AccountDetails key="account" {...data} updateField={updateFields} />,
   ]);
   const { pathname } = useLocation();
   const navigate = useNavigate();

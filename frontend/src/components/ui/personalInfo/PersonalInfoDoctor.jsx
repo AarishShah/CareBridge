@@ -33,7 +33,7 @@ const PersonalInfoDoctor = () => {
       </div>
       <div className="flex-1">
         <h3 className="text-2xl font-semibold mb-6">Personal Information</h3>
-        <p><span className="font-semibold">Experience:</span> {doctorInfo.yearsOfExperience}</p>
+        <p><span className="font-semibold">Experience:</span> {doctorInfo.yearsOfExperience} year(s)</p>
         <p><span className="font-semibold">Specialization:</span> {doctorInfo?.specialization?.map((s) => (
           <span key={s}> {s}, </span>
         ))}</p>

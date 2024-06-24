@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-// import axios from "axios";
+import axios from "axios";
 
 import useMultiStepForm from "../../../../hooks/use-multistep";
 import AccountDetails from "./AccountDetails";
@@ -37,9 +37,9 @@ function PatientSignup() {
     });
   }
   const { steps, step, currentStep, back, next } = useMultiStepForm([
-    <PersonalInfo {...data} updateField={updateFields} />,
-    <Address {...data} updateField={updateFields} />,
-    <AccountDetails {...data} updateField={updateFields} />,
+    <PersonalInfo key="personal" {...data} updateField={updateFields} />,
+    <Address key="info" {...data} updateField={updateFields} />,
+    <AccountDetails key="account" {...data} updateField={updateFields} />,
   ]);
   const { pathname } = useLocation();
   const navigate = useNavigate();
