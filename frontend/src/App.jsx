@@ -12,6 +12,8 @@ import ReadSingleMedicalRecord from './components/dashboards/medical-record/read
 import ReadAllRecords from './components/dashboards/medical-record/read/ReadAllRecords';
 import Create from './components/dashboards/medical-record/read/Create';
 import CreateRecord from './components/dashboards/medical-record/read/create/CreateRecord';
+import DoctorEdit from './components/ui/personalInfo/DoctorEdit';
+import PatientEdit from './components/ui/personalInfo/PatientEdit';
 
 const queryClient = new QueryClient();
 
@@ -28,6 +30,9 @@ const router = createBrowserRouter([
   { path: '/all-medical-records', element: <ReadAllRecords /> },
   { path: '/medical-record/create', element: <Create /> },
   { path: '/medical-record/create/:id', element: <CreateRecord /> },
+  { path: '/doctor/edit', element: <DoctorEdit /> },
+  { path: '/patient/edit', element: <PatientEdit /> },
+
 
 ]);
 

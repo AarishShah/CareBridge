@@ -190,6 +190,7 @@ router.post("/patient/login", async (req, res) =>
 // Update Route
 router.patch("/patient/me", auth, async (req, res) =>
 {
+    console.log("Request body:", req.body); 
     const { key, uploadUrl } = await getUploadProfileUrl(req.query.fileType);
 
     const updates = Object.keys(req.body); // returns the keys of the json object as an array
