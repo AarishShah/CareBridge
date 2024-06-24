@@ -39,7 +39,7 @@ function ReadSingleMedicalRecord() {
 
   return (
     <div className="container mx-auto p-6">
-      {biodata && <h1 className="text-3xl font-bold text-gray-800">Medical Record for {biodata.name}</h1>}
+      {biodata && <h1 className="text-3xl font-bold text-gray-800 ">Medical Record for {biodata.name}</h1>}
       {title && <h2 className="text-2xl font-semibold text-gray-700 mt-4">Title: {title}</h2>}
 
       {biodata && (
