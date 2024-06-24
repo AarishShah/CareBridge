@@ -1,7 +1,7 @@
 import image1 from "../../assets/9.png";
 import image2 from "../../assets/10.png";
 import image3 from "../../assets/11.png";
-import image4 from "../../assets/12.png";
+import image4 from "../../assets/14.png";
 import image5 from "../../assets/13.png";
 
 const patientImagesData = [
