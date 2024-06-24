@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
+import PersonalInfoDoctor from '../ui/personalInfo/PersonalInfoDoctor';
+import PersonalInfoPatient from '../ui/personalInfo/PersonalInfoPatient';
 
 const Images = ({ images }) => {
   const navigate = useNavigate();
@@ -7,11 +9,23 @@ const Images = ({ images }) => {
   const handleButtonClick = (path) => {
     navigate(path);
   };
+
+  const renderComponent = (component) => {
+    switch (component) {
+      case 'PersonalInfoDoctor':
+        return <PersonalInfoDoctor />;
+      case 'PersonalInfoPatient':
+        return <PersonalInfoPatient />;
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="h-full w-10/12 ml-44 mt-12 no-scrollbar overflow-hidden hover:overflow-scroll ">
+    <div className="h-full w-10/12 ml-44 mt-12 no-scrollbar overflow-hidden hover:overflow-scroll">
       {images.map((image, index) => (
-        <div key={index} className="relative mb-12 ">
-          <img src={image.src} alt="" className="w-full h-auto" />
+        <div key={index} className="relative mb-12">
+          <img src={image.src} alt={image.heading} className="w-full h-auto" />
           <div className="absolute top-0 left-12 mt-8 text-black text-2xl font-semibold p-2">
             {image.heading}
             <div className="">
@@ -36,7 +50,11 @@ const Images = ({ images }) => {
             </div>
           </div>
           <div className="absolute top-20 text-lg p-2 left-12">
-            <div dangerouslySetInnerHTML={{ __html: image.text }} />
+            {image.component ? (
+              renderComponent(image.component)
+            ) : (
+              <div dangerouslySetInnerHTML={{ __html: image.text }} />
+            )}
           </div>
         </div>
       ))}

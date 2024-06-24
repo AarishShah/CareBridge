@@ -5,13 +5,15 @@ import image4 from "../../assets/12.png";
 import image5 from "../../assets/13.png";
 
 const patientImagesData = [
-  { src: image1, heading: "Personal Information", text: "" },
+  { src: image1, heading: "",
+    component: 'PersonalInfoPatient'
+   },
 
   {
     src: image2,
     heading: "Files",
     text: "Easily access and review your old <br/> medical records to stay informed <br/> about your health journey",
-    button: { text: "View Old Medical Records"},
+    button: { text: "View Old Medical Records" },
   },
 
   {
@@ -25,7 +27,7 @@ const patientImagesData = [
     src: image4,
     heading: "Medical Records",
     text: "View and manage your complete<br/> medical history conveniently to stay<br/> informed about your health journey",
-    button: { text: "View Medical History", path: "/all-medical-records"  },
+    button: { text: "View Medical History", path: "/all-medical-records" },
   },
 
   {
