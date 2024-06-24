@@ -173,12 +173,9 @@ router.post("/patient/login", async (req, res) =>
     {
         const patient = await Patient.findByCredentials(req.body.email, req.body.password);
 
-        const { bucket, profileKey } = patient;
-        const profileUrl = await getProfileUrl(bucket, profileKey);
-
         const token = await patient.generateAuthToken();
 
-        res.status(202).send({ patient, profileUrl, token });
+        res.status(202).send({ patient, token });
     }
     catch (error)
     {
@@ -275,7 +272,12 @@ router.post("/patient/logoutall", auth, async (req, res) =>
 // Read Patient Route
 router.get("/patient/me", auth, async (req, res) =>
 {
-    res.send(req.user);
+    const patient = await Patient.findById(req.user._id)
+
+    const { bucket, profileKey } = patient;
+    const profileUrl = await getProfileUrl(bucket, profileKey);
+    
+    res.send({ patient, profileUrl });
 });
 
 // assignDoctor Route

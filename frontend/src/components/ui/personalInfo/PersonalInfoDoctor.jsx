@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios';
 import { FaEdit } from 'react-icons/fa';
@@ -6,13 +6,15 @@ import defaultImage from '../../../assets/8.png';
 
 const PersonalInfoDoctor = () => {
   const [doctorInfo, setDoctorInfo] = useState({});
+  const [profile, setProfile] = useState('');
 
   const getDoctorProfile = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:5000/doctor/me", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      setDoctorInfo(response.data);
+      setDoctorInfo(response.data.doctor);
+      setProfile(response.data.profileUrl);
     } catch (error) {
       console.error("Failed to fetch doctor profile:", error);
     }
@@ -29,7 +31,7 @@ const PersonalInfoDoctor = () => {
       <div className="flex-none w-56 mr-44">
         <div className="flex items-center">
           <img
-            src={doctorInfo.uploadUrl || defaultImage}
+            src={profile || defaultImage}
             alt="Profile"
             className="w-24 h-24 rounded-full mr-4 border-gray-400 border-2"
             style={{ width: '80px', height: '80px' }}
