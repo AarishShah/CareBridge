@@ -15,6 +15,7 @@ import CreateRecord from './components/dashboards/medical-record/read/create/Cre
 import DoctorEdit from './components/ui/personalInfo/DoctorEdit';
 import PatientEdit from './components/ui/personalInfo/PatientEdit';
 import ViewFiles from './components/dashboards/medical-files/ViewFiles';
+import FormTemp from './components/auth/FormTemp'
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
   { path: "/doctor/edit", element: <DoctorEdit /> },
   { path: "/patient/edit", element: <PatientEdit /> },
   { path: "/patient/dashboard/medical-files", element: <ViewFiles /> },
+  { path: '/patient/complete-profile', element: <FormTemp /> },
 ]);
 
 function App() {
