@@ -23,7 +23,8 @@ const getProfileUrl = async (bucket, profileKey) =>
     return await getSignedUrl(s3, command, { expiresIn: 4000 });
 };
 
-const getUploadProfileUrl = async (fileType) => {
+const getUploadProfileUrl = async (fileType) =>
+{
     let key;
     if (fileType)
     {
@@ -113,18 +114,51 @@ router.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/auth/google' }),
     async (req, res) =>
     {
-        req.session.tempUser = req.user;
-        const isNewUser = !req.user.DOB || !req.user.gender || !req.user.maritalStatus || !req.user.occupation || !req.user.address;
+        const user = req.user;
+        console.log(user);
 
-        if (isNewUser)
+        if (!user)
         {
-            res.redirect(`http://localhost:5173/patient/complete-profile`);
-        } else
+            return res.redirect('/auth/google');
+        }
+
+        try
         {
-            res.redirect(`http://localhost:5173/`); // error page: http://localhost:5173/error (this page should be created) @KhushbooHamid
+            const existingUser = await Patient.findOne({ email: user.email });
+
+            // check if user is in db
+            if (existingUser)
+            {
+                // if user is in db but not linked to google account then link the account
+                if (!existingUser.isGoogleSignUp)
+                {
+                    existingUser.isGoogleSignUp = true;
+                    existingUser.googleId = user.googleId;
+                    await existingUser.save();
+                }
+
+                // generate token, save it to the session and redirect to dashboard
+                const token = await existingUser.generateAuthToken();
+                req.session.token = token;
+                return res.redirect('http://localhost:5173/patient/dashboard');
+            }
+
+            else
+            {
+                // Temporarily store the user data
+                req.session.tempUser = user;
+                return res.redirect('http://localhost:5173/patient/complete-profile');
+            }
+
+        } catch (error)
+        {
+            console.error("Google authentication error:", error);
+            return res.redirect('/auth/google');
         }
     }
 );
+
+
 
 router.post("/patient/complete-profile", async (req, res) =>
 {
