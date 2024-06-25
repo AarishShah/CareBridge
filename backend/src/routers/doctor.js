@@ -15,7 +15,12 @@ require('dotenv').config({path: path.join(__dirname, '../.env')});
 const getProfileUrl = async (bucket, profileKey) =>
 {
     if (!bucket || !profileKey) return "";
-    const command = new GetObjectCommand({ Bucket: bucket, Key: profileKey });
+    const command = new GetObjectCommand(
+    {
+        Bucket: bucket,
+        Key: profileKey,
+        ResponseContentType: "image/jpeg",
+    });
     return await getSignedUrl(s3, command, { expiresIn: 4000 });
 };
 
@@ -109,12 +114,9 @@ router.post("/doctor/login", async (req, res) =>
   {
     const doctor = await Doctor.findByCredentials(req.body.email, req.body.password);
 
-    const { bucket, profileKey } = doctor;
-    const profileUrl = await getProfileUrl(bucket, profileKey);
-
     const token = await doctor.generateAuthToken();
 
-    res.status(200).send({ doctor, profileUrl, token });
+    res.status(200).send({ doctor, token });
   } catch (error)
   {
     console.error("Login error:", error);
@@ -210,7 +212,11 @@ router.get("/doctor/me", auth, async (req, res) => {
   try {
     // Populate assigned patients in the response
     const doctor = await Doctor.findById(req.user._id).populate('assignedPatients');
-    res.send(doctor);
+    
+    const { bucket, profileKey } = doctor;
+    const profileUrl = await getProfileUrl(bucket, profileKey);
+
+    res.send({ doctor, profileUrl });
   } catch (error) {
     res.status(500).send({ error: "Failed to fetch doctor details" });
   }

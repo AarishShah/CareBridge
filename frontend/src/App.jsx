@@ -12,23 +12,28 @@ import ReadSingleMedicalRecord from './components/dashboards/medical-record/read
 import ReadAllRecords from './components/dashboards/medical-record/read/ReadAllRecords';
 import Create from './components/dashboards/medical-record/read/Create';
 import CreateRecord from './components/dashboards/medical-record/read/create/CreateRecord';
+import DoctorEdit from './components/ui/personalInfo/DoctorEdit';
+import PatientEdit from './components/ui/personalInfo/PatientEdit';
+import ViewFiles from './components/dashboards/medical-files/ViewFiles';
 
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
-  { path: '/', element: <LandingPage /> },
-  { path: '/login/patient', element: <LoginPage /> },
-  { path: '/login/doctor', element: <LoginPage /> },
-  { path: '/signup/doctor', element: <SignupPage /> },
-  { path: '/signup/patient', element: <SignupPagePatient /> },
-  { path: '/dashboard', element: <Dashboard /> },
-  { path: '/patient/dashboard', element: <PatientDashboard /> },
-  { path: '/doctor/dashboard', element: <DoctorDashboard /> },
-  { path: '/all-medical-records/:id', element: <ReadSingleMedicalRecord /> },
-  { path: '/all-medical-records', element: <ReadAllRecords /> },
-  { path: '/medical-record/create', element: <Create /> },
-  { path: '/medical-record/create/:id', element: <CreateRecord /> },
-
+  { path: "/", element: <LandingPage /> },
+  { path: "/login/patient", element: <LoginPage /> },
+  { path: "/login/doctor", element: <LoginPage /> },
+  { path: "/signup/doctor", element: <SignupPage /> },
+  { path: "/signup/patient", element: <SignupPagePatient /> },
+  { path: "/dashboard", element: <Dashboard /> },
+  { path: "/patient/dashboard", element: <PatientDashboard /> },
+  { path: "/doctor/dashboard", element: <DoctorDashboard /> },
+  { path: "/all-medical-records/:id", element: <ReadSingleMedicalRecord /> },
+  { path: "/all-medical-records", element: <ReadAllRecords /> },
+  { path: "/medical-record/create", element: <Create /> },
+  { path: "/medical-record/create/:id", element: <CreateRecord /> },
+  { path: "/doctor/edit", element: <DoctorEdit /> },
+  { path: "/patient/edit", element: <PatientEdit /> },
+  { path: "/patient/dashboard/medical-files", element: <ViewFiles /> },
 ]);
 
 function App() {
