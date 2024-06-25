@@ -21,7 +21,7 @@ function ViewFiles() {
 
   return (
     <div
-      className="bg-cover bg-center bg-no-repeat min-h-screen"
+      className="flex justify-center  h-screen bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${image})` }}
     >
       <div className="fixed w-1/3 container mx-auto p-6">
@@ -30,9 +30,7 @@ function ViewFiles() {
             No medical files found
           </h2>
         )}
-        <div className="flex justify-center items-center">
-          <h1 className="text-2xl font-semibold mb-6">View Medical Files</h1>
-        </div>
+          <h1 className="text-2xl font-semibold text-center  mt-2 mb-6">View Medical Files</h1>
         {medicalRecords &&
           medicalRecords.map((record) => (
             <div
