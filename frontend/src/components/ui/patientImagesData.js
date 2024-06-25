@@ -13,7 +13,7 @@ const patientImagesData = [
     src: image2,
     heading: "Files",
     text: "Easily access and review your old <br/> medical records to stay informed <br/> about your health journey",
-    button: { text: "View Old Medical Records" },
+    button: { text: "View Medical Files", path: "medical-files" },
   },
 
   {

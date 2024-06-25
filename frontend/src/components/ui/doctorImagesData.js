@@ -14,7 +14,7 @@ const doctorImagesData = [
     src: image2,
     heading: 'Files',
     text: 'Access and review patient files <br/> seamlessly to provide informed<br/> and effective care.',
-    button: { text: 'View Old Medical Records', path: '/view-old-medical-records' },
+    button: { text: 'View Medical Files', path: '/medical-files' },
   },
   {
     src: image3,
