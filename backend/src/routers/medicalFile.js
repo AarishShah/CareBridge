@@ -52,17 +52,19 @@ router.get("/medical-record", auth, async (req, res) =>
         }
 
         let formattedUrl = [];
+        let key = [];
         const presignedUrls = medicalFile.map(async (file) =>
             {
                 const s3ObjectUrl = parseUrl(`https://${file.bucket}.s3.${file.region}.amazonaws.com/${file.key}`);
                 const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
+                key.push(file.key)
                 return formattedUrl.push(formatUrl(url));
             }
         )
 
         await Promise.all(presignedUrls);
 
-        res.status(200).json({ presignedUrl: formattedUrl });
+        res.status(200).json({ presignedUrl: formattedUrl, key });
     } catch (e)
     {
         res.status(400).send({ error: "Error fetching medical file(s)" });   

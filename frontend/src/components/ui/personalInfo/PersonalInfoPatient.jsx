@@ -1,16 +1,18 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios';
 import { FaEdit } from 'react-icons/fa'; 
 
 const PersonalInfoDoctor = () => {
   const [patientInfo, setPatientInfo] = useState({ address: {} });
+  const [profle, setProfile] = useState('');
 
   const getPatientProfile = useCallback(async () => {
     const response = await axios.get("http://localhost:5000/patient/me", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
-    setPatientInfo(response.data);
+    setPatientInfo(response.data.patient);
+    setProfile(response.data.profleUrl)
   }, []);
 
   useEffect(() => {
