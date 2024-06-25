@@ -1,32 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const FormTemp = () => {
   const [formData, setFormData] = useState({
+    name: '',
+    email: '',
     DOB: '',
     gender: '',
     maritalStatus: '',
     occupation: '',
-    address: ''
+    address: {
+      state: '',
+      city: '',
+      street: '',
+      pinCode: ''
+    }
   });
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  // useEffect(() => {
+  //   // Fetch session data and prepopulate the form
+  //   const fetchSessionData = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:5000/patient/session-data', { withCredentials: true });
+  //       const { name, email } = response.data;
+  //       setFormData((prevFormData) => ({
+  //         ...prevFormData,
+  //         name,
+  //         email
+  //       }));
+  //     } catch (err) {
+  //       console.error('Error fetching session data:', err);
+  //     }
+  //   };
+
+  //   fetchSessionData();
+  // }, []);
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  if (name.includes("address")) {
+    const addressField = name.split(".")[1];
     setFormData({
       ...formData,
-      [name]: value
+      address: {
+        ...formData.address,
+        [addressField]: value,
+      },
     });
-  };
+  } else {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  }
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/patient/complete-profile', formData, { withCredentials: true });
       setSuccess('Profile completed successfully!');
-      setError('error');
+      setError('');
       console.log(response.data);
     } catch (err) {
       setError(err.response.data.error);
@@ -88,11 +127,44 @@ const FormTemp = () => {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700">Address:</label>
+          <label className="block text-gray-700">State:</label>
           <input
             type="text"
-            name="address"
-            value={formData.address}
+            name="address.state"
+            value={formData.address.state}
+            onChange={handleChange}
+            className="border rounded w-full py-2 px-3 text-gray-700"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">City:</label>
+          <input
+            type="text"
+            name="address.city"
+            value={formData.address.city}
+            onChange={handleChange}
+            className="border rounded w-full py-2 px-3 text-gray-700"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">Street:</label>
+          <input
+            type="text"
+            name="address.street"
+            value={formData.address.street}
+            onChange={handleChange}
+            className="border rounded w-full py-2 px-3 text-gray-700"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">Pin Code:</label>
+          <input
+            type="text"
+            name="address.pinCode"
+            value={formData.address.pinCode}
             onChange={handleChange}
             className="border rounded w-full py-2 px-3 text-gray-700"
             required
