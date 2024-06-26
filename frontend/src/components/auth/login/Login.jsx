@@ -26,7 +26,7 @@ function LoginPage() {
     onSuccess: (data) => {
       if (data.token) {
         localStorage.setItem("token", data.token);
-        login();
+        login(data.token);
       }
 
       if (location.pathname.includes("doctor")) {

@@ -16,6 +16,7 @@ import DoctorEdit from './components/ui/personalInfo/DoctorEdit';
 import PatientEdit from './components/ui/personalInfo/PatientEdit';
 import ViewFiles from './components/dashboards/medical-files/ViewFiles';
 import FormTemp from './components/auth/FormTemp'
+import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient();
 
@@ -25,9 +26,10 @@ const router = createBrowserRouter([
   { path: "/login/doctor", element: <LoginPage /> },
   { path: "/signup/doctor", element: <SignupPage /> },
   { path: "/signup/patient", element: <SignupPagePatient /> },
-  { path: "/dashboard", element: <Dashboard /> },
-  { path: "/patient/dashboard", element: <PatientDashboard /> },
-  { path: "/doctor/dashboard", element: <DoctorDashboard /> },
+  { path: "/dashboard", element: <ProtectedRoute><Dashboard /></ProtectedRoute> },
+  { path: "/patient/dashboard", element: <ProtectedRoute><PatientDashboard /></ProtectedRoute> },
+  { path: "/doctor/dashboard", element: <ProtectedRoute><DoctorDashboard /></ProtectedRoute> },
+  
   { path: "/all-medical-records/:id", element: <ReadSingleMedicalRecord /> },
   { path: "/all-medical-records", element: <ReadAllRecords /> },
   { path: "/medical-record/create", element: <Create /> },
