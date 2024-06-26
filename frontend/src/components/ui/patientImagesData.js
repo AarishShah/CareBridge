@@ -5,15 +5,16 @@ import image4 from "../../assets/14.png";
 import image5 from "../../assets/13.png";
 
 const patientImagesData = [
-  { src: image1, heading: "",
-    component: 'PersonalInfoPatient'
-   },
+  { src: image1, heading: "", component: "PersonalInfoPatient" },
 
   {
     src: image2,
     heading: "Files",
     text: "Easily access and review your old <br/> medical records to stay informed <br/> about your health journey",
-    button: { text: "View Medical Files", path: "medical-files" },
+    buttons: [
+      { text: "View Medical Files", path: "medical-files" },
+      { text: "Upload Medical File", path: "medical-files/upload" },
+    ],
   },
 
   {
