@@ -107,11 +107,11 @@ router.post("/patient/signup", async (req, res) =>
 });
 
 // Redirect to Google for authentication
-router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/patient/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // Google callback URL
-router.get('/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/auth/google' }),
+router.get('/patient/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/patient/auth/google' }),
     async (req, res) =>
     {
         const user = req.user;
@@ -119,7 +119,7 @@ router.get('/auth/google/callback',
 
         if (!user)
         {
-            return res.redirect('/auth/google');
+            return res.redirect('/patient/auth/google');
         }
 
         try
@@ -153,7 +153,7 @@ router.get('/auth/google/callback',
         } catch (error)
         {
             console.error("Google authentication error:", error);
-            return res.redirect('/auth/google');
+            return res.redirect('/patient/auth/google');
         }
     }
 );
