@@ -5,14 +5,14 @@ import image from "../../../assets/8.png";
 
 function ViewFiles() {
   const [medicalRecords, setMedicalRecords] = useState([]);
-  const [title, setTitle] = useState('')
+  const [title, setTitle] = useState("");
 
   const fetchMedicalRecords = useCallback(async () => {
     const response = await axios.get("http://localhost:5000/medical-record", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     setMedicalRecords(response.data.presignedUrl);
-    setTitle(response.data.key)
+    setTitle(response.data.key);
   }, []);
 
   useEffect(() => {
@@ -25,12 +25,16 @@ function ViewFiles() {
       style={{ backgroundImage: `url(${image})` }}
     >
       <div className="fixed w-1/3 container mx-auto p-6">
-        {!medicalRecords && (
+        {title.length === 0 && (
           <h2 className="text-xl font-semibold text-center text-gray-700">
-            No medical files found
+            No medical files were found
           </h2>
         )}
-          <h1 className="text-2xl font-semibold text-center  mt-2 mb-6">View Medical Files</h1>
+        {!title.length === 0 && (
+          <h1 className="text-2xl font-semibold text-center  mt-2 mb-6">
+            View Medical Files
+          </h1>
+        )}
         {medicalRecords &&
           medicalRecords.map((record) => (
             <div

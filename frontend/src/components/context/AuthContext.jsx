@@ -1,25 +1,40 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 
 const AuthContext = createContext();
 
+// eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-    const login = () => {
-        setIsAuthenticated(true);
-    };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token);
+    setLoading(false);
+  }, []);
 
-    const logout = useCallback((navigate) => {
-        setIsAuthenticated(false);
-        localStorage.removeItem("token");
-        navigate('/'); // Navigate to the landing page on logout
-    }, []);
+  const login = (token) => {
+    localStorage.setItem("token", token);
+    setIsAuthenticated(true);
+  };
 
-    return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  const logout = useCallback((navigate) => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("token");
+    navigate("/");
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => useContext(AuthContext);
