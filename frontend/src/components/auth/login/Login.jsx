@@ -47,7 +47,7 @@ function LoginPage() {
   };
 
   const handleSignin = () => {
-    window.location.href = "http://localhost:5000/auth/google";
+    window.location.href = "http://localhost:5000/patient/auth/google";
   }
 
   return (
