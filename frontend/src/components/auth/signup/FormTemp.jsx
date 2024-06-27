@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 const FormTemp = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    
     DOB: '',
     gender: '',
     maritalStatus: '',
@@ -21,45 +20,25 @@ const FormTemp = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // useEffect(() => {
-  //   // Fetch session data and prepopulate the form
-  //   const fetchSessionData = async () => {
-  //     try {
-  //       const response = await axios.get('http://localhost:5000/patient/session-data', { withCredentials: true });
-  //       const { name, email } = response.data;
-  //       setFormData((prevFormData) => ({
-  //         ...prevFormData,
-  //         name,
-  //         email
-  //       }));
-  //     } catch (err) {
-  //       console.error('Error fetching session data:', err);
-  //     }
-  //   };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  //   fetchSessionData();
-  // }, []);
-
-const handleChange = (e) => {
-  const { name, value } = e.target;
-
-  if (name.includes("address")) {
-    const addressField = name.split(".")[1];
-    setFormData({
-      ...formData,
-      address: {
-        ...formData.address,
-        [addressField]: value,
-      },
-    });
-  } else {
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  }
-};
-
+    if (name.includes("address")) {
+      const addressField = name.split(".")[1];
+      setFormData({
+        ...formData,
+        address: {
+          ...formData.address,
+          [addressField]: value,
+        },
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -115,14 +94,17 @@ const handleChange = (e) => {
         </div>
         <div className="mb-4">
           <label className="block text-gray-700">Marital Status:</label>
-          <input
-            type="text"
+          <select
             name="maritalStatus"
             value={formData.maritalStatus}
             onChange={handleChange}
             className="border rounded w-full py-2 px-3 text-gray-700"
             required
-          />
+          >
+            <option value="">Select Marital Status</option>
+            <option value="Married">Married</option>
+            <option value="Unmarried">Unmarried</option>
+          </select>
         </div>
         <div className="mb-4">
           <label className="block text-gray-700">Occupation:</label>
