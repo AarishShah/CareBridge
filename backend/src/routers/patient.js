@@ -140,6 +140,7 @@ router.get('/patient/auth/google/callback',
                 // generate token, save it to the session and redirect to dashboard
                 const token = await existingUser.generateAuthToken();
                 req.session.token = token;
+                console.log("Login successful");
                 return res.redirect('http://localhost:5173/patient/dashboard');
             }
 
@@ -210,6 +211,7 @@ router.post("/patient/login", async (req, res) =>
         const token = await patient.generateAuthToken();
 
         res.status(202).send({ patient, token });
+        
     }
     catch (error)
     {

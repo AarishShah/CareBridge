@@ -65,12 +65,19 @@ const handleChange = (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/patient/complete-profile', formData, { withCredentials: true });
-      setSuccess('Profile completed successfully!');
+
+      const token = response.data.token;
+      if(token) {
+        localStorage.setItem('token', token);
+        setSuccess('Profile completed successfully!');
+        navigate('/patient/dashboard');
+      }else {
+        setError('No token received');
+      }
       setError('');
       console.log(response.data);
-      navigate('/patient/dashboard');
     } catch (err) {
-      setError(err.response.data.error);
+      setError(err.response && err.response.data.error ? err.response.data.error : 'An unexpected error occurred');
       setSuccess('');
       console.error('Error:', err);
     }

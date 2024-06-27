@@ -36,7 +36,7 @@ function LoginPage() {
       }
     },
     onError: (error) => {
-      setError(true);
+      setError(error.response?.data?.message || 'An unexpected error occurred');
     },
   });
 
