@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const FormTemp = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    
     DOB: '',
     gender: '',
     maritalStatus: '',
@@ -67,6 +68,7 @@ const handleChange = (e) => {
       setSuccess('Profile completed successfully!');
       setError('');
       console.log(response.data);
+      navigate('/patient/dashboard');
     } catch (err) {
       setError(err.response.data.error);
       setSuccess('');

@@ -15,7 +15,7 @@ import CreateRecord from "./components/dashboards/medical-record/read/create/Cre
 import DoctorEdit from "./components/ui/personalInfo/DoctorEdit";
 import PatientEdit from "./components/ui/personalInfo/PatientEdit";
 import ViewFiles from "./components/dashboards/medical-files/ViewFiles";
-import FormTemp from "./components/auth/FormTemp";
+import FormTemp from "./components/auth/signup/FormTemp";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UploadFile from "./components/dashboards/medical-files/UploadFile";
 
