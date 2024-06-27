@@ -5,12 +5,15 @@ const session = require("express-session");
 require("./db/mongoose");
 require("../src/utils/cleanup-token");
 
+// const adminRouter = require("./routers/admin");
 const patientRouter = require("./routers/patient");
 const doctorRouter = require("./routers/doctor");
 const medicalHistoryRouter = require("./routers/medicalHistory");
 const medicalFileRouter = require("./routers/medicalFile");
 
 const app = express();
+
+const port = process.env.PORT || 5000;
 
 // Apply CORS with specific options only once
 app.use(cors({
@@ -31,13 +34,12 @@ app.use(session({
 // Parse JSON bodies
 app.use(express.json());
 
-// Route middlewares
+// app.use(adminRouter); // to register admin router
 app.use(patientRouter);
 app.use(doctorRouter);
 app.use(medicalHistoryRouter);
 app.use(medicalFileRouter);
 
-const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
   console.log("Server is up on port " + port);
