@@ -89,7 +89,7 @@ router.get("/medical-record/:id", auth, async (req, res) =>
         }
 
         
-        const ext = req.query.fileType.split(".")[1];
+        const ext = req.query.fileType.split("/")[1];
         const key = `document/${randomUUID()}.${ext}`;
 
         if (!key)
