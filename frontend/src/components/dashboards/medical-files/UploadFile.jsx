@@ -1,10 +1,10 @@
 import axios from "axios";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import image from "../../../assets/7.png";
 import image1 from "../../../assets/2.png";
 
-async function uploadToS3(event) {
+async function uploadToS3(event, patientId) {
   const formData = new FormData(event.target);
 
   const file = formData.get("file");
@@ -16,11 +16,12 @@ async function uploadToS3(event) {
   const fileType = encodeURIComponent(file.type);
 
   const { data } = await axios.get(
-    `http://localhost:5000/medical-record/id?fileType=${fileType}`
+    `http://localhost:5000/medical-record/${patientId}?fileType=${fileType}`,
+    { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
   );
 
   const { uploadUrl, key } = data;
-  // await axios.put(uploadUrl, file);
+  await axios.put(uploadUrl, file);
 
   return key;
 }
@@ -28,12 +29,26 @@ async function uploadToS3(event) {
 function UploadFile() {
   const [error, setError] = useState("");
   const [uploadStatus, setUploadStatus] = useState("");
+  const [patientId, setPatientId] = useState("");
+
+  const getPatient = useCallback(async () => {
+    const response = await axios.get("http://localhost:5000/patient/me", {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    setPatientId(response.data.patient._id);
+  }, []);
+
+  useEffect(() => {
+    getPatient();
+  }, [getPatient]);
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     try {
-      await uploadToS3(e);
+      if (patientId) {
+        await uploadToS3(e, patientId);
+      }
 
       setUploadStatus("File upload successful");
     } catch (err) {
@@ -55,7 +70,7 @@ function UploadFile() {
           className="h-16 w-16 rounded-full mt-16 mb-8"
         />
         <h2 className="text-2xl font-bold mb-8">Upload File</h2>
-        {error && <h3 className="text-green-500 mb-3">{error}</h3>}
+        {error && <h3 className="text-red-500 mb-3">{error}</h3>}
         {uploadStatus && (
           <h3 className="text-green-400 mb-3">{uploadStatus}</h3>
         )}
@@ -81,3 +96,4 @@ function UploadFile() {
 }
 
 export default UploadFile;
+
