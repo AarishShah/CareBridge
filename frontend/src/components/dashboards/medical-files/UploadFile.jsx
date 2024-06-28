@@ -29,6 +29,7 @@ async function uploadToS3(event, patientId) {
 function UploadFile() {
   const [error, setError] = useState("");
   const [uploadStatus, setUploadStatus] = useState("");
+  const [loading, setLoading] = useState(false); // New loading state
   const [patientId, setPatientId] = useState("");
 
   const getPatient = useCallback(async () => {
@@ -47,12 +48,14 @@ function UploadFile() {
 
     try {
       if (patientId) {
+        setLoading(true); // Start loading
         await uploadToS3(e, patientId);
+        setUploadStatus("File upload successful");
       }
-
-      setUploadStatus("File upload successful");
     } catch (err) {
       setError("Could not upload your file");
+    } finally {
+      setLoading(false); // Stop loading
     }
   }
 
@@ -74,26 +77,29 @@ function UploadFile() {
         {uploadStatus && (
           <h3 className="text-green-400 mb-3">{uploadStatus}</h3>
         )}
-        <form onSubmit={handleSubmit} className="w-full max-w-sm">
-          <div className="flex flex-col text-lg">
-            <input
-              className="border rounded h-10 text-sm placeholder-gray-400 placeholder:ml-5 border-gray-600 mb-6 p-2"
-              type="file"
-              accept="application/pdf"
-              name="file"
-            />
-            <button
-              className="h-10 w-1/3 bg-blue-600 text-white rounded ml-32 mb-8 hover:bg-blue-800 font-semibold"
-              type="submit"
-            >
-              Upload
-            </button>
-          </div>
-        </form>
+        {loading ? (
+          <h3 className="text-blue-600 mb-3">Uploading...</h3> // Loading message
+        ) : (
+          <form onSubmit={handleSubmit} className="w-full max-w-sm">
+            <div className="flex flex-col text-lg">
+              <input
+                className="border rounded h-10 text-sm placeholder-gray-400 placeholder:ml-5 border-gray-600 mb-6 p-2"
+                type="file"
+                accept="application/pdf"
+                name="file"
+              />
+              <button
+                className="h-10 w-1/3 bg-blue-600 text-white rounded ml-32 mb-8 hover:bg-blue-800 font-semibold"
+                type="submit"
+              >
+                Upload
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );
 }
 
 export default UploadFile;
-
