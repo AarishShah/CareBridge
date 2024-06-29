@@ -25,10 +25,10 @@ const Images = ({ images }) => {
     <div className="h-full w-10/12 ml-44 mt-12 no-scrollbar overflow-hidden hover:overflow-scroll">
       {images.map((image, index) => (
         <div key={index} className="relative mb-12">
-          <img src={image.src} alt={image.heading} className="w-full h-auto" />
-          <div className="absolute top-0 left-12 mt-8 text-black text-2xl font-semibold p-2">
+          <img src={image.src} alt={image.heading} className="w-full h-auto sm:hidden md:hidden lg:block" />
+          <div className="absolute top-0 left-12 mt-8 text-black text-2xl font-semibold p-2 sm:hidden md:hidden lg:block">
             {image.heading}
-            <div className="">
+            <div className="sm:hidden md:hidden lg:block">
               {image.button && (
                 <button
                   className="w-8/12 ml-96 mt-6 bg-gray-300 text-black text-lg p-2 rounded"
