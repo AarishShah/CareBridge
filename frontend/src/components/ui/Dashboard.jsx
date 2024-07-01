@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../Header';
 import Sidebar from '../ui/Sidebar';
 import image from '../../assets/8.png';
@@ -12,6 +12,8 @@ const Dashboard = () => {
   const userType = location.pathname.includes("doctor") ? "doctor" : "patient";
   const imagesData = userType === "doctor" ? doctorImagesData : patientImagesData;
 
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
   return (
     <div className='relative h-screen overflow-hidden'> 
       <Header />
@@ -24,9 +26,9 @@ const Dashboard = () => {
           backgroundAttachment: 'fixed',
         }}
       >
-        <Sidebar userType={userType} className="sticky top-0 h-full" />
+        <Sidebar userType={userType} hoveredIndex={hoveredIndex} className="sticky top-0 h-full" />
         <div className="flex-grow no-scrollbar overflow-hidden hover:overflow-scroll h-full p-4 bg-transparent">
-          <Images images={imagesData} />
+          <Images images={imagesData} setHoveredIndex={setHoveredIndex}/>
         </div>
       </div>
     </div>

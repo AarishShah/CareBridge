@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import PersonalInfoDoctor from '../ui/personalInfo/PersonalInfoDoctor';
 import PersonalInfoPatient from '../ui/personalInfo/PersonalInfoPatient';
 
-const Images = ({ images }) => {
+const Images = ({ images, setHoveredIndex }) => {
   const navigate = useNavigate();
 
   const handleButtonClick = (path) => {
@@ -24,7 +24,11 @@ const Images = ({ images }) => {
   return (
     <div className="h-full w-10/12 ml-44 mt-12 no-scrollbar overflow-hidden hover:overflow-scroll hidden lg:block">
       {images.map((image, index) => (
-        <div key={index} className="relative mb-12 ">
+        <div 
+        key={index}
+        className="relative mb-12"
+        onMouseEnter={() => setHoveredIndex(index)}
+        onMouseLeave={() => setHoveredIndex(null)}>
           <img src={image.src} alt={image.heading} className="w-full h-auto sm:hidden md:hidden lg:block" />
           <div className="absolute top-0 left-12 mt-8 text-black text-2xl font-semibold p-2 sm:hidden md:hidden lg:block">
             {image.heading}
