@@ -22,9 +22,9 @@ const Images = ({ images }) => {
   };
 
   return (
-    <div className="h-full w-10/12 ml-44 mt-12 no-scrollbar overflow-hidden hover:overflow-scroll">
+    <div className="h-full w-10/12 ml-44 mt-12 no-scrollbar overflow-hidden hover:overflow-scroll hidden lg:block">
       {images.map((image, index) => (
-        <div key={index} className="relative mb-12">
+        <div key={index} className="relative mb-12 ">
           <img src={image.src} alt={image.heading} className="w-full h-auto sm:hidden md:hidden lg:block" />
           <div className="absolute top-0 left-12 mt-8 text-black text-2xl font-semibold p-2 sm:hidden md:hidden lg:block">
             {image.heading}

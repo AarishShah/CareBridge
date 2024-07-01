@@ -24,10 +24,8 @@ const PersonalInfoDoctor = () => {
     getDoctorProfile();
   }, [getDoctorProfile]);
 
- 
-
   return (
-    <div className="bg-transparent p-2 rounded-lg flex">
+    <div className="bg-transparent p-2 rounded-lg flex hidden md:flex">
       <div className="flex-none w-56 mr-44">
         <div className="flex items-center">
           <img
@@ -47,9 +45,7 @@ const PersonalInfoDoctor = () => {
             <p>{doctorInfo.email}</p>
           </div>
         </div>
-       
       </div>
-      
       <div className="flex-1">
         <h3 className="text-2xl font-semibold mb-6">Personal Information</h3>
         <p><span className="font-semibold">Experience:</span> {doctorInfo.yearsOfExperience} year(s)</p>
