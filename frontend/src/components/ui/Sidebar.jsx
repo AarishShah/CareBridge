@@ -14,7 +14,7 @@ const Sidebar = ({ userType, hoveredIndex }) => {
     `flex items-center space-x-2 ${hoveredIndex === index ? 'text-blue-600' : ''} hover:text-blue-600`;
 
   return (
-    <div className="bg-transparent h-full p-4 w-64 mt-24 ml-20 text-lg font-semibold">
+    <div className="bg-transparent h-full p-4 w-64 mt-24 ml-20 text-lg font-semibold hidden lg:block">
       <ul className="space-y-8">
         <li>
           <Link to="/personal-info" className={linkClasses(0)}>

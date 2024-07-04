@@ -22,38 +22,38 @@ const Images = ({ images, setHoveredIndex }) => {
   };
 
   return (
-    <div className="h-full w-10/12 ml-44 mt-12 no-scrollbar overflow-hidden hover:overflow-scroll hidden lg:block">
+    <div className="h-full w-full md:w-10/12 ml-4 md:ml-44 mt-12 no-scrollbar overflow-hidden hover:overflow-scroll">
       {images.map((image, index) => (
         <div 
-        key={index}
-        className="relative mb-12"
-        onMouseEnter={() => setHoveredIndex(index)}
-        onMouseLeave={() => setHoveredIndex(null)}>
-          <img src={image.src} alt={image.heading} className="w-full h-auto sm:hidden md:hidden lg:block" />
-          <div className="absolute top-0 left-12 mt-8 text-black text-2xl font-semibold p-2 sm:hidden md:hidden lg:block">
+          key={index}
+          className="relative mb-12 flex flex-col items-start"
+          onMouseEnter={() => setHoveredIndex(index)}
+          onMouseLeave={() => setHoveredIndex(null)}
+        >
+          <img src={image.src} alt={image.heading} className="w-full h-auto sm:h-full" />
+          <div className="absolute top-0 left-12 mt-8 text-black text-lg md:text-2xl font-semibold p-2">
             {image.heading}
-            <div className="sm:hidden md:hidden lg:block">
+            <div>
               {image.button && (
                 <button
-                  className="w-8/12 ml-96 mt-6 bg-gray-300 text-black text-lg p-2 rounded"
+                  className="w-4/12 md:w-7/12 ml-96 md:mt-6 bg-gray-300 text-black text-sm p-2 rounded"
                   onClick={() => handleButtonClick(image.button.path)}
                 >
                   {image.button.text}
                 </button>
               )}
-              {image.buttons &&
-                image.buttons.map((btn, btnIndex) => (
-                  <button
-                    key={btnIndex}
-                    className="w-6/12 ml-96 mt-2 bg-gray-300 text-black text-lg p-2 rounded"
-                    onClick={() => handleButtonClick(btn.path)}
-                  >
-                    {btn.text}
-                  </button>
-                ))}
+              {image.buttons && image.buttons.map((btn, btnIndex) => (
+                <button
+                  key={btnIndex}
+                  className="w-4/12 md:w-5/12 ml-96 mt-2 bg-gray-300 text-black text-sm p-2 rounded"
+                  onClick={() => handleButtonClick(btn.path)}
+                >
+                  {btn.text}
+                </button>
+              ))}
             </div>
           </div>
-          <div className="absolute top-20 text-lg p-2 left-12">
+          <div className="absolute top-20 text-sm md:text-lg p-2 left-12">
             {image.component ? (
               renderComponent(image.component)
             ) : (
