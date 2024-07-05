@@ -25,8 +25,8 @@ const router = createBrowserRouter([
   { path: "/", element: <LandingPage /> },
   { path: "/login/patient", element: <LoginPage /> },
   { path: "/login/doctor", element: <LoginPage /> },
-  { path: "/signup/doctor", element: <SignupPage /> },
-  { path: "/signup/patient", element: <SignupPagePatient /> },
+  { path: "/doctor/signup", element: <SignupPage /> },
+  { path: "/patient/signup", element: <SignupPagePatient /> },
   {
     path: "/dashboard",
     element: (
