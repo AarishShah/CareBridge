@@ -3,7 +3,7 @@ import React from "react";
 function PersonalInfo({ name, gender, updateField }) {
   return (
     <div  className="flex flex-col items-center mt-16 mb-12 w-full">
-      <h1 className="text-xl font-bold mb-12 mr-60">Personal Information</h1>
+      <h1 className="text-xl font-bold mb-12">Personal Information</h1>
       <div className="w-2/3 mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2">Name</label>
         <input

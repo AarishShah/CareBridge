@@ -67,9 +67,13 @@ function PatientSignup() {
       }
     }
   }
+  
+  const handleSignin = () => {
+    window.location.href = "http://localhost:5000/patient/auth/google";
+  };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen h-full">
       <img
         src={image}
         alt=""
@@ -100,6 +104,20 @@ function PatientSignup() {
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold h-10 w-24 rounded"
           >
             {currentStep !== steps.length - 1 ? "Next" : "Finish"}
+          </button>
+        </div>
+        <div>
+        <button
+            type="button"
+            className="h-10 w-48 border border-gray-400 text-gray-600 rounded mt-8 flex items-center justify-evenly font-medium text-sm hover:underline"
+            onClick={handleSignin}
+          >
+            <img
+              src="https://img.icons8.com/color/16/000000/google-logo.png"
+              alt="Google logo"
+              className="mr-1"
+            />
+            Sign up with Google
           </button>
         </div>
         <div className="text-center font-normal text-sm mt-6">

@@ -70,7 +70,7 @@ function UploadFile() {
         <img
           src={image1}
           alt=""
-          className="h-16 w-16 rounded-full mt-16 mb-8"
+          className="h-16 w-16 rounded-full mt-16 mb-24"
         />
         <h2 className="text-2xl font-bold mb-8">Upload File</h2>
         {error && <h3 className="text-red-500 mb-3">{error}</h3>}

@@ -74,8 +74,12 @@ function DoctorSignup() {
     }
   }
 
+  const handleSignin = () => {
+    window.location.href = "http://localhost:5000/patient/auth/google";
+  };
+
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen h-full">
       <img src={image} alt="" className="hidden md:block w-1/2 object-cover" />
       <form
         onSubmit={handleSubmit}
@@ -108,8 +112,23 @@ function DoctorSignup() {
           >
             {currentStep !== steps.length - 1 ? "Next" : "Finish"}
           </button>
+         
         </div>
-        <div className="text-center mt-16 font-normal text-sm">
+        <div>
+        <button
+            type="button"
+            className="h-10 w-48 border border-gray-400 text-gray-600 rounded mt-8 flex items-center justify-evenly font-medium text-sm hover:underline"
+            onClick={handleSignin}
+          >
+            <img
+              src="https://img.icons8.com/color/16/000000/google-logo.png"
+              alt="Google logo"
+              className="mr-1"
+            />
+            Sign up with Google
+          </button>
+        </div>
+        <div className="text-center mt-8 font-normal text-sm">
           <span>Already have an Account? </span>
           <a href="#" className="text-blue-500 font-semibold hover:underline">
             Sign in

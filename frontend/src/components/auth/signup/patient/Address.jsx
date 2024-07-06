@@ -12,7 +12,7 @@ function Address({ address, updateField }) {
 
   return (
     <div className="flex flex-col items-center mt-16 mb-2 w-full">
-    <h1 className="text-xl font-bold mb-12 mr-72">Address Details</h1>
+    <h1 className="text-xl font-bold mb-12 ">Address Details</h1>
 
       <div className="w-2/3 mb-4">
 
