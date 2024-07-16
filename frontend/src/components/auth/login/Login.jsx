@@ -26,7 +26,7 @@ function LoginPage() {
     onSuccess: (data) => {
       if (data.token) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.patient.role);
+        localStorage.setItem("role", data.role);
         login(data.token);
       }
 
