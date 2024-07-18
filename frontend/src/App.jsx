@@ -22,6 +22,8 @@ import ContactForm from "./components/header-links/ContactForm";
 import ReadAllPrescriptions from "./components/dashboards/prescription/ReadAllPrescriptions";
 import CreatePrescriptionForm from "./components/dashboards/prescription/CreatePrescriptionForm";
 import CreatePrescription from "./components/dashboards/prescription/CreatePrescription";
+import AboutPage from "./components/header-links/AboutPage";
+import TeamPage from "./components/header-links/TeamPage";
 
 
 const queryClient = new QueryClient();
@@ -70,6 +72,8 @@ const router = createBrowserRouter([
   { path: "/create-prescription", element: <CreatePrescription /> },
   { path: "/create-prescription/:id", element: <CreatePrescriptionForm /> },
   { path: "/contact", element: <ContactForm /> },
+  { path: "/about", element: <AboutPage /> },
+  { path: "/team", element: <TeamPage /> },
 ]);
 
 function App() {

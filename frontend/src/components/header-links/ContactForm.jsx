@@ -1,8 +1,11 @@
 import React from 'react';
+import Header from '../Header';
 import backgroundImage from '../../assets/8.png'; // Adjust the path as necessary
 
 function ContactForm() {
     return (
+        <>
+        <Header/>
         <div className="relative text-center p-5 h-screen">
             <img src={backgroundImage} className="absolute inset-0 w-full h-full object-cover" alt="Background" />
             <div className="relative z-10 flex flex-col justify-center items-center h-full">
@@ -16,6 +19,7 @@ function ContactForm() {
                 </div>
             </div>
         </div>
+        </>
     );
 }
 
