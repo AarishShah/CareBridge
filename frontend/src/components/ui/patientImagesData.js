@@ -21,7 +21,7 @@ const patientImagesData = [
     src: image3,
     heading: "Prescription",
     text: "Access and manage your<br/> uploaded prescriptions<br/> conveniently to stay informed<br/> about your healthcare needs.",
-    button: { text: "View Prescription" },
+    button: { text: "View Prescription", path: "/prescription" },
   },
 
   {

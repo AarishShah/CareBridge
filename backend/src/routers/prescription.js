@@ -70,7 +70,6 @@ router.get("/prescription", auth, async (req, res) =>
           $in: assignedPatientIds.map((doc) => doc._id),
         };
       }
-      console.log(filter);
 
       const prescription = await Prescription.find(
     
@@ -92,6 +91,46 @@ router.get("/prescription", auth, async (req, res) =>
     }
 }
 );
+
+router.get('/prescription/:id', auth, async (req, res) =>
+{
+    try
+    {
+        const prescriptionId = req.params.id;
+        const prescription = await Prescription.findById(prescriptionId);
+        const patientId = prescription.patientId;
+
+        if (!prescription)
+        {
+            return res.status(404).send();
+        }
+
+        if (req.user.role === 'patient' && req.user._id.toString() === patientId.toString())
+        {
+            return res.send(prescription);
+        }
+
+        else if (req.user.role === 'doctor')
+        {
+            const patient = await Patient.findById(patientId);
+            const isAssignedDoctor = patient.assignedDoctors.some(doctor => doctor.doctor.toString() === req.user._id.toString());
+
+            if (isAssignedDoctor)
+            {
+                return res.send(prescription);
+            } else
+            {
+                return res.status(403).send({ error: 'Not authorized' });
+            }
+        } else
+        {
+            return res.status(403).send({ error: 'Not authorized' });
+        }
+    } catch (error)
+    {
+        res.status(500).send(error);
+    }
+});
 
 router.delete("/prescription/:id", auth, async (req, res) =>
 {

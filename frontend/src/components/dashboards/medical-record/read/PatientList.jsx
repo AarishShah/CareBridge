@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import image from '../../../../assets/8.png';
 
 function PatientList() {
   const [assignedPatients, setAssignedPatients] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  console.log(location.pathname)
 
   const fetchAssignedDoctor = async () => {
     try {
@@ -35,7 +37,7 @@ function PatientList() {
     <div className="flex flex-col items-center bg-cover bg-center bg-no-repeat min-h-screen" style={{ backgroundImage: `url(${image})`}}>
       {assignedPatients.length > 0 && (
         <h1 className="text-2xl font-semibold text-center text-gray-700 mt-2 mb-6">
-          Create Medical Record
+          All Assigned Patients
         </h1>
       )}
 
@@ -52,7 +54,7 @@ function PatientList() {
                 className="text-black text-lg font-semibold hover:text-blue-600"
                 onClick={() => {
                   console.log("Navigating to create record for patient ID:", assignedPatient.patient); 
-                  navigate(`/medical-record/create/${assignedPatient.patient}`);
+                  location.pathname.includes("create-prescription") ? navigate(`${location.pathname}/${assignedPatient.patient}`) : navigate(`/medical-record/create/${assignedPatient.patient}`);
                 }}
               >
                 {assignedPatient.name}
