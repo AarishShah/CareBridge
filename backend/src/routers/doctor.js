@@ -9,7 +9,7 @@ const passport = require("passport");
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
-require("../middleware/apple");
+// require("../middleware/apple");
 const router = express.Router();
 const { assignDoctor, removeDoctor } = require("../utils/assignment");
 const s3 = require("../utils/s3Client");

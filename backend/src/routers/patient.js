@@ -91,11 +91,11 @@ router.post("/patient/signup", async (req, res) =>
 });
 
 // Redirect to Google for authentication
-router.get('/patient/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/patient/auth/google', passport.authenticate('google-patient', { scope: ['profile', 'email'] }));
 
 // Google callback URL
 router.get('/patient/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/patient/auth/google' }),
+    passport.authenticate('google-patient', { failureRedirect: '/patient/auth/google' }),
     async (req, res) =>
     {
         const user = req.user;
