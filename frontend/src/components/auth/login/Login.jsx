@@ -26,7 +26,7 @@ function LoginPage() {
     onSuccess: (data) => {
       if (data.token) {
         localStorage.setItem("token", data.token);
-        login();
+        login(data.token);
       }
 
       if (location.pathname.includes("doctor")) {
@@ -47,7 +47,7 @@ function LoginPage() {
   };
 
   const handleSignin = () => {
-    window.location.href = "http://localhost:5000/auth/google";
+    window.location.href = "http://localhost:5000/patient/auth/google";
   }
 
   return (

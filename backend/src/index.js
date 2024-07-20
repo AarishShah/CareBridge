@@ -3,7 +3,7 @@ const cors = require("cors");
 const session = require("express-session");
 
 require("./db/mongoose");
-require("../src/utils/cleanup-token")
+require("../src/utils/cleanup-token");
 
 // const adminRouter = require("./routers/admin");
 const patientRouter = require("./routers/patient");
@@ -12,29 +12,34 @@ const medicalHistoryRouter = require("./routers/medicalHistory");
 const medicalFileRouter = require("./routers/medicalFile");
 
 const app = express();
-app.use(cors());
+
+const port = process.env.PORT || 5000;
+
+// Apply CORS with specific options only once
+app.use(cors({
+  origin: 'http://localhost:5173', // Frontend origin
+  credentials: true, // To handle cookies and authentication
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'] // Allowed custom headers
+}));
+
+// Setup session
 app.use(session({
   secret: 'your_secret_key',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // Set secure to true if using HTTPS
+  cookie: { secure: false } // Set to true if using HTTPS
 }));
 
-const port = process.env.PORT || 5000;
-
-app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your frontend URL
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
+// Parse JSON bodies
 app.use(express.json());
 
 // app.use(adminRouter); // to register admin router
-app.use(patientRouter); // to register patient router
-app.use(doctorRouter); // to register doctor router
-app.use(medicalHistoryRouter); // to register patient history router
+app.use(patientRouter);
+app.use(doctorRouter);
+app.use(medicalHistoryRouter);
 app.use(medicalFileRouter);
+
 
 app.listen(port, () => {
   console.log("Server is up on port " + port);

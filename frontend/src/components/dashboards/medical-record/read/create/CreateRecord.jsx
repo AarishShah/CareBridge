@@ -78,7 +78,7 @@ function CreateRecord() {
   const { id } = useParams();
 
   useEffect(() => {
-    console.log("Patient ID:", id); // Debug patient ID
+    console.log("Patient ID:", id); 
   }, [id]);
 
   function updateFields(fields) {
@@ -97,13 +97,13 @@ function CreateRecord() {
     if (currentStep >= steps.length - 1) {
       try {
         const token = localStorage.getItem("token");
-        console.log("Token:", token); // Debug token
+        console.log("Token:", token); 
 
         const decodedToken = JSON.parse(atob(token.split('.')[1]));
-        console.log("Decoded Token:", decodedToken); // Debug decoded token
+        console.log("Decoded Token:", decodedToken); 
 
         const submitUrl = `http://localhost:5000/medicalhistory/${id}`;
-        console.log("Submit URL:", submitUrl); // Debug submit URL
+        console.log("Submit URL:", submitUrl); 
 
         const response = await axios.post(
           submitUrl,

@@ -23,7 +23,8 @@ const getProfileUrl = async (bucket, profileKey) =>
     return await getSignedUrl(s3, command, { expiresIn: 4000 });
 };
 
-const getUploadProfileUrl = async (fileType) => {
+const getUploadProfileUrl = async (fileType) =>
+{
     let key;
     if (fileType)
     {
@@ -47,22 +48,6 @@ const getUploadProfileUrl = async (fileType) => {
 
     return { key, uploadUrl };
 }
-
-// completed:
-
-// Sign Up Route
-// Login Route
-// Update Route
-// Delete Route // make sure to delete all prescriptions and medical records associated with the patient
-// Logout Route
-// Logout All Route
-// Read Route
-// assignDoctor Route
-// removeDoctor Route
-// read patient's medical history (this is common to both patient and doctor)
-
-// Incomplete:
-// when a patient assigns a doctor, the doctor should get a notification which when accepted, the doctor is added to the patient's assignedDoctors array
 
 // Sign Up Route
 router.post("/patient/signup", async (req, res) =>
@@ -106,26 +91,59 @@ router.post("/patient/signup", async (req, res) =>
 });
 
 // Redirect to Google for authentication
-router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/patient/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // Google callback URL
-router.get('/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/auth/google' }),
+router.get('/patient/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/patient/auth/google' }),
     async (req, res) =>
     {
-        req.session.tempUser = req.user;
-        const isNewUser = !req.user.DOB || !req.user.gender || !req.user.maritalStatus || !req.user.occupation || !req.user.address;
+        const user = req.user;
+        console.log(user);
 
-        if (isNewUser)
+        if (!user)
         {
-            res.redirect(`http://localhost:5173/patient/complete-profile`);
-        } else
+            return res.redirect('/patient/auth/google');
+        }
+
+        try
         {
-            res.redirect(`http://localhost:5173/`); // error page: http://localhost:5173/error (this page should be created) @KhushbooHamid
+            const existingUser = await Patient.findOne({ email: user.email });
+
+            // check if user is in db
+            if (existingUser)
+            {
+                // if user is in db but not linked to google account then link the account
+                if (!existingUser.isGoogleSignUp)
+                {
+                    existingUser.isGoogleSignUp = true;
+                    existingUser.googleId = user.googleId;
+                    await existingUser.save();
+                }
+
+                // generate token, save it to the session and redirect to dashboard
+                const token = await existingUser.generateAuthToken();
+                req.session.token = token; //  remove if the below line is working fine
+                // res.send({ token }); // test this
+                return res.redirect('http://localhost:5173/patient/dashboard');
+            }
+
+            else
+            {
+                // Temporarily store the user data
+                req.session.tempUser = user;
+                return res.redirect('http://localhost:5173/patient/complete-profile');
+            }
+
+        } catch (error)
+        {
+            console.error("Google authentication error:", error);
+            return res.redirect('/patient/auth/google');
         }
     }
 );
 
+// Complete Profile Route
 router.post("/patient/complete-profile", async (req, res) =>
 {
     try
@@ -165,7 +183,6 @@ router.post("/patient/complete-profile", async (req, res) =>
     }
 });
 
-
 // Login Route
 router.post("/patient/login", async (req, res) =>
 {
@@ -173,12 +190,9 @@ router.post("/patient/login", async (req, res) =>
     {
         const patient = await Patient.findByCredentials(req.body.email, req.body.password);
 
-        const { bucket, profileKey } = patient;
-        const profileUrl = await getProfileUrl(bucket, profileKey);
-
         const token = await patient.generateAuthToken();
 
-        res.status(202).send({ patient, profileUrl, token });
+        res.status(202).send({ patient, token });
     }
     catch (error)
     {
@@ -275,7 +289,12 @@ router.post("/patient/logoutall", auth, async (req, res) =>
 // Read Patient Route
 router.get("/patient/me", auth, async (req, res) =>
 {
-    res.send(req.user);
+    const patient = await Patient.findById(req.user._id)
+
+    const { bucket, profileKey } = patient;
+    const profileUrl = await getProfileUrl(bucket, profileKey);
+    
+    res.send({ patient, profileUrl });
 });
 
 // assignDoctor Route

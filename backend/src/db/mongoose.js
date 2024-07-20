@@ -17,6 +17,13 @@ mongoose.connect
         if (error.name === 'MongooseServerSelectionError')
         {
             console.error("Database connection failed: IP not registered");
+        } 
+        else if (error.code === 'ECONNREFUSED')
+        {
+            console.error("Database connection failed: The connection was refused by the server. Ensure that the MongoDB server is running and accessible.");
+        } else if (error.code === 'EREFUSED')
+        {
+            console.error("Database connection failed: The DNS query was refused. This is likely due to DNS server issues or misconfiguration.");
         } else
         {
             console.error("Database connection failed:", error);

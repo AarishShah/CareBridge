@@ -3,17 +3,17 @@ const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "../../.env") });
 
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const Patient = require('../models/patient');
+const Doctor = require('../models/doctor');
 
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:5000/patient/auth/google/callback"
+    callbackURL: "http://localhost:5000/doctor/auth/google/callback"
 }, async (token, tokenSecret, profile, done) => {
     try {
-        let patient = await Patient.findOne({ email: profile.emails[0].value });
+        let doctor = await Doctor.findOne({ email: profile.emails[0].value });
 
-        if (!patient) {
+        if (!doctor) {
             // Temporarily store the user data
             const tempUser = {
                 name: profile.displayName,
@@ -25,7 +25,7 @@ passport.use(new GoogleStrategy({
             return done(null, tempUser); // Pass the temp user to done
         }
 
-        return done(null, patient);
+        return done(null, doctor);
     } catch (err) {
         return done(err, false);
     }
@@ -37,11 +37,11 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
     try {
-        const patient = await Patient.findById(id);
-        if (patient) {
-            done(null, patient);
+        const doctor = await Doctor.findById(id);
+        if (doctor) {
+            done(null, doctor);
         } else {
-            // If patient not found in DB, it must be a temp user
+            // If doctor not found in DB, it must be a temp user
             done(null, { googleId: id });
         }
     } catch (err) {

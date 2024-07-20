@@ -12,10 +12,10 @@ function PatientList() {
       const response = await axios.get("http://localhost:5000/doctor/me", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-
-      if (response.data && response.data.assignedPatients) {
-        console.log("Assigned Patients:", response.data.assignedPatients); // Debugging statement
-        setAssignedPatients(response.data.assignedPatients); // Ensure assignedPatients is populated correctly
+      // console.log(response.data.doctor.assignedPatients);
+      if ( response.data.doctor.assignedPatients) {
+        console.log("Assigned Patients:", response.data.doctor.assignedPatients); // Debugging statement
+        setAssignedPatients(response.data.doctor.assignedPatients); // Ensure assignedPatients is populated correctly
       } else {
         console.warn("No patient data in response");
         setAssignedPatients([]);
@@ -28,6 +28,7 @@ function PatientList() {
 
   useEffect(() => {
     fetchAssignedDoctor();
+    
   }, []);
 
   return (

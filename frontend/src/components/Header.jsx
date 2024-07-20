@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { Link } from 'react-router-dom';
 import { useAuth } from '../components/context/AuthContext';
@@ -7,18 +7,37 @@ import logo from "../assets/2.png";
 
 const Header = () => {
   const { isAuthenticated } = useAuth();
-  const logout = useLogout(); // Use the custom hook
+  const logout = useLogout(); 
   const [showLoginDropdown, setShowLoginDropdown] = useState(false);
   const [showSignupDropdown, setShowSignupDropdown] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
+  // Toggle the state of mobile drawer
   const toggleNavbar = () => {
     setMobileDrawerOpen(!mobileDrawerOpen);
   };
 
-  const renderDropdown = (isVisible, links) => (
+  const loginDropdownRef = useRef(null);
+  const signupDropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (loginDropdownRef.current && !loginDropdownRef.current.contains(event.target)) {
+        setShowLoginDropdown(false);
+      }
+      if (signupDropdownRef.current && !signupDropdownRef.current.contains(event.target)) {
+        setShowSignupDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const renderDropdown = (isVisible, links, ref) => (
     isVisible && (
-      <div className="absolute mt-2 w-32 bg-white border border-gray-200 rounded shadow-lg z-20">
+      <div ref={ref} className="absolute mt-2 w-32 bg-white border border-gray-200 rounded shadow-lg z-20">
         {links.map((link, index) => (
           <Link key={index} className="block px-4 py-2 text-gray-800 hover:bg-gray-100" to={link.to}>
             {link.label}
@@ -61,7 +80,7 @@ const Header = () => {
                   {renderDropdown(showLoginDropdown, [
                     { label: 'As Patient', to: '/login/patient' },
                     { label: 'As Doctor', to: '/login/doctor' }
-                  ])}
+                  ], loginDropdownRef)}
                 </div>
                 <div className="relative">
                   <button className="py-2 px-3 border rounded-md" onClick={() => setShowSignupDropdown(!showSignupDropdown)}>
@@ -70,7 +89,7 @@ const Header = () => {
                   {renderDropdown(showSignupDropdown, [
                     { label: 'As Patient', to: '/signup/patient' },
                     { label: 'As Doctor', to: '/signup/doctor' }
-                  ])}
+                  ], signupDropdownRef)}
                 </div>
               </div>
             )}
@@ -108,7 +127,7 @@ const Header = () => {
                     {renderDropdown(showLoginDropdown, [
                       { label: 'As Patient', to: '/login/patient' },
                       { label: 'As Doctor', to: '/login/doctor' }
-                    ])}
+                    ], loginDropdownRef)}
                   </div>
                   <div className="relative">
                     <button className="py-2 px-3 border rounded-md" onClick={() => setShowSignupDropdown(!showSignupDropdown)}>
@@ -117,7 +136,7 @@ const Header = () => {
                     {renderDropdown(showSignupDropdown, [
                       { label: 'As Patient', to: '/signup/patient' },
                       { label: 'As Doctor', to: '/signup/doctor' }
-                    ])}
+                    ], signupDropdownRef)}
                   </div>
                 </>
               )}

@@ -1,6 +1,7 @@
 import image from '../../assets/7.png';
 import image1 from '../../assets/2.png';
 
+// eslint-disable-next-line react/prop-types
 const AuthForm = ({ heading, children, onSubmit }) => {
   return (
     <div className='flex flex-col md:flex-row h-screen'>
