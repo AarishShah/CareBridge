@@ -49,22 +49,6 @@ const getUploadProfileUrl = async (fileType) =>
     return { key, uploadUrl };
 }
 
-// completed:
-
-// Sign Up Route
-// Login Route
-// Update Route
-// Delete Route // make sure to delete all prescriptions and medical records associated with the patient
-// Logout Route
-// Logout All Route
-// Read Route
-// assignDoctor Route
-// removeDoctor Route
-// read patient's medical history (this is common to both patient and doctor)
-
-// Incomplete:
-// when a patient assigns a doctor, the doctor should get a notification which when accepted, the doctor is added to the patient's assignedDoctors array
-
 // Sign Up Route
 router.post("/patient/signup", async (req, res) =>
 {
@@ -139,8 +123,8 @@ router.get('/patient/auth/google/callback',
 
                 // generate token, save it to the session and redirect to dashboard
                 const token = await existingUser.generateAuthToken();
-                req.session.token = token;
-                console.log("Login successful");
+                req.session.token = token; //  remove if the below line is working fine
+                // res.send({ token }); // test this
                 return res.redirect('http://localhost:5173/patient/dashboard');
             }
 
@@ -159,8 +143,7 @@ router.get('/patient/auth/google/callback',
     }
 );
 
-
-
+// Complete Profile Route
 router.post("/patient/complete-profile", async (req, res) =>
 {
     try
@@ -199,7 +182,6 @@ router.post("/patient/complete-profile", async (req, res) =>
         res.status(500).send({ error: "Failed to create a new user." });
     }
 });
-
 
 // Login Route
 router.post("/patient/login", async (req, res) =>
