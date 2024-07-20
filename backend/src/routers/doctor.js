@@ -9,7 +9,7 @@ const passport = require("passport");
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
-// require("../middleware/apple");
+require("../middleware/passport");
 const router = express.Router();
 const { assignDoctor, removeDoctor } = require("../utils/assignment");
 const s3 = require("../utils/s3Client");
@@ -94,11 +94,11 @@ router.post("/doctor/signup", async (req, res) =>
 });
 
 // Redirect to Google for authentication
-router.get('/doctor/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/doctor/auth/google', passport.authenticate('google-doctor', { scope: ['profile', 'email'] }));
 
 // Google callback URL
 router.get('/doctor/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/doctor/auth/google' }),
+  passport.authenticate('google-doctor', { failureRedirect: '/doctor/auth/google' }),
   async (req, res) =>
   {
     const user = req.user;
