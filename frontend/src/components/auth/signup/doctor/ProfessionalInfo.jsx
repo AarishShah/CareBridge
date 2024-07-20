@@ -7,9 +7,9 @@ function ProfessionalInfo({
   updateField,
 }) {
   return (
-    <div  className="flex flex-col items-center mt-16 mb-2 w-full">
+    <div  className="flex flex-col items-center mt-10 mb-2 w-full">
 
-    <h1 className="text-xl font-bold mb-12 mr-52">Professional Information</h1>
+    <h1 className="text-xl font-bold mb-12">Professional Information</h1>
 
       <div className="w-2/3 mb-4">
 

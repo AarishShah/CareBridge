@@ -13,7 +13,7 @@ function PersonalInfo({
 
   return (
     <div className="flex flex-col items-center mt-10 mb-6 w-full">
-      <h1 className="text-xl font-bold mb-6 mr-60">Personal Information</h1>
+      <h1 className="text-xl font-bold mb-6">Personal Information</h1>
 
       <div className="w-2/3 mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2">Name</label>

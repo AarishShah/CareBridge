@@ -52,19 +52,34 @@ const Header = () => {
       <div className="container px-4 mx-auto relative text-sm">
         <div className="flex justify-between items-center">
           <div className="flex items-center flex-shrink-0">
-            <img className="h-10 w-10 mr-2 rounded-full" src={logo} alt="logo" />
+            <img
+              className="h-10 w-10 mr-2 rounded-full"
+              src={logo}
+              alt="logo"
+            />
             <span className="text-xl tracking-tight">CareBridge</span>
           </div>
           <ul className="hidden lg:flex ml-14 space-x-12">
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/contact">Contact</Link></li>
-            <li><Link to="/team">Team</Link></li>
-            <li><Link to="/about">About</Link></li>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/contact">Contact</Link>
+            </li>
+            <li>
+              <Link to="/team">Team</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
           </ul>
           <div className="hidden lg:flex justify-center space-x-6 items-center">
             {isAuthenticated ? (
               <>
-                <button className="py-2 px-3 border rounded-md" onClick={logout}>
+                <button
+                  className="py-2 px-3 border rounded-md"
+                  onClick={logout}
+                >
                   Log Out
                 </button>
                 <button className="py-2 px-3 border rounded-md">
@@ -74,22 +89,36 @@ const Header = () => {
             ) : (
               <div className="flex space-x-2 relative">
                 <div className="relative">
-                  <button className="py-2 px-3 border rounded-md" onClick={() => setShowLoginDropdown(!showLoginDropdown)}>
+                  <button
+                    className="py-2 px-3 border rounded-md"
+                    onClick={() => setShowLoginDropdown(!showLoginDropdown)}
+                  >
                     Sign In
                   </button>
-                  {renderDropdown(showLoginDropdown, [
-                    { label: 'As Patient', to: '/login/patient' },
-                    { label: 'As Doctor', to: '/login/doctor' }
-                  ], loginDropdownRef)}
+                  {renderDropdown(
+                    showLoginDropdown,
+                    [
+                      { label: "As Patient", to: "/login/patient" },
+                      { label: "As Doctor", to: "/login/doctor" },
+                    ],
+                    loginDropdownRef
+                  )}
                 </div>
                 <div className="relative">
-                  <button className="py-2 px-3 border rounded-md" onClick={() => setShowSignupDropdown(!showSignupDropdown)}>
+                  <button
+                    className="py-2 px-3 border rounded-md"
+                    onClick={() => setShowSignupDropdown(!showSignupDropdown)}
+                  >
                     Create an account
                   </button>
-                  {renderDropdown(showSignupDropdown, [
-                    { label: 'As Patient', to: '/signup/patient' },
-                    { label: 'As Doctor', to: '/signup/doctor' }
-                  ], signupDropdownRef)}
+                  {renderDropdown(
+                    showSignupDropdown,
+                    [
+                      { label: "As Patient", to: "/patient/signup" },
+                      { label: "As Doctor", to: "/doctor/signup" },
+                    ],
+                    signupDropdownRef
+                  )}
                 </div>
               </div>
             )}
@@ -103,15 +132,26 @@ const Header = () => {
         {mobileDrawerOpen && (
           <div className="fixed right-0 z-20 bg-neutral-100 w-full p-12 flex flex-col justify-center items-center lg:hidden">
             <ul className="w-full">
-              <li><Link to="/">Home</Link></li>
-              <li><Link to="/contact">Contact</Link></li>
-              <li><Link to="/team">Team</Link></li>
-              <li><Link to="/about">About</Link></li>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/contact">Contact</Link>
+              </li>
+              <li>
+                <Link to="/team">Team</Link>
+              </li>
+              <li>
+                <Link to="/about">About</Link>
+              </li>
             </ul>
             <div className="flex space-x-2 relative">
               {isAuthenticated ? (
                 <>
-                  <button className="py-2 px-3 border rounded-md" onClick={logout}>
+                  <button
+                    className="py-2 px-3 border rounded-md"
+                    onClick={logout}
+                  >
                     Log Out
                   </button>
                   <button className="py-2 px-3 border rounded-md">
@@ -121,22 +161,36 @@ const Header = () => {
               ) : (
                 <>
                   <div className="relative">
-                    <button className="py-2 px-3 border rounded-md" onClick={() => setShowLoginDropdown(!showLoginDropdown)}>
+                    <button
+                      className="py-2 px-3 border rounded-md"
+                      onClick={() => setShowLoginDropdown(!showLoginDropdown)}
+                    >
                       Sign In
                     </button>
-                    {renderDropdown(showLoginDropdown, [
-                      { label: 'As Patient', to: '/login/patient' },
-                      { label: 'As Doctor', to: '/login/doctor' }
-                    ], loginDropdownRef)}
+                    {renderDropdown(
+                      showLoginDropdown,
+                      [
+                        { label: "As Patient", to: "/login/patient" },
+                        { label: "As Doctor", to: "/login/doctor" },
+                      ],
+                      loginDropdownRef
+                    )}
                   </div>
                   <div className="relative">
-                    <button className="py-2 px-3 border rounded-md" onClick={() => setShowSignupDropdown(!showSignupDropdown)}>
+                    <button
+                      className="py-2 px-3 border rounded-md"
+                      onClick={() => setShowSignupDropdown(!showSignupDropdown)}
+                    >
                       Create an account
                     </button>
-                    {renderDropdown(showSignupDropdown, [
-                      { label: 'As Patient', to: '/signup/patient' },
-                      { label: 'As Doctor', to: '/signup/doctor' }
-                    ], signupDropdownRef)}
+                    {renderDropdown(
+                      showSignupDropdown,
+                      [
+                        { label: "As Patient", to: "/signup/patient" },
+                        { label: "As Doctor", to: "/signup/doctor" },
+                      ],
+                      signupDropdownRef
+                    )}
                   </div>
                 </>
               )}

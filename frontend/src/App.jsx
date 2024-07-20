@@ -18,6 +18,13 @@ import ViewFiles from "./components/dashboards/medical-files/ViewFiles";
 import FormTemp from "./components/auth/signup/FormTemp";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UploadFile from "./components/dashboards/medical-files/UploadFile";
+import ContactForm from "./components/header-links/ContactForm";
+import ReadAllPrescriptions from "./components/dashboards/prescription/ReadAllPrescriptions";
+import CreatePrescriptionForm from "./components/dashboards/prescription/CreatePrescriptionForm";
+import CreatePrescription from "./components/dashboards/prescription/CreatePrescription";
+import AboutPage from "./components/header-links/AboutPage";
+import TeamPage from "./components/header-links/TeamPage";
+
 
 const queryClient = new QueryClient();
 
@@ -25,22 +32,22 @@ const router = createBrowserRouter([
   { path: "/", element: <LandingPage /> },
   { path: "/login/patient", element: <LoginPage /> },
   { path: "/login/doctor", element: <LoginPage /> },
-  { path: "/signup/doctor", element: <SignupPage /> },
-  { path: "/signup/patient", element: <SignupPagePatient /> },
+  { path: "/doctor/signup", element: <SignupPage /> },
+  { path: "/patient/signup", element: <SignupPagePatient /> },
   {
     path: "/dashboard",
     element: (
-      <ProtectedRoute>
+      // <ProtectedRoute>
         <Dashboard />
-      </ProtectedRoute>
+      // </ProtectedRoute>
     ),
   },
   {
     path: "/patient/dashboard",
     element: (
-      <ProtectedRoute>
+      // <ProtectedRoute>
         <PatientDashboard />
-      </ProtectedRoute>
+      // </ProtectedRoute>
     ),
   },
   {
@@ -61,6 +68,12 @@ const router = createBrowserRouter([
   { path: "/patient/dashboard/medical-files", element: <ViewFiles /> },
   { path: "/patient/dashboard/medical-files/upload", element: <UploadFile /> },
   { path: "/patient/complete-profile", element: <FormTemp /> },
+  { path: "/prescription", element: <ReadAllPrescriptions /> },
+  { path: "/create-prescription", element: <CreatePrescription /> },
+  { path: "/create-prescription/:id", element: <CreatePrescriptionForm /> },
+  { path: "/contact", element: <ContactForm /> },
+  { path: "/about", element: <AboutPage /> },
+  { path: "/team", element: <TeamPage /> },
 ]);
 
 function App() {

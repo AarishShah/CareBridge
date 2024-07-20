@@ -193,6 +193,7 @@ router.post("/patient/login", async (req, res) =>
         const token = await patient.generateAuthToken();
 
         res.status(202).send({ patient, token });
+        
     }
     catch (error)
     {

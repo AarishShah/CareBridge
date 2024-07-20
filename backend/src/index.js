@@ -10,6 +10,7 @@ const patientRouter = require("./routers/patient");
 const doctorRouter = require("./routers/doctor");
 const medicalHistoryRouter = require("./routers/medicalHistory");
 const medicalFileRouter = require("./routers/medicalFile");
+const prescriptionRouter = require("./routers/prescription");
 
 const app = express();
 
@@ -39,7 +40,7 @@ app.use(patientRouter);
 app.use(doctorRouter);
 app.use(medicalHistoryRouter);
 app.use(medicalFileRouter);
-
+app.use(prescriptionRouter);
 
 app.listen(port, () => {
   console.log("Server is up on port " + port);
