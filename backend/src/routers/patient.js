@@ -139,7 +139,8 @@ router.get('/patient/auth/google/callback',
 
                 // generate token, save it to the session and redirect to dashboard
                 const token = await existingUser.generateAuthToken();
-                req.session.token = token;
+                req.session.token = token; //  remove if the below line is working fine
+                // res.send({ token }); // test this
                 return res.redirect('http://localhost:5173/patient/dashboard');
             }
 
