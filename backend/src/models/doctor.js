@@ -31,8 +31,30 @@ const doctorSchema = new mongoose.Schema({
         type: String,
         minlength: 8,
         maxlength: 64,
-        required: true,
+        required: function () { return !this.isGoogleSignUp },
         trim: true,
+        validate(value)
+        {
+            // Skip validation if google sign up is true
+            if (this.isGoogleSignUp) return;
+            if (!value || value.length < 8)
+            {
+                throw new Error("Password is required and should be at between 8 to 64 characters long");
+            }
+        },
+        default: null,
+    },
+
+    isGoogleSignUp:
+    {
+        type: Boolean,
+        default: false,
+    },
+
+    googleId:
+    {
+        type: String,
+        required: false,
     },
 
     bucket:

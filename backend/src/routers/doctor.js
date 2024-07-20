@@ -1,11 +1,15 @@
 const express = require("express");
+
 const path = require("path");
 const { randomUUID } = require("crypto");
 const { PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const passport = require("passport");
+
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
+require("../middleware/apple");
 const router = express.Router();
 const { assignDoctor, removeDoctor } = require("../utils/assignment");
 const s3 = require("../utils/s3Client");
@@ -50,24 +54,6 @@ const getUploadProfileUrl = async (fileType) =>
     return { key, uploadUrl };
 }
 
-// completed:
-
-// Sign Up Route
-// Login Route
-// Update Route
-// Delete Route
-// Logout Route
-// Logout All Route
-// Read Route
-// Create patient's medical history
-// Read patient's medical history (this is common to both patient and doctor)
-
-// Incomplete:
-// add doctor to patient's assignedDoctors array
-// remove doctor from patient's assignedDoctors array
-
-// when a doctor is assigned himself/herself to a patient, the patient should get a notification which when accepted, the doctor is added to the patient's assignedDoctors array
-
 // Sign Up Route
 router.post("/doctor/signup", async (req, res) =>
 {
@@ -104,6 +90,98 @@ router.post("/doctor/signup", async (req, res) =>
   {
     // console.error("Create error:", e);
     res.status(500).send({ error: "Create failed" });
+  }
+});
+
+// Redirect to Google for authentication
+router.get('/doctor/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// Google callback URL
+router.get('/doctor/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/doctor/auth/google' }),
+  async (req, res) =>
+  {
+    const user = req.user;
+    console.log(user);
+
+    if (!user)
+    {
+      return res.redirect('/doctor/auth/google');
+    }
+
+    try
+    {
+      const existingUser = await Doctor.findOne({ email: user.email });
+
+      // check if user is in db
+      if (existingUser)
+      {
+        // if user is in db but not linked to google account then update the parameters and hence link the account
+        if (!existingUser.isGoogleSignUp)
+        {
+          existingUser.isGoogleSignUp = true;
+          existingUser.googleId = user.googleId;
+          await existingUser.save();
+        }
+
+        // generate token, save it to the session and redirect to dashboard
+        const token = await existingUser.generateAuthToken();
+        req.session.token = token; //  remove if the below line is working fine
+        // res.send({ token }); // test this
+        return res.redirect('http://localhost:5173/doctor/dashboard');
+      }
+
+      else
+      {
+        // Temporarily store the user data
+        req.session.tempUser = user;
+        return res.redirect('http://localhost:5173/doctor/complete-profile');
+      }
+
+    } catch (error)
+    {
+      console.error("Google authentication error:", error);
+      return res.redirect('/doctor/auth/google');
+    }
+  }
+);
+
+// Complete Profile Route
+router.post("/doctor/complete-profile", async (req, res) =>
+{
+  try
+  {
+    const tempUser = req.session.tempUser;
+    const { gender, specialization, yearsOfExperience, qualifications } = req.body;
+
+    const missingFields = [];
+    if (!gender) missingFields.push("gender");
+    if (!specialization) missingFields.push("specialization");
+    if (!yearsOfExperience) missingFields.push("years of experience");
+    if (!qualifications) missingFields.push("qualifications");
+
+    if (missingFields.length > 0)
+    {
+      return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(", ")}. Please ensure all fields are filled out correctly.`, });
+    }
+
+    const newDoctor = await Doctor.create(
+      {
+        name: tempUser.name,
+        email: tempUser.email,
+        isGoogleSignUp: tempUser.isGoogleSignUp,
+        googleId: tempUser.google,
+        gender, specialization, yearsOfExperience, qualifications
+      });
+    const token = await newDoctor.generateAuthToken();
+    delete req.session.tempUser;
+
+    res.status(201).send({ newDoctor, token });
+  } catch (e)
+  {
+    // console.error("Signup error:", e);
+    // console.log(req.body);
+    res.status(500).send({ error: "Failed to create a new user." });
   }
 });
 
