@@ -23,6 +23,7 @@ let url = "http://localhost:5000";
 
 function DoctorSignup() {
   const [data, setData] = useState(INIT_DATA);
+  const [token, setToken] = useState('');
   const [error, setError] = useState(false);
   function updateFields(fields) {
     setData((prevData) => {
@@ -60,6 +61,7 @@ function DoctorSignup() {
 
         if (response.data.token) {
           localStorage.setItem("token", response.data.token);
+          setToken(token);
         }
 
         if (pathname.includes("doctor")) {
