@@ -75,7 +75,11 @@ function DoctorSignup() {
   }
 
   const handleSignin = () => {
-    window.location.href = "http://localhost:5000/patient/auth/google";
+    const userType = location.pathname.includes("doctor")
+      ? "doctor"
+      : "patient";
+    const signInUrl = `${url}/${userType}/auth/google`;
+    window.location.href = signInUrl;
   };
 
   return (
@@ -112,10 +116,9 @@ function DoctorSignup() {
           >
             {currentStep !== steps.length - 1 ? "Next" : "Finish"}
           </button>
-         
         </div>
         <div>
-        <button
+          <button
             type="button"
             className="h-10 w-48 border border-gray-400 text-gray-600 rounded mt-8 flex items-center justify-evenly font-medium text-sm hover:underline"
             onClick={handleSignin}
