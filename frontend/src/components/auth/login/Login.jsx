@@ -50,7 +50,9 @@ function LoginPage() {
   };
 
   const handleSignin = () => {
-    window.location.href = "http://localhost:5000/patient/auth/google";
+    const userType = location.pathname.includes("doctor") ? "doctor" : "patient";
+    const signInUrl = `${url}/${userType}/auth/google`;
+    window.location.href = signInUrl;
   };
 
   return (
