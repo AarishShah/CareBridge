@@ -82,9 +82,6 @@ const Header = () => {
                 >
                   Log Out
                 </button>
-                <button className="py-2 px-3 border rounded-md">
-                  My Account
-                </button>
               </>
             ) : (
               <div className="flex space-x-2 relative">
