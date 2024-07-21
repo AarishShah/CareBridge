@@ -8,6 +8,7 @@ import ProfessionalInfo from "./ProfessionalInfo";
 import AccountDetails from "./AccountDetails";
 import image from "../../../../assets/7.png";
 import image1 from "../../../../assets/2.png";
+import { useAuth } from "../../../context/AuthContext";
 
 const INIT_DATA = {
   name: "",
@@ -23,7 +24,7 @@ let url = "http://localhost:5000";
 
 function DoctorSignup() {
   const [data, setData] = useState(INIT_DATA);
-  const [token, setToken] = useState('');
+  const { login } = useAuth();
   const [error, setError] = useState(false);
   function updateFields(fields) {
     setData((prevData) => {
@@ -60,8 +61,7 @@ function DoctorSignup() {
         const response = await axios.post(`${url}${pathname}`, formattedData);
 
         if (response.data.token) {
-          localStorage.setItem("token", response.data.token);
-          setToken(token);
+          login(response.data.token);
         }
 
         if (pathname.includes("doctor")) {

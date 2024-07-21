@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
-import { Link } from 'react-router-dom';
-import { useAuth } from '../components/context/AuthContext';
-import useLogout from '../hooks/useLogout'; 
+import { Link, NavLink } from "react-router-dom";
+import { useAuth } from "../components/context/AuthContext";
+import useLogout from "../hooks/useLogout";
 import logo from "../assets/2.png";
 
 const Header = () => {
   const { isAuthenticated } = useAuth();
-  const logout = useLogout(); 
+  const logout = useLogout();
   const [showLoginDropdown, setShowLoginDropdown] = useState(false);
   const [showSignupDropdown, setShowSignupDropdown] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -22,10 +22,16 @@ const Header = () => {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (loginDropdownRef.current && !loginDropdownRef.current.contains(event.target)) {
+      if (
+        loginDropdownRef.current &&
+        !loginDropdownRef.current.contains(event.target)
+      ) {
         setShowLoginDropdown(false);
       }
-      if (signupDropdownRef.current && !signupDropdownRef.current.contains(event.target)) {
+      if (
+        signupDropdownRef.current &&
+        !signupDropdownRef.current.contains(event.target)
+      ) {
         setShowSignupDropdown(false);
       }
     }
@@ -35,17 +41,23 @@ const Header = () => {
     };
   }, []);
 
-  const renderDropdown = (isVisible, links, ref) => (
+  const renderDropdown = (isVisible, links, ref) =>
     isVisible && (
-      <div ref={ref} className="absolute mt-2 w-32 bg-white border border-gray-200 rounded shadow-lg z-20">
+      <div
+        ref={ref}
+        className="absolute mt-2 w-32 bg-white border border-gray-200 rounded shadow-lg z-20"
+      >
         {links.map((link, index) => (
-          <Link key={index} className="block px-4 py-2 text-gray-800 hover:bg-gray-100" to={link.to}>
+          <Link
+            key={index}
+            className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+            to={link.to}
+          >
             {link.label}
           </Link>
         ))}
       </div>
-    )
-  );
+    );
 
   return (
     <nav className="sticky top-0 z-50 py-3 backdrop-blur-lg border-neutral-700/80">
@@ -61,16 +73,44 @@ const Header = () => {
           </div>
           <ul className="hidden lg:flex ml-14 space-x-12">
             <li>
-              <Link to="/">Home</Link>
+              <NavLink
+                to="/"
+                style={({ isActive }) =>
+                  isActive ? { textDecoration: "underline" } : {}
+                }
+              >
+                Home
+              </NavLink>
             </li>
             <li>
-              <Link to="/contact">Contact</Link>
+              <NavLink
+                to="/contact"
+                style={({ isActive }) =>
+                  isActive ? { textDecoration: "underline" } : {}
+                }
+              >
+                Contact
+              </NavLink>
             </li>
             <li>
-              <Link to="/team">Team</Link>
+              <NavLink
+                to="/team"
+                style={({ isActive }) =>
+                  isActive ? { textDecoration: "underline" } : {}
+                }
+              >
+                Team
+              </NavLink>
             </li>
             <li>
-              <Link to="/about">About</Link>
+              <NavLink
+                to="/about"
+                style={({ isActive }) =>
+                  isActive ? { textDecoration: "underline" } : {}
+                }
+              >
+                About
+              </NavLink>
             </li>
           </ul>
           <div className="hidden lg:flex justify-center space-x-6 items-center">

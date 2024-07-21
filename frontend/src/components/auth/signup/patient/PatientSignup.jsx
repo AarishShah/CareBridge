@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import { useAuth } from "../../../context/AuthContext";
 import useMultiStepForm from "../../../../hooks/use-multistep";
 import AccountDetails from "./AccountDetails";
 import Address from "./Address";
@@ -28,6 +29,7 @@ const INIT_DATA = {
 let url = "http://localhost:5000";
 
 function PatientSignup() {
+  const { login } = useAuth();
   const [data, setData] = useState(INIT_DATA);
   const [error, setError] = useState(false);
   function updateFields(fields) {
@@ -49,11 +51,10 @@ function PatientSignup() {
 
     if (currentStep >= steps.length - 1) {
       try {
-        console.log(`${pathname}`);
         const response = await axios.post(`${url}${pathname}`, data);
 
         if (response.data.token) {
-          localStorage.setItem("token", response.data.token);
+          login(response.data.token);
           localStorage.setItem("patient", response.data.role);
         }
 
@@ -67,18 +68,14 @@ function PatientSignup() {
       }
     }
   }
-  
+
   const handleSignin = () => {
     window.location.href = "http://localhost:5000/patient/auth/google";
   };
 
   return (
     <div className="flex min-h-screen h-full">
-      <img
-        src={image}
-        alt=""
-        className="md:block w-1/2 object-cover"
-      />
+      <img src={image} alt="" className="md:block w-1/2 object-cover" />
       <form
         onSubmit={handleSubmit}
         className="w-full md:w-1/2 flex flex-col items-center p-8"
@@ -107,7 +104,7 @@ function PatientSignup() {
           </button>
         </div>
         <div>
-        <button
+          <button
             type="button"
             className="h-10 w-48 border border-gray-400 text-gray-600 rounded mt-8 flex items-center justify-evenly font-medium text-sm hover:underline"
             onClick={handleSignin}
