@@ -14,9 +14,10 @@ async function uploadToS3(event, patientId) {
   }
 
   const fileType = encodeURIComponent(file.type);
+  const fileName = encodeURIComponent(file.name);
 
   const { data } = await axios.get(
-    `http://localhost:5000/medical-record/${patientId}?fileType=${fileType}`,
+    `http://localhost:5000/medical-record/${patientId}?fileType=${fileType}&fileName=${fileName}`,
     { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
   );
 

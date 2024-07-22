@@ -12,7 +12,7 @@ function ViewFiles() {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     setMedicalRecords(response.data.presignedUrl);
-    setTitle(response.data.key);
+    setTitle(response.data.fileName);
   }, []);
 
   useEffect(() => {
@@ -21,39 +21,39 @@ function ViewFiles() {
 
   return (
     <div
-      className="flex justify-center  h-screen bg-cover bg-center bg-no-repeat"
+      className="flex justify-center h-screen bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${image})` }}
     >
       <div className="fixed w-1/3 container mx-auto p-6">
-        {title.length === 0 && (
+        {medicalRecords.length === 0 ? (
           <h2 className="text-xl font-semibold text-center text-gray-700">
             No medical files were found
           </h2>
+        ) : (
+          <>
+            <h1 className="text-2xl font-semibold text-center mt-2 mb-6">
+              View Medical Files
+            </h1>
+            {medicalRecords.map((record, index) => (
+              <div
+                key={record}
+                className="bg-transparent shadow-md rounded-lg mb-3 p-2"
+              >
+                <ul>
+                  <li className="flex justify-center items-center">
+                    <Link
+                      className="mt-4 text-lg font-semibold text-black hover:text-blue-600"
+                      to={record}
+                      target="_blank"
+                    >
+                      {title[index]}
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            ))}
+          </>
         )}
-        {!title.length === 0 && (
-          <h1 className="text-2xl font-semibold text-center  mt-2 mb-6">
-            View Medical Files
-          </h1>
-        )}
-        {medicalRecords &&
-          medicalRecords.map((record) => (
-            <div
-              key={record}
-              className="bg-transparent shadow-md rounded-lg mb-3 p-2"
-            >
-              <ul>
-                <li className="flex justify-center items-center">
-                  <Link
-                    className="mt-4 text-lg font-semibold text-black hover:text-blue-600"
-                    to={record}
-                    target="_blank"
-                  >
-                    {title}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          ))}
       </div>
 
       <div
