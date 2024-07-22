@@ -15,6 +15,8 @@ const medicalFileSchema = mongoose.Schema(
             ref: "Patient"
         },
 
+        fileName: { type: String, required: true },
+
         bucket: { type: String, required: true },
 
         key: { type: String, required: true },
