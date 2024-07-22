@@ -24,7 +24,7 @@ import CreatePrescriptionForm from "./components/dashboards/prescription/CreateP
 import CreatePrescription from "./components/dashboards/prescription/CreatePrescription";
 import AboutPage from "./components/header-links/AboutPage";
 import TeamPage from "./components/header-links/TeamPage";
-
+import DocFormTemp from "./components/auth/signup/DocFormTemp";
 
 const queryClient = new QueryClient();
 
@@ -38,7 +38,7 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: (
       // <ProtectedRoute>
-        <Dashboard />
+      <Dashboard />
       // </ProtectedRoute>
     ),
   },
@@ -46,16 +46,16 @@ const router = createBrowserRouter([
     path: "/patient/dashboard",
     element: (
       // <ProtectedRoute>
-        <PatientDashboard />
+      <PatientDashboard />
       // </ProtectedRoute>
     ),
   },
   {
     path: "/doctor/dashboard",
     element: (
-      <ProtectedRoute>
-        <DoctorDashboard />
-      </ProtectedRoute>
+      // <ProtectedRoute>
+      <DoctorDashboard />
+      /* </ProtectedRoute> */
     ),
   },
 
@@ -66,8 +66,10 @@ const router = createBrowserRouter([
   { path: "/doctor/edit", element: <DoctorEdit /> },
   { path: "/patient/edit", element: <PatientEdit /> },
   { path: "/patient/dashboard/medical-files", element: <ViewFiles /> },
+  { path: "/doctor/dashboard/medical-files", element: <ViewFiles /> },
   { path: "/patient/dashboard/medical-files/upload", element: <UploadFile /> },
   { path: "/patient/complete-profile", element: <FormTemp /> },
+  { path: "/doctor/complete-profile", element: <DocFormTemp /> },
   { path: "/prescription", element: <ReadAllPrescriptions /> },
   { path: "/create-prescription", element: <CreatePrescription /> },
   { path: "/create-prescription/:id", element: <CreatePrescriptionForm /> },

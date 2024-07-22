@@ -8,6 +8,7 @@ import ProfessionalInfo from "./ProfessionalInfo";
 import AccountDetails from "./AccountDetails";
 import image from "../../../../assets/7.png";
 import image1 from "../../../../assets/2.png";
+import { useAuth } from "../../../context/AuthContext";
 
 const INIT_DATA = {
   name: "",
@@ -23,6 +24,7 @@ let url = "http://localhost:5000";
 
 function DoctorSignup() {
   const [data, setData] = useState(INIT_DATA);
+  const { login } = useAuth();
   const [error, setError] = useState(false);
   function updateFields(fields) {
     setData((prevData) => {
@@ -59,7 +61,7 @@ function DoctorSignup() {
         const response = await axios.post(`${url}${pathname}`, formattedData);
 
         if (response.data.token) {
-          localStorage.setItem("token", response.data.token);
+          login(response.data.token);
         }
 
         if (pathname.includes("doctor")) {
@@ -75,7 +77,11 @@ function DoctorSignup() {
   }
 
   const handleSignin = () => {
-    window.location.href = "http://localhost:5000/patient/auth/google";
+    const userType = location.pathname.includes("doctor")
+      ? "doctor"
+      : "patient";
+    const signInUrl = `${url}/${userType}/auth/google`;
+    window.location.href = signInUrl;
   };
 
   return (
@@ -112,10 +118,9 @@ function DoctorSignup() {
           >
             {currentStep !== steps.length - 1 ? "Next" : "Finish"}
           </button>
-         
         </div>
         <div>
-        <button
+          <button
             type="button"
             className="h-10 w-48 border border-gray-400 text-gray-600 rounded mt-8 flex items-center justify-evenly font-medium text-sm hover:underline"
             onClick={handleSignin}
