@@ -72,7 +72,7 @@ const Header = () => {
             <span className="text-xl tracking-tight">CareBridge</span>
           </div>
           <ul className="hidden lg:flex ml-14 space-x-12">
-            <li>
+            {/* <li>
               <NavLink
                 to="/"
                 style={({ isActive }) =>
@@ -81,7 +81,7 @@ const Header = () => {
               >
                 Home
               </NavLink>
-            </li>
+            </li> */}
             <li>
               <NavLink
                 to="/contact"
