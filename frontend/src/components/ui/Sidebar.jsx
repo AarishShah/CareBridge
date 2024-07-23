@@ -17,39 +17,39 @@ const Sidebar = ({ userType, hoveredIndex }) => {
     <div className="bg-transparent h-full p-4 w-64 mt-24 ml-20 text-lg font-semibold hidden lg:block">
       <ul className="space-y-8">
         <li>
-          <Link to="/personal-info" className={linkClasses(0)}>
+          <Link to="#" className={linkClasses(0)}>
             <User className="h-6 w-6" />
             <span>Personal Information</span>
           </Link>
         </li>
         <li>
-          <Link to="/files" className={linkClasses(1)}>
+          <Link to="#" className={linkClasses(1)}>
             <FileText className="h-6 w-6" />
             <span>Files</span>
           </Link>
         </li>
         <li>
-          <Link to="/prescription" className={linkClasses(2)}>
+          <Link to="#" className={linkClasses(2)}>
             <Clipboard className="h-6 w-6" />
             <span>Prescription</span>
           </Link>
         </li>
         <li>
-          <Link to="/medical-records" className={linkClasses(3)}>
+          <Link to="#" className={linkClasses(3)}>
             <FolderOpen className="h-6 w-6" />
             <span>Medical Records</span>
           </Link>
         </li>
         {userType === 'doctor' ? (
           <li>
-            <Link to="/assigned-patients" className={linkClasses(4)}>
+            <Link to="#" className={linkClasses(4)}>
               <UserPlus className="h-6 w-6" />
               <span>Assigned Patients</span>
             </Link>
           </li>
         ) : (
           <li>
-            <Link to="/assigned-doctors" className={linkClasses(4)}>
+            <Link to="#" className={linkClasses(4)}>
               <UserCheck className="h-6 w-6" />
               <span>Assigned Doctors</span>
             </Link>
