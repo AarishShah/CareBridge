@@ -43,6 +43,14 @@ const doctorImagesData = [
       { text: "View Assigned Patients", path: "/view-assigned-patients" },
     ],
   },
+  {
+    src: image2,
+    heading: "Send Reminder",
+    text: "Send reminder to your patients </br> to take their medicine",
+    buttons: [
+      { text: "Send Reminder", path: "reminder" },
+    ],
+  },
 ];
 
 export default doctorImagesData;

@@ -22,6 +22,7 @@ import ContactForm from "./components/header-links/ContactForm";
 import ReadAllPrescriptions from "./components/dashboards/prescription/ReadAllPrescriptions";
 import CreatePrescriptionForm from "./components/dashboards/prescription/CreatePrescriptionForm";
 import CreatePrescription from "./components/dashboards/prescription/CreatePrescription";
+import Reminder from './components/dashboards/reminders/Reminder';
 import AboutPage from "./components/header-links/AboutPage";
 import TeamPage from "./components/header-links/TeamPage";
 import DocFormTemp from "./components/auth/signup/DocFormTemp";
@@ -70,6 +71,7 @@ const router = createBrowserRouter([
   { path: "/patient/dashboard/medical-files/upload", element: <UploadFile /> },
   { path: "/patient/complete-profile", element: <FormTemp /> },
   { path: "/doctor/complete-profile", element: <DocFormTemp /> },
+  { path: '/doctor/dashboard/reminder', element: <Reminder /> },
   { path: "/prescription", element: <ReadAllPrescriptions /> },
   { path: "/create-prescription", element: <CreatePrescription /> },
   { path: "/create-prescription/:id", element: <CreatePrescriptionForm /> },
