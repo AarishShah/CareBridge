@@ -55,10 +55,16 @@ function extractRelevantInfo(medicalHistory)
 
 
     const summaryPrompt = `
-    Provide the following details based on the given medical record:
-    1. Summary: Summarize this medical record in about 100 words. This summary should be such that when the doctor reads it, it would give an idea about the Medical Record document.
-    2. Prediction: Predict future diseases that the patient might be at risk for based on the given medical history.
-    3. Remedy: Suggest possible remedies or medications for the patient based on the medical history.
+    Provide the following details based on the given medical record, using the delimiters to clearly separate each section:
+    [SUMMARY_START]
+    Summarize this medical record in about 100 words. This summary should be such that when the doctor reads it, it would give an idea about the Medical Record document.
+    [SUMMARY_END]
+    [PREDICTION_START]
+    Predict future diseases that the patient might be at risk for based on the given medical history.
+    [PREDICTION_END]
+    [REMEDY_START]
+    Suggest possible remedies or medications for the patient based on the medical history.
+    [REMEDY_END]
   
     Title: ${title}
     Name: ${name}, Age: ${age.years} years, Gender: ${gender}, Occupation: ${occupation}, Marital Status: ${maritalStatus}
