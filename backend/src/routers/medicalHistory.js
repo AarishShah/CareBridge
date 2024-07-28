@@ -97,7 +97,7 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
         res.status(201).send(medicalHistory);
     } catch (e)
     {
-        console.error("Error creating patient history:", e);
+        // console.error("Error creating patient history:", e);
         res.status(400).send({ error: 'Failed to create patient history' });
     }
 });
