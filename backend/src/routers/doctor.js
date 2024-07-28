@@ -331,6 +331,35 @@ router.post("/doctor/assignDoctor", auth, async (req, res) =>
   }
 });
 
+// removeDoctor Route
+router.delete("/doctor/removeDoctor", auth, async (req, res) =>
+{
+  try
+  {
+    const doctorId = req.user._id;
+    const patientEmail = req.body.email;
+
+    const patient = await Patient.findOne({ email: patientEmail });
+    if (!patient)
+    {
+      return res.status(404).send({ error: "Patient not found" });
+    }
+
+    const result = await removeDoctor(patient._id, doctorId);
+    if (result.error)
+    {
+      return res.status(400).send({ error: result.message });
+    }
+
+    res.status(200).send({ message: "Doctor removed successfully" });
+  }
+  catch (error)
+  {
+    // console.error("Remove doctor error:", error);
+    res.status(400).send({ error: "Doctor removal failed" });
+  }
+});
+
 // Send medicine reminder
 router.post('/doctor/reminder', auth, (req, res) =>
 {
@@ -344,9 +373,9 @@ router.post('/doctor/reminder', auth, (req, res) =>
         user: "carebridge56@gmail.com",
         pass: "qwnrzwddfyztxzha",
       },
-      tls: {
-        rejectUnauthorized: false,
-      },
+      // tls: {
+      //   rejectUnauthorized: false,
+      // },
     });
 
     const { to, subject, text, startDate, intervalDays } = req.body;
@@ -401,35 +430,6 @@ router.post('/doctor/reminder', auth, (req, res) =>
   {
     res.status(500).send("Could not send email")
     console.log(e);
-  }
-});
-
-// removeDoctor Route
-router.delete("/doctor/removeDoctor", auth, async (req, res) =>
-{
-  try
-  {
-    const doctorId = req.user._id;
-    const patientEmail = req.body.email;
-
-    const patient = await Patient.findOne({ email: patientEmail });
-    if (!patient)
-    {
-      return res.status(404).send({ error: "Patient not found" });
-    }
-
-    const result = await removeDoctor(patient._id, doctorId);
-    if (result.error)
-    {
-      return res.status(400).send({ error: result.message });
-    }
-
-    res.status(200).send({ message: "Doctor removed successfully" });
-  }
-  catch (error)
-  {
-    // console.error("Remove doctor error:", error);
-    res.status(400).send({ error: "Doctor removal failed" });
   }
 });
 
