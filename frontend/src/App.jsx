@@ -25,6 +25,8 @@ import CreatePrescription from "./components/dashboards/prescription/CreatePresc
 import AboutPage from "./components/header-links/AboutPage";
 import TeamPage from "./components/header-links/TeamPage";
 import DocFormTemp from "./components/auth/signup/DocFormTemp";
+import ForgetPassword from "./components/auth/login/ForgetPassword";
+import ResetPassword from "./components/auth/login/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +78,10 @@ const router = createBrowserRouter([
   { path: "/contact", element: <ContactForm /> },
   { path: "/about", element: <AboutPage /> },
   { path: "/team", element: <TeamPage /> },
+  { path: "/doctor/forgot-password", element: <ForgetPassword /> },
+  { path: "/patient/forgot-password", element: <ForgetPassword /> },
+  { path: "/patient/reset-password/:id/:token", element: <ResetPassword /> },
+  { path: "/doctor/reset-password/:id/:token", element: <ResetPassword /> }
 ]);
 
 function App() {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import AuthForm from "../AuthForm";
@@ -55,6 +55,9 @@ function LoginPage() {
     window.location.href = signInUrl;
   };
 
+  const userType = location.pathname.includes("doctor") ? "doctor" : "patient";
+  const forgotPasswordUrl = `/${userType}/forgot-password`;
+
   return (
     <AuthForm heading="Login to CareBridge" onSubmit={handleSubmit}>
       {error && <div style={{ color: "crimson" }}>Could not authenticate</div>}
@@ -88,12 +91,12 @@ function LoginPage() {
         <label htmlFor="rememberMe" className="font-normal text-sm mr-2">
           Remember me
         </label>
-        <a
-          href="#"
+        <Link
+          to={forgotPasswordUrl}
           className="ml-auto font-normal text-sm text-[10px] hover:underline"
         >
           Forgot Password?
-        </a>
+        </Link>
       </div>
       <button
         type="submit"

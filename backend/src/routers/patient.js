@@ -5,7 +5,7 @@ const { randomUUID } = require("crypto");
 const { GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const passport = require("passport");
-
+const bcrypt = require('bcrypt');
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
@@ -13,6 +13,8 @@ require("../middleware/passport");
 const router = new express.Router();
 const { assignDoctor, removeDoctor } = require('../utils/assignment');
 const s3 = require("../utils/s3Client");
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
@@ -355,5 +357,73 @@ router.delete("/patient/removeDoctor", auth, async (req, res) =>
         res.status(400).send({ error: "Doctor removal failed" });
     }
 });
+
+//forgot-password
+router.post('/patient/forgot-password', (req, res) => {
+    const { email } = req.body;
+
+    Patient.findOne({email: email})
+    .then(user => {
+        if(!user) {
+            return res.send({Status: "User does not exist"})
+        }
+
+
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1d"})
+console.log("token in patient is", token);
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'carebridge56@gmail.com',
+              pass: 'qwnrzwddfyztxzha'
+            }
+          });
+
+          const mailOptions = {
+            from: 'carebridge56@gmail.com',
+            to: email,
+            subject: 'Reset your password',
+            text: `http://localhost:5173/patient/reset-password/${user._id}/${token}`
+          };
+          
+          transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent: ' + info.response);
+              return res.send({Status: "Success"})
+            }
+          });
+    })
+})
+
+//reset password
+
+router.post('/patient/reset-password/:id/:token', (req, res) => {
+    // install bcrypt, nodemailer
+    const {id, token} = req.params
+    const {password} = req.body
+
+    console.log('Received reset password request');
+    console.log(`ID: ${id}`);
+    console.log(`Token: ${token}`);
+    console.log(`Password: ${password}`);
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        console.log("res");
+        if(err) {
+            console.error('Error with token verification:', err);
+            return res.status(400).json({ Status: "Error with token" });
+            
+        } else {
+            bcrypt.hash(password, 10)
+                .then(hash => {
+                    return Patient.findByIdAndUpdate(id, { password: hash });
+                })
+                .then(u => res.json({ Status: "Success" }))
+                .catch(err => res.status(500).json({ Status: err.message }));
+        }
+    })
+})
 
 module.exports = router;
