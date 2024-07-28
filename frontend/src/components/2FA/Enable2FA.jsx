@@ -8,14 +8,21 @@ const Enable2FA = () => {
     const [verificationResult, setVerificationResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    const pathname = window.location.pathname;
+    const urlPrefix = pathname.includes('doctor') ? 'doctor' : 'patient';
+
+
     const getQrCode = async () => {
+        console.log("usertype is", urlPrefix);
         try {
             setIsLoading(true);
-            const response = await fetch(`${BASE_URL}patient/qrCode`, {
+            const response = await fetch(`${BASE_URL}${urlPrefix}/qrCode`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`, // assuming you store JWT in localStorage
                 }
             });
+            console.log("response is", response);
+
             if (!response.ok) {
                 throw new Error('Failed to fetch QR code');
             }
@@ -47,7 +54,7 @@ const Enable2FA = () => {
     const handleVerifyCode = async (code) => {
         try {
             setIsLoading(true);
-            const response = await fetch(`${BASE_URL}patient/verifyqrCode`, {
+            const response = await fetch(`${BASE_URL}${urlPrefix}/verifyqrCode`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

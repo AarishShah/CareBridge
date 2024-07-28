@@ -196,6 +196,7 @@ router.post("/patient/login", async (req, res) =>
 
          // Check if 2FA is enabled
          if (patient.twoFactorSecret) {
+            console.log(`2FA required for patient: ${patient._id}`);
             // Return a flag indicating that 2FA is required
             return res.status(200).send({ twoFactorRequired: true, patientId: patient._id });
         }
@@ -207,14 +208,17 @@ router.post("/patient/login", async (req, res) =>
     }
     catch (error)
     {
-        // console.error("Login error:", error);
+        console.error("Patient Login error:", error);
         res.status(400).send({ error: "Login failed" });
     }
 });
 
 router.post('/patient/verify2FA', async (req, res) => {
+  console.log("patient verify2fa route hit");
+
     try {
         const { patientId, code } = req.body;
+        console.log(`Received verify2FA request with patientId: ${patientId}, code: ${code}`);
         const patient = await Patient.findById(patientId);
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
@@ -231,9 +235,11 @@ router.post('/patient/verify2FA', async (req, res) => {
             const authToken = await patient.generateAuthToken();
             return res.status(200).json({ patient, token: authToken });
         } else {
+            console.error('Invalid 2FA code');
             return res.status(400).json({ error: 'Invalid 2FA code' });
         }
     } catch (error) {
+        console.error("Patient 2FA verification error:", error);
         res.status(500).json({ error: 'Verification failed' });
     }
 });
