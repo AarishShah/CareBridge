@@ -52,6 +52,7 @@ const doctorInfoSchema = new mongoose.Schema(
       required: true
     }
   });
+
 const medicalHistorySchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true, maxlength: 100, required: true },
@@ -146,12 +147,12 @@ const medicalHistorySchema = new mongoose.Schema(
 
     doctorInfo: doctorInfoSchema,
 
-    summary:
+    aiAssessment:
     {
-      type: String,
-      required: false,
-      default: null,
-    },
+      summary: { type: String, default: null },
+      prediction: { type: String, default: null },
+      remedy: { type: String, default: null },
+    }
   },
 
   {
