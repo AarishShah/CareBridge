@@ -86,7 +86,7 @@ async function summarize(medicalHistory)
 
   } catch (error)
   {
-    console.error("Error generating summary with OpenAI:", error);
+    // console.error("Error generating summary with OpenAI:", error);
     return null; // In case of an error, return null so the summary field remains unchanged
   }
 }

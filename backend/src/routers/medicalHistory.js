@@ -33,26 +33,26 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
             return res.status(403).send({ error: 'Doctor not authorized to add history for this patient' });
         }
 
-        const { 
-            medicalHistory: { 
-                title, 
-                biodata: { modeOfAdmission }, 
-                historyOfPresentingComplaints, 
-                historyOfPresentingIllness, 
-                systemicHistory, 
-                pastSurgicalHistory, 
-                pastMedicalHistory, 
-                familyHistory, 
-                drugHistory, 
-                allergies, 
-                gynecologicalHistory, 
-                occupationalHistory, 
-                travelHistory, 
-                socioeconomicHistory 
-            }, 
-            examination, 
-            investigations, 
-            treatment 
+        const {
+            medicalHistory: {
+                title,
+                biodata: { modeOfAdmission },
+                historyOfPresentingComplaints,
+                historyOfPresentingIllness,
+                systemicHistory,
+                pastSurgicalHistory,
+                pastMedicalHistory,
+                familyHistory,
+                drugHistory,
+                allergies,
+                gynecologicalHistory,
+                occupationalHistory,
+                travelHistory,
+                socioeconomicHistory
+            },
+            examination,
+            investigations,
+            treatment
         } = req.body;
 
         const medicalHistory = new MedicalHistory({
@@ -90,9 +90,6 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
             }
         });
 
-        const AISummary = await openai.summarize(medicalHistory);
-        medicalHistory.summary = AISummary;
-
         await medicalHistory.save();
         res.status(201).send(medicalHistory);
     } catch (e)
@@ -101,6 +98,44 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
         res.status(400).send({ error: 'Failed to create patient history' });
     }
 });
+
+// AI Processed Medical History
+router.post('/medicalhistory/:id/summary', auth, async (req, res) =>
+    {
+        if (req.role !== 'doctor')
+        {
+            return res.status(403).send({ error: 'Only doctors are authorized to generate patient history summary' });
+        }
+    
+        const medicalHistoryId = req.params.id;
+        const doctorId = req.user._id; // req.user is set by the auth middleware
+    
+        try
+        {
+            const medicalHistory = await MedicalHistory.findById(medicalHistoryId);
+    
+            if (!medicalHistory)
+            {
+                return res.status(404).send({ error: 'Medical history not found' });
+            }
+    
+            if (medicalHistory.doctorInfo.doctorSignature.toString() !== doctorId.toString())
+            {
+                return res.status(403).send({ error: 'Only the doctor who created this report is authorized to generate the summary.' });
+            }
+    
+            const AISummary = await openai.summarize(medicalHistory);
+            medicalHistory.summary = AISummary;
+    
+            await medicalHistory.save();
+            res.status(200).send(medicalHistory);
+        } catch (e)
+        {
+            // console.error("Error generating AI summary:", e);
+            res.status(400).send({ error: 'Failed to generate AI summary' });
+        }
+    });
+
 // Route to fetch paginated medical histories (only title and ID) with authorization
 router.get('/medicalhistories', auth, async (req, res) =>
 {
