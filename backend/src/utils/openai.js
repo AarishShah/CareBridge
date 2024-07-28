@@ -106,13 +106,22 @@ async function summarize(medicalHistory)
       });
 
     // Return the summary text
-    return completion.choices[0].message.content.trim();
+    // return completion.choices[0].message.content.trim(); // if test fails, uncomment this line and remove the dead code below
+
+    // Parse the response to extract summary, prediction, and remedy
+    const response = completion.choices[0].message.content.trim();
+
+    // Use delimiters to split the response
+    const summary = response.split('[SUMMARY_START]')[1].split('[SUMMARY_END]')[0].trim();
+    const prediction = response.split('[PREDICTION_START]')[1].split('[PREDICTION_END]')[0].trim();
+    const remedy = response.split('[REMEDY_START]')[1].split('[REMEDY_END]')[0].trim();
+
+    return { summary, prediction, remedy };
 
   } catch (error)
   {
     // console.error("Error generating summary with OpenAI:", error);
-    // return null; // In case of an error, return null so the summary field remains unchanged
-    return tempResponse; // For testing purposes, remove this line when the OpenAI API is working
+    return { summary: null, prediction: null, remedy: null };
   }
 }
 
