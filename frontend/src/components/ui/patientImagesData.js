@@ -37,6 +37,12 @@ const patientImagesData = [
     text: "Easily view and manage doctors<br/> assigned to you for personalized<br/> healthcare support.",
     buttons: [{ text: "Assign Doctors" }, { text: "View Assigned Doctors" }],
   },
+  {
+    src: image4,
+    heading: "Enable 2 FA",
+    text: "View and manage your complete<br/> medical history conveniently to stay<br/> informed about your health journey",
+    button: { text: "Enable Two Factor Authentication", path: "/enable2fa" },
+  },
 ];
 
 export default patientImagesData;
