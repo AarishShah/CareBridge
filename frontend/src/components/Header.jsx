@@ -223,8 +223,8 @@ const Header = () => {
                     {renderDropdown(
                       showSignupDropdown,
                       [
-                        { label: "As Patient", to: "/signup/patient" },
-                        { label: "As Doctor", to: "/signup/doctor" },
+                        { label: "As Patient", to: "/patient/signup" },
+                        { label: "As Doctor", to: "/doctor/signup" },
                       ],
                       signupDropdownRef
                     )}
