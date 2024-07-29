@@ -196,7 +196,7 @@ router.post("/doctor/login", async (req, res) =>
 
     const token = await doctor.generateAuthToken();
 
-    res.status(200).send({ doctor, token });
+    res.status(202).send({ doctor, token });
   } catch (error)
   {
     console.error("Login error:", error);
