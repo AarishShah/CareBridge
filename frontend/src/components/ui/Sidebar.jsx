@@ -15,7 +15,7 @@ const Sidebar = ({ userType, hoveredIndex }) => {
     `flex items-center space-x-2 ${hoveredIndex === index ? 'text-blue-600' : ''} hover:text-blue-600`;
 
   return (
-    <div className="bg-transparent h-full p-4 w-64 mt-24 ml-20 text-lg font-semibold hidden lg:block">
+    <div className="bg-transparent h-full w-64 mt-20 ml-20 text-md font-semibold hidden lg:block">
       <ul className="space-y-8">
         <li>
           <Link to="#" className={linkClasses(0)}>
@@ -59,7 +59,7 @@ const Sidebar = ({ userType, hoveredIndex }) => {
         <li>
           <Link to="#" className={linkClasses(5)}>
             <ShieldCheck className="h-6 w-6" />
-            <span>Enable 2 FA</span>
+            <span>Two-Factor Authentication</span>
           </Link>
         </li>
       </ul>
