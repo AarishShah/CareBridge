@@ -77,7 +77,8 @@ const router = createBrowserRouter([
   { path: "/contact", element: <ContactForm /> },
   { path: "/about", element: <AboutPage /> },
   { path: "/team", element: <TeamPage /> },
-  { path: "/enable2fa", element: <Enable2FA /> }
+  { path: "/patient/enable2fa", element: <Enable2FA /> },
+  { path: "/doctor/enable2fa", element: <Enable2FA /> }
 ]);
 
 function App() {

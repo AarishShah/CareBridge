@@ -13,6 +13,8 @@ require("../middleware/passport");
 const router = express.Router();
 const { assignDoctor, removeDoctor } = require("../utils/assignment");
 const s3 = require("../utils/s3Client");
+const speakeasy = require('speakeasy');
+const qrcode = require('qrcode');
 
 require('dotenv').config({path: path.join(__dirname, '../.env')});
 
@@ -192,6 +194,11 @@ router.post("/doctor/login", async (req, res) =>
   {
     const doctor = await Doctor.findByCredentials(req.body.email, req.body.password);
 
+    if (doctor.twoFactorSecret) {
+      // Return a flag indicating that 2FA is required
+      return res.status(200).send({ twoFactorRequired: true, doctorId: doctor._id });
+  }
+  
     const token = await doctor.generateAuthToken();
 
     res.status(202).send({ doctor, token });
@@ -201,6 +208,35 @@ router.post("/doctor/login", async (req, res) =>
     res.status(400).send({ error: "Login failed" });
   }
 });
+
+
+router.post('/doctor/verify2FA', async (req, res) => {
+  console.log("doctor verify2fa route hit");
+  try {
+      const { doctorId, code } = req.body;
+      const doctor = await Doctor.findById(doctorId);
+      if (!doctor) {
+          return res.status(404).json({ error: 'Doctor not found' });
+      }
+
+      const token = JSON.parse(doctor.twoFactorSecret);
+      const verify = speakeasy.totp.verify({
+          secret: token.base32,
+          encoding: 'base32',
+          token: code
+      });
+
+      if (verify) {
+          const authToken = await doctor.generateAuthToken();
+          return res.status(200).json({ doctor, token: authToken });
+      } else {
+          return res.status(400).json({ error: 'Invalid 2FA code' });
+      }
+  } catch (error) {
+      res.status(500).json({ error: 'Verification failed' });
+  }
+});
+
 
 // Update Route
 router.patch("/doctor/me", auth, async (req, res) =>
@@ -357,5 +393,58 @@ router.delete("/doctor/removeDoctor", auth, async (req, res) =>
     res.status(400).send({ error: "Doctor removal failed" });
   }
 });
+
+
+// getqrCode
+router.get('/doctor/qrCode',auth, async (req, res) => {
+  try {
+      const doctorId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
+      const secret = speakeasy.generateSecret({ length: 20 });
+      
+      // Update the existing doctor document with the new secret
+      const doctor = await Doctor.findByIdAndUpdate(doctorId, { twoFactorSecret: JSON.stringify(secret) }, { new: true });
+      if (!doctor) {
+          return res.status(404).json({ message: 'Doctor not found' });
+      }
+
+      qrcode.toDataURL(secret.otpauth_url, (err, data) => {
+          if (err) {
+              console.error('Error generating QR code:', err);
+              return res.status(500).json({ message: 'Error generating QR code' });
+          }
+          res.json({ qrCode: data });
+      });
+  } catch (error) {
+      console.error('Error storing secret:', error);
+      res.status(500).json({ message: 'Error storing secret' });
+  }
+});
+
+
+// verifyqrCode
+router.post('/doctor/verifyqrCode',auth, async (req, res) => {
+  try {
+      const { code } = req.body;
+      const doctorId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
+      
+      const doctor = await Doctor.findById(doctorId);
+      if (!doctor) {
+          return res.status(404).json({ message: 'Doctor not found' });
+      }
+
+      const token = JSON.parse(doctor.twoFactorSecret);
+      const verify = speakeasy.totp.verify({
+          secret: token.base32,
+          encoding: 'base32',
+          token: code
+      });
+
+      res.json({ verify });
+  } catch (error) {
+      console.error('Error verifying code:', error);
+      res.status(500).json({ message: 'Error verifying code' });
+  }
+});
+
 
 module.exports = router;

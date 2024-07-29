@@ -12,8 +12,14 @@ const loginRequest = async (user, userType) => {
   return response.data;
 };
 
-const verify2FARequest = async ({ patientId, code }) => {
-  const response = await axios.post(`${url}/patient/verify2FA`, { patientId, code });
+const verify2FARequest = async ({ userType, userId, code }) => {
+  const payload = {
+    [`${userType}Id`]: userId,
+    code,
+  };
+  console.log("payload is", payload); // Debug payload
+  const response = await axios.post(`${url}/${userType}/verify2FA`, payload);
+  console.log("verify2FA response", response); // Debug response
   return response.data;
 };
 
@@ -26,16 +32,18 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState(false);
-  const [patientId, setPatientId] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [twoFactorRequired, setTwoFactorRequired] = useState(false);
+
+  const userType = location.pathname.includes("doctor") ? "doctor" : "patient";
 
   const mutation = useMutation({
     mutationFn: ({ user, userType }) => loginRequest(user, userType),
     onSuccess: (data) => {
-
+      console.log("login response data:", data); // Debug the response
       if (data.twoFactorRequired) {
         setTwoFactorRequired(true);
-        setPatientId(data.patientId);
+        setUserId(data[`${userType}Id`]);
       } else if (data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
@@ -44,45 +52,45 @@ function LoginPage() {
       }
     },
     onError: (error) => {
+      console.error("Login error:", error); // Add error logging
       setError(error.response?.data?.message || "An unexpected error occurred");
     },
   });
+
   const verify2FAMutation = useMutation({
-    mutationFn: verify2FARequest,
+    mutationFn: ({ userType, userId, code }) => verify2FARequest({ userType, userId, code }),
     onSuccess: (data) => {
+      console.log("verify2FA success:", data); // Debug success response
       if (data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
         login(data.token);
-        navigate("/patient/dashboard");
+        navigate(userType === "doctor" ? "/doctor/dashboard" : "/patient/dashboard");
       }
     },
     onError: (error) => {
+      console.error("verify2FA error:", error); // Add error logging
       setError(error.response?.data?.message || "Invalid 2FA code");
     },
   });
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const userType = location.pathname.includes("doctor")
-      ? "doctor"
-      : "patient";
-      console.log("usertype in login is", userType);
     mutation.mutate({ user: { email, password }, userType });
   };
 
   const handleVerify2FA = (event) => {
     event.preventDefault();
-    verify2FAMutation.mutate({ patientId, code });
+    console.log("userId is", userId); // Debug userId
+    console.log("code is", code); // Debug code
+    verify2FAMutation.mutate({ userType, userId, code });
   };
 
   const handleSignin = () => {
-    const userType = location.pathname.includes("doctor") ? "doctor" : "patient";
     const signInUrl = `${url}/${userType}/auth/google`;
     window.location.href = signInUrl;
   };
 
-  const userType = location.pathname.includes("doctor") ? "doctor" : "patient";
   const forgotPasswordUrl = `/${userType}/forgot-password`;
 
   return (
