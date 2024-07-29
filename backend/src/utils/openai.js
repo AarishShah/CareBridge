@@ -55,16 +55,10 @@ function extractRelevantInfo(medicalHistory)
 
 
     const summaryPrompt = `
-    Provide the following details based on the given medical record, using the delimiters to clearly separate each section:
-    [SUMMARY_START]
-    Summarize this medical record in about 100 words. This summary should be such that when the doctor reads it, it would give an idea about the Medical Record document.
-    [SUMMARY_END]
-    [PREDICTION_START]
-    Predict future diseases that the patient might be at risk for based on the given medical history.
-    [PREDICTION_END]
-    [REMEDY_START]
-    Suggest possible remedies or medications for the patient based on the medical history.
-    [REMEDY_END]
+    Provide the following details based on the given medical record:
+    1. Summary: Summarize this medical record in about 100 words. This summary should be such that when the doctor reads it, it would give an idea about the Medical Record document.
+    2. Prediction: Predict future diseases that the patient might be at risk for based on the given medical history.
+    3. Remedy: Suggest possible remedies or medications for the patient based on the medical history.
   
     Title: ${title}
     Name: ${name}, Age: ${age.years} years, Gender: ${gender}, Occupation: ${occupation}, Marital Status: ${maritalStatus}
@@ -106,22 +100,13 @@ async function summarize(medicalHistory)
       });
 
     // Return the summary text
-    // return completion.choices[0].message.content.trim(); // if test fails, uncomment this line and remove the dead code below
-
-    // Parse the response to extract summary, prediction, and remedy
-    const response = completion.choices[0].message.content.trim();
-
-    // Use delimiters to split the response
-    const summary = response.split('[SUMMARY_START]')[1].split('[SUMMARY_END]')[0].trim();
-    const prediction = response.split('[PREDICTION_START]')[1].split('[PREDICTION_END]')[0].trim();
-    const remedy = response.split('[REMEDY_START]')[1].split('[REMEDY_END]')[0].trim();
-
-    return { summary, prediction, remedy };
+    return completion.choices[0].message.content.trim();
 
   } catch (error)
   {
     // console.error("Error generating summary with OpenAI:", error);
-    return { summary: null, prediction: null, remedy: null };
+    // return null; // In case of an error, return null so the summary field remains unchanged
+    return tempResponse; // For testing purposes, remove this line when the OpenAI API is working
   }
 }
 
