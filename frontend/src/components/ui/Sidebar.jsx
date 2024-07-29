@@ -6,7 +6,8 @@ import {
   Clipboard, 
   FolderOpen, 
   UserCheck,
-  UserPlus
+  UserPlus,
+  ShieldCheck
 } from 'lucide-react'; 
 
 const Sidebar = ({ userType, hoveredIndex }) => {
@@ -55,6 +56,12 @@ const Sidebar = ({ userType, hoveredIndex }) => {
             </Link>
           </li>
         )}
+        <li>
+          <Link to="#" className={linkClasses(5)}>
+            <ShieldCheck className="h-6 w-6" />
+            <span>Enable 2 FA</span>
+          </Link>
+        </li>
       </ul>
     </div>
   );
