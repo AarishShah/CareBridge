@@ -8,10 +8,10 @@ const Enable2FA = () => {
     const [code, setCode] = useState('');
     const [verificationResult, setVerificationResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [is2FAEnabled, setIs2FAEnabled] = useState(false);
 
     const pathname = window.location.pathname;
     const urlPrefix = pathname.includes('doctor') ? 'doctor' : 'patient';
-
 
     const getQrCode = async () => {
         console.log("usertype is", urlPrefix);
@@ -35,10 +35,6 @@ const Enable2FA = () => {
             setIsLoading(false);
         }
     };
-
-    useEffect(() => {
-        getQrCode();
-    }, []);
 
     const debounce = (func, wait) => {
         let timeout;
@@ -83,35 +79,55 @@ const Enable2FA = () => {
         debouncedVerification(e.target.value);
     };
 
+    const handleToggle2FA = () => {
+        if (is2FAEnabled) {
+            // Logic to disable 2FA can be added here
+            setQrCode('');
+            setVerificationResult(null);
+            setCode('');
+        } else {
+            getQrCode();
+        }
+        setIs2FAEnabled(!is2FAEnabled);
+    };
+
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100"
-        style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+            style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
         >
-             <div className="p-8 bg-white shadow-md rounded-md text-center">
-             <h1 className="text-2xl font-bold mb-6">Enable 2-Factor Authentication</h1>
-            {isLoading && <p>Loading...</p>}
-            <img src={qrCode} alt="QR Code" className="w-64 h-64 mx-auto" />
-            <br />
-            <input
-                type="text"
-                value={code}
-                onChange={handleInputChange}
-                placeholder="Enter code here"
-                 className="mt-4 p-2 border border-gray-300 rounded-md w-full"
-            />
-            {verificationResult && <p className="mt-4"> {verificationResult === 'Verification Successful!'
-                            ? 'Enabled 2-Factor Authentication'
-                            : 'Error enabling 2-Factor Authentication'}</p>}
-            <div className="mt-4 text-gray-600 font-bold text-left">
-    <ol className="list-decimal list-inside mt-6">
-        <li>Use your Google Authenticator app  or any other<br />compatible app to scan the QR code above.</li>
-        <li>Once scanned, the app will generate a unique code.</li>
-        <li>Enter this code in the input field provided above.</li>
-        <li>Remember, you will need to provide a code <br /> from your authenticator app each time you log in <br />to verify your identity.</li>
-    </ol>
-</div>
-               </div>
-         </div>
+            <div className="p-8 bg-white shadow-md rounded-md text-center">
+                <h1 className="text-2xl font-bold mb-6">Enable 2-Factor Authentication</h1>
+                <button
+                    onClick={handleToggle2FA}
+                    className="mt-4 p-2 border border-gray-300 rounded-md w-full"
+                >
+                    {is2FAEnabled ? 'Disable 2FA' : 'Enable 2FA'}
+                </button>
+                {isLoading && <p>Loading...</p>}
+                {qrCode && <img src={qrCode} alt="QR Code" className="w-64 h-64 mx-auto" />}
+                {qrCode && (
+                    <>
+                        <br />
+                        <input
+                            type="text"
+                            value={code}
+                            onChange={handleInputChange}
+                            placeholder="Enter code here"
+                            className="mt-4 p-2 border border-gray-300 rounded-md w-full"
+                        />
+                        {verificationResult && <p className="mt-4">{verificationResult}</p>}
+                        <div className="mt-4 text-gray-600 font-bold text-left">
+                            <ol className="list-decimal list-inside mt-6">
+                                <li>Use your Google Authenticator app or any other compatible app to scan the QR code above.</li>
+                                <li>Once scanned, the app will generate a unique code.</li>
+                                <li>Enter this code in the input field provided above.</li>
+                                <li>Remember, you will need to provide a code from your authenticator app each time you log in to verify your identity.</li>
+                            </ol>
+                        </div>
+                    </>
+                )}
+            </div>
+        </div>
     );
 };
 

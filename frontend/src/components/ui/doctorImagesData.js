@@ -45,9 +45,9 @@ const doctorImagesData = [
   },
   {
     src: image3,
-    heading: "Enable 2FA",
+    heading: "Two-Factor Authentication",
     text: "Create and manage patient prescriptions<br/> conveniently to ensure accurate and<br/> up-to-date medication records.",
-    button: { text: "Enable Two Factor Authentication", path: "/doctor/enable2fa" },
+    button: { text: "Two-Factor Authentication", path: "/doctor/enable2fa" },
   },
 ];
 

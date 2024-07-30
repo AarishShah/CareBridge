@@ -39,9 +39,9 @@ const patientImagesData = [
   },
   {
     src: image4,
-    heading: "Enable 2 FA",
+    heading: "Two-Factor Authentication",
     text: "Manage your 2-Factor Authentication <br/> settings for enhanced security.",
-    button: { text: "Enable Two Factor Authentication", path: "/patient/enable2fa" },
+    button: { text: "Two-Factor Authentication", path: "/patient/enable2fa" },
   },
 ];
 
