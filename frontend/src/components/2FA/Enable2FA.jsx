@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import backgroundImage from '../../assets/8.png';
 
 const BASE_URL = 'http://localhost:5000/'; 
@@ -14,7 +14,6 @@ const Enable2FA = () => {
     const urlPrefix = pathname.includes('doctor') ? 'doctor' : 'patient';
 
     const getQrCode = async () => {
-        console.log("usertype is", urlPrefix);
         try {
             setIsLoading(true);
             const response = await fetch(`${BASE_URL}${urlPrefix}/qrCode`, {
@@ -22,7 +21,6 @@ const Enable2FA = () => {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
             });
-            console.log("response is", response);
 
             if (!response.ok) {
                 throw new Error('Failed to fetch QR code');
@@ -31,6 +29,31 @@ const Enable2FA = () => {
             setQrCode(data.qrCode);
         } catch (error) {
             console.error("Failed to fetch QR code:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const remove2FASecret = async () => {
+        try {
+            setIsLoading(true);
+            const response = await fetch(`${BASE_URL}${urlPrefix}/remove2FA`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to remove 2FA');
+            }
+
+            setQrCode('');
+            setVerificationResult(null);
+            setCode('');
+        } catch (error) {
+            console.error("Failed to remove 2FA kill me:", error);
         } finally {
             setIsLoading(false);
         }
@@ -81,10 +104,7 @@ const Enable2FA = () => {
 
     const handleToggle2FA = () => {
         if (is2FAEnabled) {
-            // Logic to disable 2FA can be added here
-            setQrCode('');
-            setVerificationResult(null);
-            setCode('');
+            remove2FASecret();
         } else {
             getQrCode();
         }

@@ -446,5 +446,27 @@ router.post('/doctor/verifyqrCode',auth, async (req, res) => {
   }
 });
 
+// Route to remove 2FA secret for doctors
+router.post('/doctor/remove2FA', auth, async (req, res) => {
+  console.log("remove yourself doc");
+
+  try {
+      const doctorId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
+      
+      const doctor = await Doctor.findById(doctorId);
+      if (!doctor) {
+          return res.status(404).json({ message: 'Doctor not found' });
+      }
+
+      await Doctor.updateOne({ _id: doctorId }, { $unset: { twoFactorSecret: "" } });
+
+      res.status(200).json({ message: '2FA disabled successfully' });
+  } catch (error) {
+      res.status(500).json({ message: 'Failed to disable 2FA', error: error.message });
+  }
+});
+
+
+
 
 module.exports = router;
