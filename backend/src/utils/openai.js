@@ -54,28 +54,30 @@ function extractRelevantInfo(medicalHistory)
     } = medicalHistory;
 
 
-    const summaryPrompt = `
-    Provide the following details based on the given medical record:
-    1. Summary: Summarize this medical record in about 100 words. This summary should be such that when the doctor reads it, it would give an idea about the Medical Record document.
-    2. Prediction: Predict future diseases that the patient might be at risk for based on the given medical history.
-    3. Remedy: Suggest possible remedies or medications for the patient based on the medical history.
+    // const summaryPrompt = `
+    // Provide the following details based on the given medical record:
+    // 1. Summary: Summarize this medical record in about 100 words. This summary should be such that when the doctor reads it, it would give an idea about the Medical Record document.
+    // 2. Prediction: Predict future diseases that the patient might be at risk for based on the given medical history.
+    // 3. Remedy: Suggest possible remedies or medications for the patient based on the medical history.
   
-    Title: ${title}
-    Name: ${name}, Age: ${age.years} years, Gender: ${gender}, Occupation: ${occupation}, Marital Status: ${maritalStatus}
-    Mode of Admission: ${modeOfAdmission}, Date of Admission: ${dateOfAdmission}
-    Presenting Complaints: ${historyOfPresentingComplaints || 'N/A'}
-    Presenting Illness History: ${historyOfPresentingIllness || 'N/A'}
-    Systemic History: CNS: ${systemicHistory.centralNervousSystem || 'N/A'}, CVS: ${systemicHistory.cardiovascularSystem || 'N/A'}, GIT: ${systemicHistory.gastrointestinalSystem || 'N/A'}
-    Past Surgical History: ${pastSurgicalHistory || 'N/A'}
-    Past Medical History: ${pastMedicalHistory || 'N/A'}
-    Family History: ${familyHistory || 'N/A'}
-    Drug History: ${drugHistory || 'N/A'}, Allergies: ${allergies || 'N/A'}
-    Gynecological History: ${gynecologicalHistory || 'N/A'}
-    Occupational History: ${occupationalHistory || 'N/A'}, Travel History: ${travelHistory || 'N/A'}, Socioeconomic History: ${socioeconomicHistory || 'N/A'}
-    Examination: BP: ${examination.generalPhysicalExamination.bloodPressure || 'N/A'}, Pulse: ${examination.generalPhysicalExamination.pulse || 'N/A'}, Temp: ${examination.generalPhysicalExamination.temperature || 'N/A'}, RR: ${examination.generalPhysicalExamination.respiratoryRate || 'N/A'}, Blood Sugar: ${examination.generalPhysicalExamination.bloodSugarLevel || 'N/A'}, Notes: ${examination.generalPhysicalExamination.notes || 'N/A'}
-    Investigations: ${investigations || 'N/A'}
-    Treatment Plan: Prescribed Drug: ${treatment.prescribedDrug || 'N/A'}, Dosage: ${treatment.dosage || 'N/A'}
-      `.trim();
+    // Title: ${title}
+    // Name: ${name}, Age: ${age.years} years, Gender: ${gender}, Occupation: ${occupation}, Marital Status: ${maritalStatus}
+    // Mode of Admission: ${modeOfAdmission}, Date of Admission: ${dateOfAdmission}
+    // Presenting Complaints: ${historyOfPresentingComplaints || 'N/A'}
+    // Presenting Illness History: ${historyOfPresentingIllness || 'N/A'}
+    // Systemic History: CNS: ${systemicHistory.centralNervousSystem || 'N/A'}, CVS: ${systemicHistory.cardiovascularSystem || 'N/A'}, GIT: ${systemicHistory.gastrointestinalSystem || 'N/A'}
+    // Past Surgical History: ${pastSurgicalHistory || 'N/A'}
+    // Past Medical History: ${pastMedicalHistory || 'N/A'}
+    // Family History: ${familyHistory || 'N/A'}
+    // Drug History: ${drugHistory || 'N/A'}, Allergies: ${allergies || 'N/A'}
+    // Gynecological History: ${gynecologicalHistory || 'N/A'}
+    // Occupational History: ${occupationalHistory || 'N/A'}, Travel History: ${travelHistory || 'N/A'}, Socioeconomic History: ${socioeconomicHistory || 'N/A'}
+    // Examination: BP: ${examination.generalPhysicalExamination.bloodPressure || 'N/A'}, Pulse: ${examination.generalPhysicalExamination.pulse || 'N/A'}, Temp: ${examination.generalPhysicalExamination.temperature || 'N/A'}, RR: ${examination.generalPhysicalExamination.respiratoryRate || 'N/A'}, Blood Sugar: ${examination.generalPhysicalExamination.bloodSugarLevel || 'N/A'}, Notes: ${examination.generalPhysicalExamination.notes || 'N/A'}
+    // Investigations: ${investigations || 'N/A'}
+    // Treatment Plan: Prescribed Drug: ${treatment.prescribedDrug || 'N/A'}, Dosage: ${treatment.dosage || 'N/A'}
+    //   `.trim();
+
+    const summaryPrompt = `Reply with a test success message`;
 
   return summaryPrompt;
 }
