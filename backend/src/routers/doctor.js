@@ -11,7 +11,7 @@ const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
 require("../middleware/passport");
 const router = express.Router();
-const { assignDoctor, removeDoctor } = require("../utils/assignment");
+const { doctorRequestPatient, handleDoctorResponse, removeDoctor } = require('../utils/assignment');
 const s3 = require("../utils/s3Client");
 
 require('dotenv').config({path: path.join(__dirname, '../.env')});
@@ -348,4 +348,32 @@ router.patch("/doctor/responseRequest/:id", auth, async (req, res) =>
   }
 });
 
+// Doctor removes a connection with a patient by email
+router.delete('/doctor/removePatient', auth, async (req, res) =>
+  {
+    try
+    {
+      const doctorId = req.user._id;
+      const patientEmail = req.body.email;
+  
+      const patient = await Patient.findOne({ email: patientEmail });
+      if (!patient)
+      {
+        return res.status(404).send({ error: 'Patient not found' });
+      }
+  
+      const result = await removeDoctor(patient._id, doctorId);
+      if (result.error)
+      {
+        return res.status(400).send(result.message);
+      }
+  
+      res.status(200).send({ message: 'Patient removed successfully' });
+    }
+    catch (error)
+    {
+      res.status(400).send({ error: 'Removing patient failed' });
+    }
+  });
+  
 module.exports = router;
