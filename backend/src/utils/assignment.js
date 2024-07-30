@@ -27,8 +27,9 @@ const assignDoctorRequest = async (patientId, doctorId) => {
         status: 'pending'
     });
 
-    if (existingRequest) {
-        return { error: true, message: 'There is already a pending request between this patient and doctor' };
+    // If the patient has created another request to the same doctor, return an error
+    if (existingRequest && existingRequest.createdBy === 'patient') {
+        return { error: true, message: 'You already have a pending request to this doctor' };
     }
 
     // Check if there's a pending request from the doctor to the patient
@@ -203,8 +204,9 @@ const doctorRequestPatient = async (doctorId, patientId) => {
         status: 'pending'
     });
 
-    if (existingRequest) {
-        return { error: true, message: 'There is already a pending request between this doctor and patient' };
+    // If the doctor has created another request to the same patient, return an error
+    if (existingRequest && existingRequest.createdBy === 'doctor') {
+        return { error: true, message: 'You already have a pending request to this patient' };
     }
 
     // Check if there's a pending request from the patient to the doctor
