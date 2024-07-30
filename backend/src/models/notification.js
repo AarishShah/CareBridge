@@ -17,6 +17,16 @@ const notificationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    status: {
+        type: String,
+        enum: ['pending', 'accepted', 'rejected'],
+        default: 'pending'
+    },
+    createdBy: {
+        type: String,
+        enum: ['patient', 'doctor'],
+        required: true
+    },
     read: {
         type: Boolean,
         default: false

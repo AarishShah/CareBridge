@@ -299,8 +299,8 @@ router.get("/doctor/me", auth, async (req, res) => {
     res.status(500).send({ error: "Failed to fetch doctor details" });
   }
 });
-// assignDoctor Route
-router.post("/doctor/assignDoctor", auth, async (req, res) =>
+// assignDoctor Route - Doctor requests to connect to a patient by email
+router.post("/doctor/requestPatient", auth, async (req, res) => 
 {
   try
   {
@@ -314,47 +314,37 @@ router.post("/doctor/assignDoctor", auth, async (req, res) =>
       return res.status(404).send({ error: "Patient not found" });
     }
 
-    const result = await assignDoctor(patient._id, doctorId);
+    const result = await doctorRequestPatient(doctorId, patient._id);
     if (result.error)
     {
-      return res.status(400).send({ error: result.message });
+      return res.status(400).send(result.message);
     }
 
-    res.status(201).send({ message: "Doctor assigned successfully" });
+    res.status(201).send({ message: result.message });
   }
   catch (error)
   {
-    // console.error("Assign doctor error:", error);
-    res.status(500).send({ error: "Doctor assignment failed" });
+    res.status(400).send({ error: "Patient connection request failed" });
   }
 });
 
-// removeDoctor Route
-router.delete("/doctor/removeDoctor", auth, async (req, res) =>
+// removeDoctor Route - Doctor handles the response to a connection request
+router.patch("/doctor/responseRequest/:id", auth, async (req, res) => 
 {
   try
   {
-    const doctorId = req.user._id;
-    const patientEmail = req.body.email;
-
-    const patient = await Patient.findOne({ email: patientEmail });
-    if (!patient)
-    {
-      return res.status(404).send({ error: "Patient not found" });
-    }
-
-    const result = await removeDoctor(patient._id, doctorId);
+    const action = req.body.action; // 'accept' or 'reject'
+    const result = await handleDoctorResponse(req.params.id, action);
     if (result.error)
     {
-      return res.status(400).send({ error: result.message });
+      return res.status(400).send(result.message);
     }
 
-    res.status(200).send({ message: "Doctor removed successfully" });
+      res.status(200).send({ message: result.message });
   }
   catch (error)
   {
-    // console.error("Remove doctor error:", error);
-    res.status(400).send({ error: "Doctor removal failed" });
+    res.status(400).send({ error: "Handling request failed" });
   }
 });
 

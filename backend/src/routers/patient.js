@@ -11,7 +11,7 @@ const Doctor = require("../models/doctor");
 const auth = require("../middleware/auth");
 require("../middleware/passport");
 const router = new express.Router();
-const { assignDoctor, removeDoctor } = require('../utils/assignment');
+const { assignDoctorRequest, removeDoctor, handlePatientResponse } = require('../utils/assignment');
 const s3 = require("../utils/s3Client");
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
@@ -193,7 +193,7 @@ router.post("/patient/login", async (req, res) =>
         const token = await patient.generateAuthToken();
 
         res.status(202).send({ patient, token });
-        
+
     }
     catch (error)
     {
@@ -294,11 +294,11 @@ router.get("/patient/me", auth, async (req, res) =>
 
     const { bucket, profileKey } = patient;
     const profileUrl = await getProfileUrl(bucket, profileKey);
-    
+
     res.send({ patient, profileUrl });
 });
 
-// assignDoctor Route
+// assignDoctor Route - Patient requests to connect to a doctor by email
 router.post("/patient/assignDoctor", auth, async (req, res) =>
 {
     try
@@ -312,22 +312,21 @@ router.post("/patient/assignDoctor", auth, async (req, res) =>
             return res.status(404).send({ error: "Doctor not found" });
         }
 
-        const result = await assignDoctor(patientId, doctor._id);
+        const result = await assignDoctorRequest(patientId, doctor._id);
         if (result.error)
         {
             return res.status(400).send(result.message);
         }
 
-        res.status(201).send({ message: "Doctor assigned successfully" });
+        res.status(201).send({ message: result.message });
     }
     catch (error)
     {
-        // console.error("Doctor assignment error:", error);
-        res.status(400).send({ error: "Doctor assignment failed" });
+        res.status(400).send({ error: "Doctor assignment request failed" });
     }
 });
 
-// removeDoctor Route
+// removeDoctor Route - Patient removes a connection with a doctor by email
 router.delete("/patient/removeDoctor", auth, async (req, res) =>
 {
     try
@@ -352,7 +351,28 @@ router.delete("/patient/removeDoctor", auth, async (req, res) =>
     catch (error)
     {
         // console.error("Doctor removal error:", error);
-        res.status(400).send({ error: "Doctor removal failed" });
+        res.status(400).send({ error: "Removing doctor failed" });
+    }
+});
+
+// notification Route - Patient handles the response to a connection request
+router.patch('/patient/responseRequest/:id', auth, async (req, res) =>
+{
+    try
+    {
+        const action = req.body.action; // 'accept' or 'reject'
+        const result = await handlePatientResponse(req.params.id, action);
+        if (result.error)
+        {
+            return res.status(400).send(result.message);
+        }
+
+        res.status(200).send({ message: result.message });
+    }
+    catch (error)
+    {
+        console.error("Handling request error:", error);
+        res.status(400).send({ error: 'Handling request failed' });
     }
 });
 
