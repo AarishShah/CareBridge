@@ -93,6 +93,10 @@ function LoginPage() {
 
   const forgotPasswordUrl = `/${userType}/forgot-password`;
 
+  const handleSignUp = () => {
+    navigate(`/${userType}/signup`);
+  };
+
   return (
     <AuthForm heading="Login to CareBridge" onSubmit={handleSubmit}>
       {error && <div style={{ color: "crimson" }}>Could not authenticate</div>}
@@ -183,9 +187,12 @@ function LoginPage() {
       </button>
       <div className="text-center mt-8 font-normal text-sm ml-2">
         <span>Don't have an Account? </span>
-        <a href="#" className="text-blue-500 font-semibold hover:underline">
-          Sign up
-        </a>
+        <button
+      onClick={handleSignUp}
+      className="text-blue-500 font-semibold hover:underline"
+    >
+      Sign up
+    </button>
       </div>
     </AuthForm>
   );

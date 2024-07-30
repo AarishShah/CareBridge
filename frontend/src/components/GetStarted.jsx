@@ -1,6 +1,13 @@
 import image from "../assets/5.png";
+import {useNavigate} from "react-router-dom";
 
 export default function GetStarted() {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate('/doctor/signup');
+  };
+
   return (
     <div className="relative">
       <img src={image} alt="" className="w-full h-auto" />
@@ -13,7 +20,9 @@ export default function GetStarted() {
         </p>
         <p className="text-sm md:text-md lg:text-lg text-black">
           Looking to elevate your practice?
-          <button className="mt-2 md:mt-4 ml-2 md:ml-4 px-4 md:px-6 py-2 bg-blue-500 text-white rounded-lg">Get Started</button>
+          <button className="mt-2 md:mt-4 ml-2 md:ml-4 px-4 md:px-6 py-2 bg-blue-500 text-white rounded-lg"
+            onClick={handleGetStarted}
+            >Get Started</button>
         </p>
       </div>
     </div>
