@@ -1,5 +1,6 @@
 const Patient = require('../models/patient');
 const Doctor = require('../models/doctor');
+const Notification = require('../models/notification');
 
 const assignDoctor = async (patientId, doctorId) =>
 {
@@ -39,6 +40,12 @@ const assignDoctor = async (patientId, doctorId) =>
     {
         doctor.assignedPatients.push({ patient: patientId, name: patient.name, email: patient.email });
         await doctor.save();
+        const notification = new Notification({
+            doctor: doctorId,
+            patient: patientId,
+            message: `Patient ${patient.name} wants to connect with you`
+        });
+        await notification.save();
     }
     
     return { error: false };
