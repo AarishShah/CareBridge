@@ -302,6 +302,7 @@ router.get("/doctor/me", auth, async (req, res) =>
         res.status(500).send({ error: "Failed to fetch doctor details" });
     }
 });
+
 // assignDoctor Route - Doctor requests to connect to a patient by email
 router.post("/doctor/requestPatient", auth, async (req, res) => 
 {
