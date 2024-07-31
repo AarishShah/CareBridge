@@ -48,8 +48,7 @@ const assignDoctorRequest = async (patientId, doctorId) => {
         doctor.assignedPatients.push({ patient: patientId, name: patient.name, email: patient.email });
         await doctor.save();
 
-        reciprocalRequest.status = 'accepted';
-        await reciprocalRequest.save();
+        await Notification.deleteOne({ _id: reciprocalRequest._id });
 
         return { error: false, message: 'Doctor and patient connected automatically' };
     }
@@ -92,13 +91,11 @@ const handleDoctorResponse = async (notificationId, action) => {
         doctor.assignedPatients.push({ patient: patient._id, name: patient.name, email: patient.email });
         await doctor.save();
 
-        notification.status = 'accepted';
-        await notification.save();
+        await Notification.deleteOne({ _id: notificationId });
 
         return { error: false, message: 'Doctor assigned successfully' };
     } else if (action === 'reject') {
-        notification.status = 'rejected';
-        await notification.save();
+        await Notification.deleteOne({ _id: notificationId });
 
         return { error: false, message: 'Request rejected successfully' };
     } else {
@@ -132,13 +129,11 @@ const handlePatientResponse = async (notificationId, action) => {
         doctor.assignedPatients.push({ patient: patient._id, name: patient.name, email: patient.email });
         await doctor.save();
 
-        notification.status = 'accepted';
-        await notification.save();
+        await Notification.deleteOne({ _id: notificationId });
 
         return { error: false, message: 'Patient assigned successfully' };
     } else if (action === 'reject') {
-        notification.status = 'rejected';
-        await notification.save();
+        await Notification.deleteOne({ _id: notificationId });
 
         return { error: false, message: 'Request rejected successfully' };
     } else {
@@ -225,8 +220,7 @@ const doctorRequestPatient = async (doctorId, patientId) => {
         doctor.assignedPatients.push({ patient: patientId, name: patient.name, email: patient.email });
         await doctor.save();
 
-        reciprocalRequest.status = 'accepted';
-        await reciprocalRequest.save();
+        await Notification.deleteOne({ _id: reciprocalRequest._id });
 
         return { error: false, message: 'Doctor and patient connected automatically' };
     }
