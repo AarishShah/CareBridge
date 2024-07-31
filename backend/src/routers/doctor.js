@@ -210,7 +210,7 @@ router.post("/doctor/login", async (req, res) =>
     }
 });
 
-
+// verify 2fa
 router.post('/doctor/verify2FA', async (req, res) => {
   console.log("doctor verify2fa route hit");
   try {
@@ -466,7 +466,6 @@ router.delete('/doctor/cancelRequest/:id', auth, async (req, res) =>
     }
 });
 
-
 // getqrCode
 router.get('/doctor/qrCode',auth, async (req, res) => {
   try {
@@ -491,7 +490,6 @@ router.get('/doctor/qrCode',auth, async (req, res) => {
       res.status(500).json({ message: 'Error storing secret' });
   }
 });
-
 
 // verifyqrCode
 router.post('/doctor/verifyqrCode',auth, async (req, res) => {
@@ -537,8 +535,5 @@ router.post('/doctor/remove2FA', auth, async (req, res) => {
       res.status(500).json({ message: 'Failed to disable 2FA', error: error.message });
   }
 });
-
-
-
 
 module.exports = router;
