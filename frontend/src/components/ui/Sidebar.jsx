@@ -7,6 +7,7 @@ import {
   FolderOpen,
   UserCheck,
   UserPlus,
+  ShieldCheck,
   Clock10
 } from "lucide-react";
 
@@ -17,7 +18,7 @@ const Sidebar = ({ userType, hoveredIndex }) => {
     } hover:text-blue-600`;
 
   return (
-    <div className="bg-transparent h-full w-64 mt-20 ml-20 text-md font-semibold hidden lg:block">
+    <div className="bg-transparent h-full w-64 mt-12 ml-20 text-md font-semibold hidden lg:block">
       <ul className="space-y-8">
         <li>
           <Link to="#" className={linkClasses(0)}>
@@ -58,6 +59,12 @@ const Sidebar = ({ userType, hoveredIndex }) => {
             </Link>
           </li>
         )}
+        <li>
+          <Link to="#" className={linkClasses(5)}>
+            <ShieldCheck className="h-6 w-6" />
+            <span>Two-Factor Authentication</span>
+          </Link>
+        </li>
         <li>
           <Link to="#" className={linkClasses(5)}>
             <Clock10 className="h-6 w-6" />
