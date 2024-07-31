@@ -294,6 +294,9 @@ router.get("/patient/me", auth, async (req, res) =>
     const patient = await Patient.findById(req.user._id)
 
     const { bucket, profileKey } = patient;
+
+    if (!bucket || !profileKey) throw new Error();
+
     const profileUrl = await getProfileUrl(bucket, profileKey);
 
     res.send({ patient, profileUrl });
