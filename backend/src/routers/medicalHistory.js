@@ -99,7 +99,7 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
 });
 
 // AI Processed Medical History
-router.post('/medicalhistory/:id/summary', auth, async (req, res) =>
+router.post('/medicalhistory/summary/:id', auth, async (req, res) =>
     {
         if (req.role !== 'doctor')
         {
