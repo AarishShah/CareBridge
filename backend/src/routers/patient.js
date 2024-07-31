@@ -8,6 +8,7 @@ const passport = require("passport");
 
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
+const Notification = require('../models/notification');
 const auth = require("../middleware/auth");
 require("../middleware/passport");
 const router = new express.Router();
@@ -373,6 +374,58 @@ router.patch('/patient/responseRequest/:id', auth, async (req, res) =>
     {
         console.error("Handling request error:", error);
         res.status(400).send({ error: 'Handling request failed' });
+    }
+});
+
+// Outgoing requests - Get all pending requests sent by the patient
+router.get('/patient/sentRequests', auth, async (req, res) =>
+{
+    try
+    {
+        const patientId = req.user._id;
+        const notifications = await Notification.find({ patient: patientId, status: 'pending', createdBy: 'patient' }).populate('doctor', 'name email');
+        res.send(notifications);
+    }
+    catch (error)
+    {
+        res.status(500).send({ error: 'Fetching sent requests failed' });
+    }
+});
+
+// Incoming requests - Get all pending requests received by the patient
+router.get('/patient/receivedRequests', auth, async (req, res) =>
+{
+    try
+    {
+        const patientId = req.user._id;
+        const notifications = await Notification.find({ patient: patientId, status: 'pending', createdBy: 'doctor' }).populate('doctor', 'name email');
+        res.send(notifications);
+    }
+    catch (error)
+    {
+        res.status(500).send({ error: 'Fetching received requests failed' });
+    }
+});
+
+// Cancel an outgoing request sent by the patient
+router.delete('/patient/cancelRequest/:id', auth, async (req, res) =>
+{
+    try
+    {
+        const notification = await Notification.findOne({ _id: req.params.id, patient: req.user._id, status: 'pending', createdBy: 'patient' });
+
+        if (!notification)
+        {
+            return res.status(404).send({ error: 'Request not found' });
+        }
+
+        await Notification.deleteOne({ _id: req.params.id });
+
+        res.status(200).send({ message: 'Request canceled successfully' });
+    }
+    catch (error)
+    {
+        res.status(500).send({ error: 'Canceling request failed' });
     }
 });
 

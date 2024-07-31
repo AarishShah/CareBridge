@@ -8,6 +8,7 @@ const passport = require("passport");
 
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
+const Notification = require('../models/notification');
 const auth = require("../middleware/auth");
 require("../middleware/passport");
 const router = express.Router();
@@ -379,5 +380,58 @@ router.delete('/doctor/removePatient', auth, async (req, res) =>
         res.status(400).send({ error: 'Removing patient failed' });
     }
 });
+
+// Outgoing requests - Get all pending requests sent by the doctor
+router.get('/doctor/sentRequests', auth, async (req, res) =>
+{
+    try
+    {
+        const doctorId = req.user._id;
+        const notifications = await Notification.find({ doctor: doctorId, status: 'pending', createdBy: 'doctor' }).populate('patient', 'name email');
+        res.send(notifications);
+    }
+    catch (error)
+    {
+        res.status(500).send({ error: 'Fetching sent requests failed' });
+    }
+});
+
+// Incoming requests - Get all pending requests received by the doctor
+router.get('/doctor/receivedRequests', auth, async (req, res) =>
+{
+    try
+    {
+        const doctorId = req.user._id;
+        const notifications = await Notification.find({ doctor: doctorId, status: 'pending', createdBy: 'patient' }).populate('patient', 'name email');
+        res.send(notifications);
+    }
+    catch (error)
+    {
+        res.status(500).send({ error: 'Fetching received requests failed' });
+    }
+});
+
+// Cancel an outgoing request sent by the doctor
+router.delete('/doctor/cancelRequest/:id', auth, async (req, res) =>
+{
+    try
+    {
+        const notification = await Notification.findOne({ _id: req.params.id, doctor: req.user._id, status: 'pending', createdBy: 'doctor' });
+
+        if (!notification)
+        {
+            return res.status(404).send({ error: 'Request not found' });
+        }
+
+        await Notification.deleteOne({ _id: req.params.id });
+
+        res.status(200).send({ message: 'Request canceled successfully' });
+    }
+    catch (error)
+    {
+        res.status(500).send({ error: 'Canceling request failed' });
+    }
+});
+
 
 module.exports = router;
