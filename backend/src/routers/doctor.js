@@ -346,7 +346,7 @@ router.get("/doctor/me", auth, async (req, res) =>
     }
 });
 
-// assignDoctor Route - Doctor requests to connect to a patient by email
+// Connect to Patient - Doctor requests to connect to a patient by email
 router.post("/doctor/requestPatient", auth, async (req, res) => 
 {
     try
@@ -374,8 +374,8 @@ router.post("/doctor/requestPatient", auth, async (req, res) =>
         res.status(400).send({ error: "Patient connection request failed" });
     }
 });
-
-// removeDoctor Route - Doctor handles the response to a connection request
+    
+// Connection Request - Doctor handles the response to a connection request
 router.patch("/doctor/responseRequest/:id", auth, async (req, res) => 
 {
     try
@@ -394,33 +394,22 @@ router.patch("/doctor/responseRequest/:id", auth, async (req, res) =>
         res.status(400).send({ error: "Handling request failed" });
     }
 });
-
-// Doctor removes a connection with a patient by email
-router.delete('/doctor/removePatient', auth, async (req, res) =>
+    
+// Outgoing requests - Get all pending requests sent by the doctor
+router.get('/doctor/sentRequests', auth, async (req, res) =>
 {
     try
     {
         const doctorId = req.user._id;
-        const patientEmail = req.body.email;
-
-        const patient = await Patient.findOne({ email: patientEmail });
-        if (!patient)
-        {
-            return res.status(404).send({ error: 'Patient not found' });
-        }
-
-    const result = await removeDoctor(patient._id, doctorId);
-    if (result.error)
-    {
-      return res.status(400).send({ error: result.message });
+        const notifications = await Notification.find({ doctor: doctorId, status: 'pending', createdBy: 'doctor' }).populate('patient', 'name email');
+        res.send(notifications);
     }
-}
     catch (error)
     {
         res.status(500).send({ error: 'Fetching sent requests failed' });
     }
 });
-
+        
 // Incoming requests - Get all pending requests received by the doctor
 router.get('/doctor/receivedRequests', auth, async (req, res) =>
 {
@@ -435,8 +424,36 @@ router.get('/doctor/receivedRequests', auth, async (req, res) =>
         res.status(500).send({ error: 'Fetching received requests failed' });
     }
 });
+    
+// Remove Patient - Doctor removes a connection with a patient by email
+router.delete('/doctor/removePatient', auth, async (req, res) =>
+{
+    try
+    {
+        const doctorId = req.user._id;
+        const patientEmail = req.body.email;
 
-// Cancel an outgoing request sent by the doctor
+        const patient = await Patient.findOne({ email: patientEmail });
+        if (!patient)
+        {
+            return res.status(404).send({ error: 'Patient not found' });
+        }
+
+        const result = await removeDoctor(patient._id, doctorId);
+        if (result.error)
+        {
+            return res.status(400).send(result.message);
+        }
+
+        res.status(200).send({ message: 'Patient removed successfully' });
+    }
+    catch (error)
+    {
+        res.status(400).send({ error: 'Removing patient failed' });
+    }
+});
+    
+// Cancel Request - Cancel an outgoing request sent by the doctor
 router.delete('/doctor/cancelRequest/:id', auth, async (req, res) =>
 {
     try
