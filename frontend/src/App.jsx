@@ -25,6 +25,8 @@ import CreatePrescription from "./components/dashboards/prescription/CreatePresc
 import AboutPage from "./components/header-links/AboutPage";
 import TeamPage from "./components/header-links/TeamPage";
 import DocFormTemp from "./components/auth/signup/DocFormTemp";
+import ForgetPassword from "./components/auth/login/ForgetPassword";
+import ResetPassword from "./components/auth/login/ResetPassword";
 import Enable2FA from "./components/2FA/Enable2FA";
 import Features from "./components/Features";
 
@@ -78,6 +80,10 @@ const router = createBrowserRouter([
   { path: "/contact", element: <ContactForm /> },
   { path: "/about", element: <AboutPage /> },
   { path: "/team", element: <TeamPage /> },
+  { path: "/doctor/forgot-password", element: <ForgetPassword /> },
+  { path: "/patient/forgot-password", element: <ForgetPassword /> },
+  { path: "/patient/reset-password/:id/:token", element: <ResetPassword /> },
+  { path: "/doctor/reset-password/:id/:token", element: <ResetPassword /> },
   { path: "/patient/enable2fa", element: <Enable2FA /> },
   { path: "/doctor/enable2fa", element: <Enable2FA /> },
   { path: "/features", element: <Features />}

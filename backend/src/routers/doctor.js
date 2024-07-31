@@ -5,7 +5,7 @@ const { randomUUID } = require("crypto");
 const { PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const passport = require("passport");
-
+const bcrypt = require('bcrypt');
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const Notification = require('../models/notification');
@@ -14,6 +14,8 @@ require("../middleware/passport");
 const router = express.Router();
 const { doctorRequestPatient, handleDoctorResponse, removeDoctor, cancelOutgoingRequest } = require('../utils/assignment');
 const s3 = require("../utils/s3Client");
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 
@@ -403,29 +405,12 @@ router.delete('/doctor/removePatient', auth, async (req, res) =>
             return res.status(404).send({ error: 'Patient not found' });
         }
 
-        const result = await removeDoctor(patient._id, doctorId);
-        if (result.error)
-        {
-            return res.status(400).send(result.message);
-        }
-
-        res.status(200).send({ message: 'Patient removed successfully' });
-    }
-    catch (error)
+    const result = await removeDoctor(patient._id, doctorId);
+    if (result.error)
     {
-        res.status(400).send({ error: 'Removing patient failed' });
+      return res.status(400).send({ error: result.message });
     }
-});
-
-// Outgoing requests - Get all pending requests sent by the doctor
-router.get('/doctor/sentRequests', auth, async (req, res) =>
-{
-    try
-    {
-        const doctorId = req.user._id;
-        const notifications = await Notification.find({ doctor: doctorId, status: 'pending', createdBy: 'doctor' }).populate('patient', 'name email');
-        res.send(notifications);
-    }
+}
     catch (error)
     {
         res.status(500).send({ error: 'Fetching sent requests failed' });
@@ -535,5 +520,82 @@ router.post('/doctor/remove2FA', auth, async (req, res) => {
       res.status(500).json({ message: 'Failed to disable 2FA', error: error.message });
   }
 });
+
+
+//forgot-password
+router.post('/doctor/forgot-password', (req, res) => {
+  console.log("jo");
+  const { email } = req.body;
+
+  Doctor.findOne({email: email})
+  .then(user => {
+      if(!user) {
+        console.log("user in doc is ", user);
+          return res.send({Status: "User does not exist"})
+      }
+      console.log("jo");
+
+
+      const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1d"})
+      console.log("token in doc is ", token);
+
+      const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'carebridge56@gmail.com',
+            pass: 'qwnrzwddfyztxzha'
+          }
+        });
+
+        const mailOptions = {
+          from: 'carebridge56@gmail.com',
+          to: email,
+          subject: 'Reset your password',
+          text: `http://localhost:5173/doctor/reset-password/${user._id}/${token}`
+        };
+        
+        console.log("mailOptions", mailOptions);
+        transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+            console.log(error);
+            return res.status(500).send({ Status: "Error sending email" });
+          } else {
+            console.log('Email sent: ' + info.response);
+            return res.send({Status: "Success"})
+          }
+        });
+  })
+  .catch(err => res.status(500).send({ Status: "Server error", Error: err.message }));
+})
+
+//reset password
+
+router.post('/doctor/reset-password/:id/:token', (req, res) => {
+  // install bcrypt, nodemailer
+  const {id, token} = req.params
+  const {password} = req.body
+
+  console.log('Received reset password request');
+  console.log(`ID: ${id}`);
+  console.log(`Token: ${token}`);
+  console.log(`Password: ${password}`);
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      console.log("res");
+      if(err) {
+          console.error('Error with token verification:', err);
+          return res.status(400).json({ Status: "Error with token" });
+          
+      } else {
+          bcrypt.hash(password, 10)
+              .then(hash => {
+                  return Doctor.findByIdAndUpdate(id, { password: hash });
+              })
+              .then(u => res.json({ Status: "Success" }))
+              .catch(err => res.status(500).json({ Status: err.message }));
+      }
+  })
+})
+
 
 module.exports = router;

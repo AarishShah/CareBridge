@@ -5,7 +5,7 @@ const { randomUUID } = require("crypto");
 const { GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const passport = require("passport");
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');const bcrypt = require('bcrypt');
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const Notification = require('../models/notification');
