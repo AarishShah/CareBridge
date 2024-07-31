@@ -132,6 +132,10 @@ const doctorSchema = new mongoose.Schema({
         default: "doctor",
         enum: ["doctor"],
     },
+    twoFactorSecret: {
+        type: String,
+        required: false,
+    },
 },
     {
         timestamps: true,

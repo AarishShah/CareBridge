@@ -25,6 +25,8 @@ import CreatePrescription from "./components/dashboards/prescription/CreatePresc
 import AboutPage from "./components/header-links/AboutPage";
 import TeamPage from "./components/header-links/TeamPage";
 import DocFormTemp from "./components/auth/signup/DocFormTemp";
+import Enable2FA from "./components/2FA/Enable2FA";
+import Features from "./components/Features";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +78,9 @@ const router = createBrowserRouter([
   { path: "/contact", element: <ContactForm /> },
   { path: "/about", element: <AboutPage /> },
   { path: "/team", element: <TeamPage /> },
+  { path: "/patient/enable2fa", element: <Enable2FA /> },
+  { path: "/doctor/enable2fa", element: <Enable2FA /> },
+  { path: "/features", element: <Features />}
 ]);
 
 function App() {

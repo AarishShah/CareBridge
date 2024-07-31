@@ -5,7 +5,7 @@ const { randomUUID } = require("crypto");
 const { GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const passport = require("passport");
-
+const bcrypt = require('bcrypt');
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const Notification = require('../models/notification');
@@ -14,6 +14,10 @@ require("../middleware/passport");
 const router = new express.Router();
 const { assignDoctorRequest, removeDoctor, handlePatientResponse, cancelOutgoingRequest } = require('../utils/assignment');
 const s3 = require("../utils/s3Client");
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+const speakeasy = require('speakeasy');
+const qrcode = require('qrcode');
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
@@ -191,6 +195,13 @@ router.post("/patient/login", async (req, res) =>
     {
         const patient = await Patient.findByCredentials(req.body.email, req.body.password);
 
+         // Check if 2FA is enabled
+         if (patient.twoFactorSecret) {
+            console.log(`2FA required for patient: ${patient._id}`);
+            // Return a flag indicating that 2FA is required
+            return res.status(200).send({ twoFactorRequired: true, patientId: patient._id });
+        }
+
         const token = await patient.generateAuthToken();
 
         res.status(202).send({ patient, token });
@@ -198,8 +209,39 @@ router.post("/patient/login", async (req, res) =>
     }
     catch (error)
     {
-        // console.error("Login error:", error);
+        console.error("Patient Login error:", error);
         res.status(400).send({ error: "Login failed" });
+    }
+});
+
+router.post('/patient/verify2FA', async (req, res) => {
+  console.log("patient verify2fa route hit");
+
+    try {
+        const { patientId, code } = req.body;
+        console.log(`Received verify2FA request with patientId: ${patientId}, code: ${code}`);
+        const patient = await Patient.findById(patientId);
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+
+        const token = JSON.parse(patient.twoFactorSecret);
+        const verify = speakeasy.totp.verify({
+            secret: token.base32,
+            encoding: 'base32',
+            token: code
+        });
+
+        if (verify) {
+            const authToken = await patient.generateAuthToken();
+            return res.status(200).json({ patient, token: authToken });
+        } else {
+            console.error('Invalid 2FA code');
+            return res.status(400).json({ error: 'Invalid 2FA code' });
+        }
+    } catch (error) {
+        console.error("Patient 2FA verification error:", error);
+        res.status(500).json({ error: 'Verification failed' });
     }
 });
 
@@ -425,5 +467,146 @@ router.delete('/patient/cancelRequest/:id', auth, async (req, res) =>
         res.status(500).send({ error: 'Canceling request failed' });
     }
 });
+
+//forgot-password
+router.post('/patient/forgot-password', (req, res) => {
+    const { email } = req.body;
+
+    Patient.findOne({email: email})
+    .then(user => {
+        if(!user) {
+            return res.send({Status: "User does not exist"})
+        }
+
+
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1d"})
+console.log("token in patient is", token);
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'carebridge56@gmail.com',
+              pass: 'qwnrzwddfyztxzha'
+            }
+          });
+
+          const mailOptions = {
+            from: 'carebridge56@gmail.com',
+            to: email,
+            subject: 'Reset your password',
+            text: `http://localhost:5173/patient/reset-password/${user._id}/${token}`
+          };
+          
+          transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent: ' + info.response);
+              return res.send({Status: "Success"})
+            }
+          });
+    })
+})
+
+//reset password
+
+router.post('/patient/reset-password/:id/:token', (req, res) => {
+    // install bcrypt, nodemailer
+    const {id, token} = req.params
+    const {password} = req.body
+
+    console.log('Received reset password request');
+    console.log(`ID: ${id}`);
+    console.log(`Token: ${token}`);
+    console.log(`Password: ${password}`);
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        console.log("res");
+        if(err) {
+            console.error('Error with token verification:', err);
+            return res.status(400).json({ Status: "Error with token" });
+            
+        } else {
+            bcrypt.hash(password, 10)
+                .then(hash => {
+                    return Patient.findByIdAndUpdate(id, { password: hash });
+                })
+                .then(u => res.json({ Status: "Success" }))
+                .catch(err => res.status(500).json({ Status: err.message }));
+        }
+    })
+})
+
+// getqrCode
+router.get('/patient/qrCode',auth, async (req, res) => {
+    try {
+        const patientId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
+        const secret = speakeasy.generateSecret({ length: 20 });
+        
+        // Update the existing patient document with the new secret
+        const patient = await Patient.findByIdAndUpdate(patientId, { twoFactorSecret: JSON.stringify(secret) }, { new: true });
+        if (!patient) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+
+        qrcode.toDataURL(secret.otpauth_url, (err, data) => {
+            if (err) {
+                console.error('Error generating QR code:', err);
+                return res.status(500).json({ message: 'Error generating QR code' });
+            }
+            res.json({ qrCode: data });
+        });
+    } catch (error) {
+        console.error('Error storing secret:', error);
+        res.status(500).json({ message: 'Error storing secret' });
+    }
+});
+
+
+// verifyqrCode
+router.post('/patient/verifyqrCode',auth, async (req, res) => {
+    try {
+        const { code } = req.body;
+        const patientId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
+        
+        const patient = await Patient.findById(patientId);
+        if (!patient) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+
+        const token = JSON.parse(patient.twoFactorSecret);
+        const verify = speakeasy.totp.verify({
+            secret: token.base32,
+            encoding: 'base32',
+            token: code
+        });
+
+        res.json({ verify });
+    } catch (error) {
+        console.error('Error verifying code:', error);
+        res.status(500).json({ message: 'Error verifying code' });
+    }
+});
+
+// Route to remove 2FA secret for patients
+router.post('/patient/remove2FA', auth, async (req, res) => {
+    console.log("remove yourself");
+    try {
+        const patientId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
+        
+        const patient = await Patient.findById(patientId);
+        if (!patient) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+
+        await Patient.updateOne({ _id: patientId }, { $unset: { twoFactorSecret: "" } });
+
+        res.status(200).json({ message: '2FA disabled successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to disable 2FA', error: error.message });
+    }
+});
+
+
+
 
 module.exports = router;

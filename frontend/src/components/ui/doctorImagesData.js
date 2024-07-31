@@ -43,6 +43,12 @@ const doctorImagesData = [
       { text: "View Assigned Patients", path: "/view-assigned-patients" },
     ],
   },
+  {
+    src: image3,
+    heading: "Two-Factor Authentication",
+    text: "Create and manage patient prescriptions<br/> conveniently to ensure accurate and<br/> up-to-date medication records.",
+    button: { text: "Two-Factor Authentication", path: "/doctor/enable2fa" },
+  },
 ];
 
 export default doctorImagesData;
