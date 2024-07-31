@@ -4,30 +4,10 @@ const mongoose = require('mongoose');
 const addressSchema = new mongoose.Schema(
   {
 
-    state:
-    {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    city:
-    {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    street:
-    {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    pinCode:
-    {
-      type: String,
-      required: true,
-      trim: true,
-    },
+    state: { type: String, required: true, trim: true, },
+    city: { type: String, required: true, trim: true, },
+    street: { type: String, required: true, trim: true, },
+    pinCode: { type: String, required: true, trim: true, },
   });
 
 // Defining a new schema for doctor information
@@ -40,18 +20,10 @@ const doctorInfoSchema = new mongoose.Schema(
       ref: 'Doctor'
     },
 
-    doctorName:
-    {
-      type: String,
-      required: true
-    },
-
-    doctorEmail:
-    {
-      type: String,
-      required: true
-    }
+    doctorName: { type: String, required: true },
+    doctorEmail: { type: String, required: true }
   });
+
 const medicalHistorySchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true, maxlength: 100, required: true },
@@ -146,12 +118,7 @@ const medicalHistorySchema = new mongoose.Schema(
 
     doctorInfo: doctorInfoSchema,
 
-    summary:
-    {
-      type: String,
-      required: false,
-      default: null,
-    },
+    summary: { type: String, required: false, default: null, },
   },
 
   {
@@ -163,4 +130,3 @@ const medicalHistorySchema = new mongoose.Schema(
 const MedicalHistoryModel = mongoose.model('medicalHistory', medicalHistorySchema);
 
 module.exports = MedicalHistoryModel;
-
