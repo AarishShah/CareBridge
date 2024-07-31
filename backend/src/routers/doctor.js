@@ -12,7 +12,7 @@ const Notification = require('../models/notification');
 const auth = require("../middleware/auth");
 require("../middleware/passport");
 const router = express.Router();
-const { doctorRequestPatient, handleDoctorResponse, removeDoctor } = require('../utils/assignment');
+const { doctorRequestPatient, handleDoctorResponse, removeDoctor, cancelOutgoingRequest } = require('../utils/assignment');
 const s3 = require("../utils/s3Client");
 
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
@@ -416,16 +416,13 @@ router.delete('/doctor/cancelRequest/:id', auth, async (req, res) =>
 {
     try
     {
-        const notification = await Notification.findOne({ _id: req.params.id, doctor: req.user._id, status: 'pending', createdBy: 'doctor' });
-
-        if (!notification)
+        const result = await cancelOutgoingRequest(req.params.id, req.user._id, 'doctor');
+        if (result.error)
         {
-            return res.status(404).send({ error: 'Request not found' });
+            return res.status(404).send(result.message);
         }
 
-        await Notification.deleteOne({ _id: req.params.id });
-
-        res.status(200).send({ message: 'Request canceled successfully' });
+        res.status(200).send({ message: result.message });
     }
     catch (error)
     {

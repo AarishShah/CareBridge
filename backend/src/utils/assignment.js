@@ -237,4 +237,29 @@ const doctorRequestPatient = async (doctorId, patientId) => {
     return { error: false, message: 'Request sent successfully' };
 };
 
-module.exports = { assignDoctorRequest, handleDoctorResponse, handlePatientResponse, removeDoctor, doctorRequestPatient };
+// Function to cancel an outgoing request
+const cancelOutgoingRequest = async (notificationId, userId, role) => {
+    const filter = { _id: notificationId, status: 'pending' };
+
+    if (role === 'patient') {
+        filter.patient = userId;
+        filter.createdBy = 'patient';
+    } else if (role === 'doctor') {
+        filter.doctor = userId;
+        filter.createdBy = 'doctor';
+    } else {
+        return { error: true, message: 'Invalid role' };
+    }
+
+    const notification = await Notification.findOne(filter);
+
+    if (!notification) {
+        return { error: true, message: 'Request not found or already processed' };
+    }
+
+    await Notification.deleteOne({ _id: notificationId });
+
+    return { error: false, message: 'Request canceled successfully' };
+};
+
+module.exports = { assignDoctorRequest, handleDoctorResponse, handlePatientResponse, removeDoctor, doctorRequestPatient, cancelOutgoingRequest };
