@@ -6,6 +6,9 @@ const { PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const passport = require("passport");
 const bcrypt = require('bcrypt');
+const nodemailer = require("nodemailer");
+const schedule = require("node-schedule");
+
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
 const Notification = require('../models/notification');
@@ -15,7 +18,6 @@ const router = express.Router();
 const { doctorRequestPatient, handleDoctorResponse, removeDoctor, cancelOutgoingRequest } = require('../utils/assignment');
 const s3 = require("../utils/s3Client");
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 
@@ -239,7 +241,6 @@ router.post('/doctor/verify2FA', async (req, res) => {
       res.status(500).json({ error: 'Verification failed' });
   }
 });
-
 
 // Update Route
 router.patch("/doctor/me", auth, async (req, res) =>
@@ -569,7 +570,6 @@ router.post('/doctor/forgot-password', (req, res) => {
 })
 
 //reset password
-
 router.post('/doctor/reset-password/:id/:token', (req, res) => {
   // install bcrypt, nodemailer
   const {id, token} = req.params
@@ -597,5 +597,77 @@ router.post('/doctor/reset-password/:id/:token', (req, res) => {
   })
 })
 
+// Send medicine reminder
+router.post('/doctor/reminder', auth, (req, res) =>
+{
+  try
+  {
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: "carebridge56@gmail.com",
+        pass: "qwnrzwddfyztxzha",
+      },
+      // tls: {
+      //   rejectUnauthorized: false,
+      // },
+    });
+
+    const { to, subject, text, startDate, intervalDays } = req.body;
+
+    if (!to || !subject || !text || !startDate || !intervalDays)
+    {
+        return res.status(400).send('Missing required fields');
+    }
+
+    const startDateObj = new Date(startDate);
+    if (isNaN(startDateObj))
+    {
+        return res.status(400).send('Invalid start date');
+    }
+
+    const sendEmail = () =>
+      {
+        const mailOptions =
+        {
+          from: 'carebridge56@gmail.com',
+          to,
+          subject,
+          text
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error)
+            {
+              console.error('Error sending email:', error);
+              return;
+            } else
+            {
+              console.log('Email sent:', info.response);
+            }
+          });
+        };
+
+    const scheduleNextEmail = (date) => {
+      schedule.scheduleJob(date, () => {
+        sendEmail();
+
+        const nextDate = new Date(
+          date.getTime() + intervalDays * 24 * 60 * 60 * 1000
+        );
+        scheduleNextEmail(nextDate);
+      });
+    };
+
+    scheduleNextEmail(startDateObj);
+    res.status(200).send('Email scheduled!');
+  } catch (e)
+  {
+    res.status(500).send("Could not send email")
+    console.log(e);
+  }
+});
 
 module.exports = router;

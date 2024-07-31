@@ -49,6 +49,14 @@ const doctorImagesData = [
     text: "Create and manage patient prescriptions<br/> conveniently to ensure accurate and<br/> up-to-date medication records.",
     button: { text: "Two-Factor Authentication", path: "/doctor/enable2fa" },
   },
+  {
+    src: image2,
+    heading: "Send Reminder",
+    text: "Send reminder to your patients </br> to take their medicine",
+    buttons: [
+      { text: "Send Reminder", path: "reminder" },
+    ],
+  },
 ];
 
 export default doctorImagesData;
