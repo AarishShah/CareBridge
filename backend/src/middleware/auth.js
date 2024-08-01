@@ -34,7 +34,7 @@ const auth = async (req, res, next) =>
         next();
     } catch (e)
     {
-        console.log("Error authenticating:", e);
+        // console.log("Error authenticating:", e);
         res.status(401).send({ error: "Please authenticate." });
     }
 };
