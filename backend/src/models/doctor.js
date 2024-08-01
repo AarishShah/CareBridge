@@ -162,7 +162,7 @@ doctorSchema.methods.toJSON = function ()
 doctorSchema.methods.generateAuthToken = async function (next)
 {
     const doctor = this;
-    const token = jwt.sign({ _id: doctor.id.toString(), role: 'doctor' }, 'thisismynewcourse', { expiresIn: '14d' })
+    const token = jwt.sign({ _id: doctor.id.toString(), role: 'doctor' }, process.env.JWT_SECRET, { expiresIn: '14d' })
 
     doctor.tokens = doctor.tokens.concat({ token })
 
@@ -206,17 +206,3 @@ doctorSchema.pre('save', async function (next)
 const Doctor = mongoose.model('doctor', doctorSchema);
 
 module.exports = Doctor;
-
-/*
-Test data:
-
-{
-    name: "Dr. John Doe",
-    email: "johndoe@example.com",
-    password: "password123",
-    gender: "Male",
-    specialization: ["Cardiology", "Internal Medicine"],
-    yearsOfExperience: 15,
-    qualifications: ["MD", "Board Certified in Cardiology", "Ph.D. in Internal Medicine"] 
-}
-*/

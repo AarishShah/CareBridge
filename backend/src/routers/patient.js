@@ -314,15 +314,21 @@ router.post("/patient/logoutall", auth, async (req, res) =>
 // 7. Read Patient Route
 router.get("/patient/me", auth, async (req, res) =>
 {
-    const patient = await Patient.findById(req.user._id)
+    try
+    {
+        const patient = await Patient.findById(req.user._id)
 
-    const { bucket, profileKey } = patient;
+        const { bucket, profileKey } = patient;
 
-    if (!bucket) throw new Error();
+        if (!bucket) throw new Error();
 
-    const profileUrl = await getProfileUrl(bucket, profileKey);
+        const profileUrl = await getProfileUrl(bucket, profileKey);
 
-    res.send({ patient, profileUrl });
+        res.send({ patient, profileUrl });
+    } catch (error)
+    {
+        res.status(500).send({ error: "Failed to fetch doctor details" });
+    }
 });
 
 // ---------------- 3. Patient-Doctor Connection Routes ----------------
@@ -470,13 +476,13 @@ router.get('/patient/qrCode',auth, async (req, res) => {
 
         qrcode.toDataURL(secret.otpauth_url, (err, data) => {
             if (err) {
-                console.error('Error generating QR code:', err);
+                // console.error('Error generating QR code:', err);
                 return res.status(500).json({ message: 'Error generating QR code' });
             }
             res.json({ qrCode: data });
         });
     } catch (error) {
-        console.error('Error storing secret:', error);
+        // console.error('Error storing secret:', error);
         res.status(500).json({ message: 'Error storing secret' });
     }
 });
@@ -570,18 +576,17 @@ router.post('/patient/forgot-password', (req, res) => {
         }
 
 
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1d"})
-console.log("token in patient is", token);
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1d"});
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-              user: 'carebridge56@gmail.com',
-              pass: 'qwnrzwddfyztxzha'
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
             }
           });
 
           const mailOptions = {
-            from: 'carebridge56@gmail.com',
+            from: process.env.EMAIL_USER,
             to: email,
             subject: 'Reset your password',
             text: `http://localhost:5173/patient/reset-password/${user._id}/${token}`
@@ -589,9 +594,9 @@ console.log("token in patient is", token);
           
           transporter.sendMail(mailOptions, function(error, info){
             if (error) {
-              console.log(error);
+            //   console.log(error);
+                return res.send({Status: "Error"})
             } else {
-              console.log('Email sent: ' + info.response);
               return res.send({Status: "Success"})
             }
           });
@@ -604,15 +609,9 @@ router.post('/patient/reset-password/:id/:token', (req, res) => {
     const {id, token} = req.params
     const {password} = req.body
 
-    console.log('Received reset password request');
-    console.log(`ID: ${id}`);
-    console.log(`Token: ${token}`);
-    console.log(`Password: ${password}`);
-
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        console.log("res");
         if(err) {
-            console.error('Error with token verification:', err);
+            // console.error('Error with token verification:', err);
             return res.status(400).json({ Status: "Error with token" });
             
         } else {

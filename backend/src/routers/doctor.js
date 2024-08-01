@@ -572,13 +572,13 @@ router.post('/doctor/forgot-password', (req, res) => {
       const transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
-            user: 'carebridge56@gmail.com',
-            pass: 'qwnrzwddfyztxzha'
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
           }
         });
 
         const mailOptions = {
-          from: 'carebridge56@gmail.com',
+            from: process.env.EMAIL_USER,
           to: email,
           subject: 'Reset your password',
           text: `http://localhost:5173/doctor/reset-password/${user._id}/${token}`
@@ -632,8 +632,8 @@ router.post('/doctor/reminder', auth, (req, res) =>
       port: 587,
       secure: false,
       auth: {
-        user: "carebridge56@gmail.com",
-        pass: "qwnrzwddfyztxzha",
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
       },
       // tls: {
       //   rejectUnauthorized: false,
@@ -657,7 +657,7 @@ router.post('/doctor/reminder', auth, (req, res) =>
       {
         const mailOptions =
         {
-          from: 'carebridge56@gmail.com',
+          from: process.env.EMAIL_USER,
           to,
           subject,
           text
@@ -666,11 +666,11 @@ router.post('/doctor/reminder', auth, (req, res) =>
         transporter.sendMail(mailOptions, (error, info) => {
           if (error)
             {
-              console.error('Error sending email:', error);
+            //   console.error('Error sending email:', error);
               return;
             } else
             {
-              console.log('Email sent:', info.response);
+            //   console.log('Email sent:', info.response);
             }
           });
         };
@@ -690,8 +690,8 @@ router.post('/doctor/reminder', auth, (req, res) =>
     res.status(200).send('Email scheduled!');
   } catch (e)
   {
+      // console.log(e);
     res.status(500).send("Could not send email")
-    console.log(e);
   }
 });
 

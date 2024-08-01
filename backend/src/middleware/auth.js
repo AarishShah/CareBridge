@@ -1,13 +1,17 @@
+require('dotenv').config();
 const jwt = require("jsonwebtoken");
 const Doctor = require('../models/doctor');
 const Patient = require('../models/patient');
+
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "../../.env") });
 
 const auth = async (req, res, next) =>
 {
     try
     {
         const token = req.header("Authorization").replace("Bearer ", "");
-        const decoded = jwt.verify(token, "thisismynewcourse");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         let user;
 
