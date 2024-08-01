@@ -570,18 +570,17 @@ router.post('/patient/forgot-password', (req, res) => {
         }
 
 
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1d"})
-console.log("token in patient is", token);
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1d"});
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-              user: 'carebridge56@gmail.com',
-              pass: 'qwnrzwddfyztxzha'
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
             }
           });
 
           const mailOptions = {
-            from: 'carebridge56@gmail.com',
+            from: process.env.EMAIL_USER,
             to: email,
             subject: 'Reset your password',
             text: `http://localhost:5173/patient/reset-password/${user._id}/${token}`
@@ -589,9 +588,9 @@ console.log("token in patient is", token);
           
           transporter.sendMail(mailOptions, function(error, info){
             if (error) {
-              console.log(error);
+            //   console.log(error);
+                return res.send({Status: "Error"})
             } else {
-              console.log('Email sent: ' + info.response);
               return res.send({Status: "Success"})
             }
           });
@@ -604,15 +603,9 @@ router.post('/patient/reset-password/:id/:token', (req, res) => {
     const {id, token} = req.params
     const {password} = req.body
 
-    console.log('Received reset password request');
-    console.log(`ID: ${id}`);
-    console.log(`Token: ${token}`);
-    console.log(`Password: ${password}`);
-
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        console.log("res");
         if(err) {
-            console.error('Error with token verification:', err);
+            // console.error('Error with token verification:', err);
             return res.status(400).json({ Status: "Error with token" });
             
         } else {
