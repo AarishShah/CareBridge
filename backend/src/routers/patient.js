@@ -73,7 +73,7 @@ router.get('/patient/auth/google/callback',
     async (req, res) =>
     {
         const user = req.user;
-        console.log(user);
+        // console.log(user);
 
         if (!user)
         {
@@ -99,14 +99,14 @@ router.get('/patient/auth/google/callback',
                 const token = await existingUser.generateAuthToken();
                 req.session.token = token; //  remove if the below line is working fine
                 // res.send({ token }); // test this
-                return res.redirect('http://localhost:5173/patient/dashboard');
+                return res.redirect(`${process.env.FRONTEND_URL}/patient/dashboard`);
             }
 
             else
             {
                 // Temporarily store the user data
                 req.session.tempUser = user;
-                return res.redirect('http://localhost:5173/patient/complete-profile');
+                return res.redirect(`${process.env.FRONTEND_URL}/patient/complete-profile`);
             }
 
         } catch (error)
@@ -209,7 +209,6 @@ router.post("/patient/login", async (req, res) =>
 
          // Check if 2FA is enabled
          if (patient.twoFactorSecret) {
-            console.log(`2FA required for patient: ${patient._id}`);
             // Return a flag indicating that 2FA is required
             return res.status(200).send({ twoFactorRequired: true, patientId: patient._id });
         }
@@ -514,11 +513,9 @@ router.post('/patient/verifyqrCode',auth, async (req, res) => {
 
 // 3. Verify 2FA Code - Route to verify the 2FA (OTP) code during login
 router.post('/patient/verify2FA', async (req, res) => {
-  console.log("patient verify2fa route hit");
 
     try {
         const { patientId, code } = req.body;
-        console.log(`Received verify2FA request with patientId: ${patientId}, code: ${code}`);
         const patient = await Patient.findById(patientId);
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
@@ -546,7 +543,6 @@ router.post('/patient/verify2FA', async (req, res) => {
 
 // 4. Disable 2FA - Route to remove 2FA secret for patients
 router.post('/patient/remove2FA', auth, async (req, res) => {
-    console.log("remove yourself");
     try {
         const patientId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
         
@@ -589,7 +585,7 @@ router.post('/patient/forgot-password', (req, res) => {
             from: process.env.EMAIL_USER,
             to: email,
             subject: 'Reset your password',
-            text: `http://localhost:5173/patient/reset-password/${user._id}/${token}`
+            text: `${process.env.FRONTEND_URL}/patient/reset-password/${user._id}/${token}`
           };
           
           transporter.sendMail(mailOptions, function(error, info){

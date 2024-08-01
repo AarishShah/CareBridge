@@ -6,11 +6,13 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const Patient = require('../models/patient');
 const Doctor = require('../models/doctor');
 
+const backendUrl = process.env.BACKEND_URL;
+
 // Patient Google Strategy
 passport.use('google-patient', new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:5000/patient/auth/google/callback"
+    callbackURL: `${backendUrl}/patient/auth/google/callback`
 }, async (token, tokenSecret, profile, done) =>
 {
     try
@@ -39,7 +41,7 @@ passport.use('google-patient', new GoogleStrategy({
 passport.use('google-doctor', new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:5000/doctor/auth/google/callback"
+    callbackURL: `${backendUrl}/doctor/auth/google/callback`
 }, async (token, tokenSecret, profile, done) =>
 {
     try
