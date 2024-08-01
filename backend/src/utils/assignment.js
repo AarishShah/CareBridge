@@ -2,6 +2,7 @@ const Patient = require('../models/patient');
 const Doctor = require('../models/doctor');
 const Notification = require('../models/notification');
 
+// Function to allow a patient to send a connection request to a doctor
 const assignDoctorRequest = async (patientId, doctorId) => {
     const patient = await Patient.findById(patientId);
     const doctor = await Doctor.findById(doctorId);
@@ -65,6 +66,7 @@ const assignDoctorRequest = async (patientId, doctorId) => {
     return { error: false, message: 'Request sent successfully' };
 };
 
+// Function to handle the response from a doctor (accept or reject)
 const handleDoctorResponse = async (notificationId, action) => {
     const notification = await Notification.findById(notificationId);
 
@@ -103,6 +105,7 @@ const handleDoctorResponse = async (notificationId, action) => {
     }
 };
 
+// Function to handle the response from a patient (accept or reject)
 const handlePatientResponse = async (notificationId, action) => {
     const notification = await Notification.findById(notificationId);
 
@@ -141,6 +144,7 @@ const handlePatientResponse = async (notificationId, action) => {
     }
 };
 
+// Function to remove a doctor or a patient from the assigned list
 const removeDoctor = async (patientId, doctorId) => {
     const patient = await Patient.findById(patientId);
     const doctor = await Doctor.findById(doctorId);

@@ -219,8 +219,8 @@ router.post('/patient/verify2FA', async (req, res) => {
 
     try {
         const { patientId, code } = req.body;
-        console.log(`Received verify2FA request with patientId: ${patientId}, code: ${code}`);
         const patient = await Patient.findById(patientId);
+
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
@@ -236,11 +236,10 @@ router.post('/patient/verify2FA', async (req, res) => {
             const authToken = await patient.generateAuthToken();
             return res.status(200).json({ patient, token: authToken });
         } else {
-            console.error('Invalid 2FA code');
             return res.status(400).json({ error: 'Invalid 2FA code' });
         }
     } catch (error) {
-        console.error("Patient 2FA verification error:", error);
+        // console.error("Patient 2FA verification error:", error);
         res.status(500).json({ error: 'Verification failed' });
     }
 });
@@ -511,7 +510,6 @@ console.log("token in patient is", token);
 })
 
 //reset password
-
 router.post('/patient/reset-password/:id/:token', (req, res) => {
     // install bcrypt, nodemailer
     const {id, token} = req.params
