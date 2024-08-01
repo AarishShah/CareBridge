@@ -2,7 +2,8 @@ const express = require('express');
 const MedicalHistory = require('../models/medicalHistory');
 const Patient = require('../models/patient');
 const auth = require('../middleware/auth');
-const openai = require('../utils/openai');
+// const openai = require('../utils/openai');
+const gemini = require('../utils/gemini');
 const router = express.Router();
 
 // Create patient's medical history
@@ -123,7 +124,7 @@ router.post('/medicalhistory/summary/:id', auth, async (req, res) =>
                 return res.status(403).send({ error: 'Only the doctor who created this report is authorized to generate the summary.' });
             }
     
-            const AISummary = await openai.summarize(medicalHistory);
+            const AISummary = await gemini.summarize(medicalHistory);
             medicalHistory.summary = AISummary;
     
             await medicalHistory.save();
