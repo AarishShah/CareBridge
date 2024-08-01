@@ -103,14 +103,14 @@ router.get('/doctor/auth/google/callback',
                 const token = await existingUser.generateAuthToken();
                 req.session.token = token; //  remove if the below line is working fine
                 // res.send({ token }); // test this
-                return res.redirect('http://localhost:5173/doctor/dashboard');
+                return res.redirect(`${process.env.FRONTEND_URL}/doctor/dashboard`);
             }
 
             else
             {
                 // Temporarily store the user data
                 req.session.tempUser = user;
-                return res.redirect('http://localhost:5173/doctor/complete-profile');
+                return res.redirect(`${process.env.FRONTEND_URL}/doctor/complete-profile`);
             }
 
         } catch (error)
@@ -509,7 +509,6 @@ router.post('/doctor/verifyqrCode',auth, async (req, res) => {
 
 // 3. Verify 2FA Code - Route to verify the 2FA (OTP) code during login
 router.post('/doctor/verify2FA', async (req, res) => {
-  console.log("doctor verify2fa route hit");
   try {
       const { doctorId, code } = req.body;
       const doctor = await Doctor.findById(doctorId);
@@ -537,7 +536,7 @@ router.post('/doctor/verify2FA', async (req, res) => {
 
 // 4. Disable 2FA - Route to remove 2FA secret for doctors
 router.post('/doctor/remove2FA', auth, async (req, res) => {
-  console.log("remove yourself doc");
+
 
   try {
       const doctorId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
@@ -581,10 +580,9 @@ router.post('/doctor/forgot-password', (req, res) => {
             from: process.env.EMAIL_USER,
           to: email,
           subject: 'Reset your password',
-          text: `http://localhost:5173/doctor/reset-password/${user._id}/${token}`
+          text: `${process.env.FRONTEND_URL}/doctor/reset-password/${user._id}/${token}`
         };
         
-        console.log("mailOptions", mailOptions);
         transporter.sendMail(mailOptions, function(error, info){
           if (error) {
             // console.log(error);
@@ -604,7 +602,6 @@ router.post('/doctor/reset-password/:id/:token', (req, res) => {
   const {password} = req.body
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      console.log("res");
       if(err) {
         //   console.error('Error with token verification:', err);
           return res.status(400).json({ Status: "Error with token" });
