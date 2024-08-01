@@ -472,7 +472,7 @@ router.delete('/doctor/cancelRequest/:id', auth, async (req, res) =>
     }
 });
 
-// getqrCode
+// getqrCode - Generate and return a QR code for 2FA
 router.get('/doctor/qrCode',auth, async (req, res) => {
   try {
       const doctorId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
@@ -497,7 +497,7 @@ router.get('/doctor/qrCode',auth, async (req, res) => {
   }
 });
 
-// verifyqrCode
+// verifyqrCode - Verify the 2FA (OTP) code
 router.post('/doctor/verifyqrCode',auth, async (req, res) => {
   try {
       const { code } = req.body;
@@ -522,7 +522,7 @@ router.post('/doctor/verifyqrCode',auth, async (req, res) => {
   }
 });
 
-// Route to remove 2FA secret for doctors
+// Disable 2FA - Route to remove 2FA secret for doctors
 router.post('/doctor/remove2FA', auth, async (req, res) => {
   console.log("remove yourself doc");
 
@@ -543,22 +543,17 @@ router.post('/doctor/remove2FA', auth, async (req, res) => {
 });
 
 
-//forgot-password
+// Forgot password
 router.post('/doctor/forgot-password', (req, res) => {
-  console.log("jo");
   const { email } = req.body;
 
   Doctor.findOne({email: email})
   .then(user => {
       if(!user) {
-        console.log("user in doc is ", user);
           return res.send({Status: "User does not exist"})
       }
-      console.log("jo");
-
 
       const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1d"})
-      console.log("token in doc is ", token);
 
       const transporter = nodemailer.createTransport({
           service: 'gmail',
@@ -578,10 +573,9 @@ router.post('/doctor/forgot-password', (req, res) => {
         console.log("mailOptions", mailOptions);
         transporter.sendMail(mailOptions, function(error, info){
           if (error) {
-            console.log(error);
+            // console.log(error);
             return res.status(500).send({ Status: "Error sending email" });
           } else {
-            console.log('Email sent: ' + info.response);
             return res.send({Status: "Success"})
           }
         });
@@ -589,21 +583,16 @@ router.post('/doctor/forgot-password', (req, res) => {
   .catch(err => res.status(500).send({ Status: "Server error", Error: err.message }));
 })
 
-//reset password
+// Reset password - route to update password
 router.post('/doctor/reset-password/:id/:token', (req, res) => {
   // install bcrypt, nodemailer
   const {id, token} = req.params
   const {password} = req.body
 
-  console.log('Received reset password request');
-  console.log(`ID: ${id}`);
-  console.log(`Token: ${token}`);
-  console.log(`Password: ${password}`);
-
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       console.log("res");
       if(err) {
-          console.error('Error with token verification:', err);
+        //   console.error('Error with token verification:', err);
           return res.status(400).json({ Status: "Error with token" });
           
       } else {

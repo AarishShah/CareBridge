@@ -2,7 +2,6 @@ const express = require('express');
 const MedicalHistory = require('../models/medicalHistory');
 const Patient = require('../models/patient');
 const auth = require('../middleware/auth');
-// const openai = require('../utils/openai');
 const gemini = require('../utils/gemini');
 const router = express.Router();
 
