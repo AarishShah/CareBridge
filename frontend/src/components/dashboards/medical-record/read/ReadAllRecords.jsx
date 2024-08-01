@@ -32,6 +32,22 @@ function ReadAllRecords() {
     }
   };
 
+  const generateSummary = async (id) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/medicalhistory/summary/${id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      setSelectedRecord(response.data);
+      setShowSummary(true);
+    } catch (error) {
+      console.error("Error generating summary:", error);
+    }
+  };
+
   useEffect(() => {
     fetchMedicalRecords();
   }, []);
@@ -190,7 +206,7 @@ function ReadAllRecords() {
               <h2 className="text-xl font-semibold text-gray-700">Summary</h2>
               <button
                 className="mt-4 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-800 py-2 px-4 rounded"
-                onClick={() => setShowSummary(true)}
+                onClick={() => generateSummary(selectedRecord._id)}
               >
                 Generate Summary
               </button>
