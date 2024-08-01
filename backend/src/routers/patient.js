@@ -226,41 +226,7 @@ router.post("/patient/login", async (req, res) =>
     }
 });
 
-<<<<<<< HEAD
 // 3. Update Route
-=======
-router.post('/patient/verify2FA', async (req, res) => {
-  console.log("patient verify2fa route hit");
-
-    try {
-        const { patientId, code } = req.body;
-        const patient = await Patient.findById(patientId);
-
-        if (!patient) {
-            return res.status(404).json({ error: 'Patient not found' });
-        }
-
-        const token = JSON.parse(patient.twoFactorSecret);
-        const verify = speakeasy.totp.verify({
-            secret: token.base32,
-            encoding: 'base32',
-            token: code
-        });
-
-        if (verify) {
-            const authToken = await patient.generateAuthToken();
-            return res.status(200).json({ patient, token: authToken });
-        } else {
-            return res.status(400).json({ error: 'Invalid 2FA code' });
-        }
-    } catch (error) {
-        // console.error("Patient 2FA verification error:", error);
-        res.status(500).json({ error: 'Verification failed' });
-    }
-});
-
-// Update Route
->>>>>>> f35dfd2aed3474c8df04d146f2955394a62cbc9c
 router.patch("/patient/me", auth, async (req, res) =>
 {
     const { key, uploadUrl } = await getUploadProfileUrl(req.query.fileType);
@@ -632,11 +598,7 @@ console.log("token in patient is", token);
     })
 })
 
-<<<<<<< HEAD
 // 2. Reset password - route to update password 
-=======
-//reset password
->>>>>>> f35dfd2aed3474c8df04d146f2955394a62cbc9c
 router.post('/patient/reset-password/:id/:token', (req, res) => {
     // install bcrypt, nodemailer
     const {id, token} = req.params
@@ -663,4 +625,5 @@ router.post('/patient/reset-password/:id/:token', (req, res) => {
         }
     })
 })
+
 module.exports = router;
