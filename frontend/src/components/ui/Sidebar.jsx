@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import {
   User,
@@ -48,7 +47,7 @@ const Sidebar = ({ userType, hoveredIndex }) => {
           <li>
             <Link to="#" className={linkClasses(4)}>
               <UserPlus className="h-6 w-6" />
-              <span>Assigned Patients</span>
+              <span>Connect to Patients</span>
             </Link>
           </li>
         ) : (
