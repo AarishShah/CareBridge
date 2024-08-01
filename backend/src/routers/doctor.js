@@ -331,7 +331,7 @@ router.get("/doctor/me", auth, async (req, res) =>
     try
     {
         // Populate assigned patients in the response
-        const doctor = await Doctor.findById(req.user._id).populate('assignedPatients');
+        const doctor = await Doctor.findById(req.user._id);
 
         const { bucket, profileKey } = doctor;
 
