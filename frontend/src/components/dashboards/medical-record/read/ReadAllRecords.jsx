@@ -6,6 +6,7 @@ function ReadAllRecords() {
   const [medicalRecords, setMedicalRecords] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [showSummary, setShowSummary] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const fetchMedicalRecords = async () => {
     const response = await axios.get(
@@ -34,6 +35,7 @@ function ReadAllRecords() {
 
   const generateSummary = async (id) => {
     try {
+      setLoading(true);
       const response = await axios.post(
         `http://localhost:5000/medicalhistory/summary/${id}`,
         {},
@@ -45,6 +47,8 @@ function ReadAllRecords() {
       setShowSummary(true);
     } catch (error) {
       console.error("Error generating summary:", error);
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -207,10 +211,11 @@ function ReadAllRecords() {
               <button
                 className="mt-4 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-800 py-2 px-4 rounded"
                 onClick={() => generateSummary(selectedRecord._id)}
+                disabled={loading}
               >
-                Generate Summary
+                 {loading ? "Generating Summary..." : "Generate Summary"}
               </button>
-              {showSummary && (
+              {showSummary && !loading && (
                  <div className="mt-2" dangerouslySetInnerHTML={{ __html: formatSummary(selectedRecord.summary) }} />
               )}
 
