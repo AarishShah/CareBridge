@@ -101,40 +101,40 @@ router.post('/medicalhistory/:id', auth, async (req, res) =>
 
 // AI Processed Medical History
 router.post('/medicalhistory/summary/:id', auth, async (req, res) =>
+{
+    if (req.role !== 'doctor')
     {
-        if (req.role !== 'doctor')
+        return res.status(403).send({ error: 'Only doctors are authorized to generate patient history summary' });
+    }
+
+    const medicalHistoryId = req.params.id;
+    const doctorId = req.user._id; // req.user is set by the auth middleware
+
+    try
+    {
+        const medicalHistory = await MedicalHistory.findById(medicalHistoryId);
+
+        if (!medicalHistory)
         {
-            return res.status(403).send({ error: 'Only doctors are authorized to generate patient history summary' });
+            return res.status(404).send({ error: 'Medical history not found' });
         }
-    
-        const medicalHistoryId = req.params.id;
-        const doctorId = req.user._id; // req.user is set by the auth middleware
-    
-        try
+
+        if (medicalHistory.doctorInfo.doctorSignature.toString() !== doctorId.toString())
         {
-            const medicalHistory = await MedicalHistory.findById(medicalHistoryId);
-    
-            if (!medicalHistory)
-            {
-                return res.status(404).send({ error: 'Medical history not found' });
-            }
-    
-            if (medicalHistory.doctorInfo.doctorSignature.toString() !== doctorId.toString())
-            {
-                return res.status(403).send({ error: 'Only the doctor who created this report is authorized to generate the summary.' });
-            }
-    
-            const AISummary = await gemini.summarize(medicalHistory);
-            medicalHistory.summary = AISummary;
-    
-            await medicalHistory.save();
-            res.status(200).send(medicalHistory);
-        } catch (e)
-        {
-            // console.error("Error generating AI summary:", e);
-            res.status(400).send({ error: 'Failed to generate AI summary' });
+            return res.status(403).send({ error: 'Only the doctor who created this report is authorized to generate the summary.' });
         }
-    });
+
+        const AISummary = await gemini.summarize(medicalHistory);
+        medicalHistory.summary = AISummary;
+
+        await medicalHistory.save();
+        res.status(200).send(medicalHistory);
+    } catch (e)
+    {
+        // console.error("Error generating AI summary:", e);
+        res.status(400).send({ error: 'Failed to generate AI summary' });
+    }
+});
 
 // Route to fetch paginated medical histories (only title and ID) with authorization
 router.get('/medicalhistories', auth, async (req, res) =>
