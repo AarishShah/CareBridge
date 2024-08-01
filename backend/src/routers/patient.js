@@ -314,15 +314,21 @@ router.post("/patient/logoutall", auth, async (req, res) =>
 // 7. Read Patient Route
 router.get("/patient/me", auth, async (req, res) =>
 {
-    const patient = await Patient.findById(req.user._id)
+    try
+    {
+        const patient = await Patient.findById(req.user._id)
 
-    const { bucket, profileKey } = patient;
+        const { bucket, profileKey } = patient;
 
-    if (!bucket) throw new Error();
+        if (!bucket) throw new Error();
 
-    const profileUrl = await getProfileUrl(bucket, profileKey);
+        const profileUrl = await getProfileUrl(bucket, profileKey);
 
-    res.send({ patient, profileUrl });
+        res.send({ patient, profileUrl });
+    } catch (error)
+    {
+        res.status(500).send({ error: "Failed to fetch doctor details" });
+    }
 });
 
 // ---------------- 3. Patient-Doctor Connection Routes ----------------
