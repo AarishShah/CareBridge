@@ -470,13 +470,13 @@ router.get('/patient/qrCode',auth, async (req, res) => {
 
         qrcode.toDataURL(secret.otpauth_url, (err, data) => {
             if (err) {
-                console.error('Error generating QR code:', err);
+                // console.error('Error generating QR code:', err);
                 return res.status(500).json({ message: 'Error generating QR code' });
             }
             res.json({ qrCode: data });
         });
     } catch (error) {
-        console.error('Error storing secret:', error);
+        // console.error('Error storing secret:', error);
         res.status(500).json({ message: 'Error storing secret' });
     }
 });
