@@ -1,24 +1,32 @@
+// Requiring necessary npm packages
 const express = require("express");
-
+const router = new express.Router();
 const path = require("path");
+const bcrypt = require('bcrypt');
+const passport = require("passport");
+const nodemailer = require('nodemailer');
 const { randomUUID } = require("crypto");
 const { GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const passport = require("passport");
-const bcrypt = require('bcrypt');
-const Patient = require("../models/patient");
-const Doctor = require("../models/doctor");
-const Notification = require('../models/notification');
-const auth = require("../middleware/auth");
-require("../middleware/passport");
-const router = new express.Router();
-const { assignDoctorRequest, removeDoctor, handlePatientResponse, cancelOutgoingRequest } = require('../utils/assignment');
-const s3 = require("../utils/s3Client");
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 
+// Models
+const Patient = require("../models/patient");
+const Doctor = require("../models/doctor");
+const Notification = require('../models/notification');
+
+// Middleware
+const auth = require("../middleware/auth");
+require("../middleware/passport");
+
+// Utils
+const { assignDoctorRequest, removeDoctor, handlePatientResponse, cancelOutgoingRequest } = require('../utils/assignment');
+const s3 = require("../utils/s3Client");
+
+
+// Load environment variables
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
 const getProfileUrl = async (bucket, profileKey) =>
@@ -54,51 +62,12 @@ const getUploadProfileUrl = async (fileType) =>
     return { key, uploadUrl };
 }
 
-// Sign Up Route
-router.post("/patient/signup", async (req, res) =>
-{
-    try
-    {
-        const { key, uploadUrl } = await getUploadProfileUrl(req.query.fileType);
+// ---------------- 1. Google authentication routes ----------------
 
-        const { name, email, password, DOB, gender, maritalStatus, occupation, address } = req.body;
-
-        const missingFields = [];
-        if (!name) missingFields.push("name");
-        if (!email) missingFields.push("email");
-        if (!password) missingFields.push("password");
-        if (!DOB) missingFields.push("date of birth (DOB)");
-        if (!gender) missingFields.push("gender");
-        if (!maritalStatus) missingFields.push("maritalStatus");
-        if (!occupation) missingFields.push("occupation");
-        if (!address) missingFields.push("address");
-
-        if (missingFields.length > 0)
-        {
-            return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(", ")}. Please ensure all fields are filled out correctly.`, });
-        }
-
-        const newPatient = await Patient.create({ name, email, password, profileKey: key, bucket: process.env.BUCKET_NAME, region: process.env.REGION, DOB, gender, maritalStatus, occupation, address });
-
-        const token = await newPatient.generateAuthToken();
-
-        res.status(201).send({ newPatient, token, uploadUrl });
-    } catch (e)
-    {
-        // Check for duplicate key error
-        if (e.code === 11000 && e.keyPattern.email)
-        {
-            return res.status(400).send({ error: `The email '${e.keyValue.email}' is already in use. Please use a different email.` });
-        }
-        // console.error("Signup error:", e);
-        res.status(500).send({ error: "Failed to create a new user." });
-    }
-});
-
-// Redirect to Google for authentication
+// 1. Redirect to Google for authentication
 router.get('/patient/auth/google', passport.authenticate('google-patient', { scope: ['profile', 'email'] }));
 
-// Google callback URL
+// 2. Google callback URL
 router.get('/patient/auth/google/callback',
     passport.authenticate('google-patient', { failureRedirect: '/patient/auth/google' }),
     async (req, res) =>
@@ -148,7 +117,7 @@ router.get('/patient/auth/google/callback',
     }
 );
 
-// Complete Profile Route
+// 3. Complete Profile Route
 router.post("/patient/complete-profile", async (req, res) =>
 {
     try
@@ -188,7 +157,50 @@ router.post("/patient/complete-profile", async (req, res) =>
     }
 });
 
-// Login Route
+// ---------------- 2. CRUD operations for doctors ----------------
+
+// 1. Sign Up Route
+router.post("/patient/signup", async (req, res) =>
+{
+    try
+    {
+        const { key, uploadUrl } = await getUploadProfileUrl(req.query.fileType);
+
+        const { name, email, password, DOB, gender, maritalStatus, occupation, address } = req.body;
+
+        const missingFields = [];
+        if (!name) missingFields.push("name");
+        if (!email) missingFields.push("email");
+        if (!password) missingFields.push("password");
+        if (!DOB) missingFields.push("date of birth (DOB)");
+        if (!gender) missingFields.push("gender");
+        if (!maritalStatus) missingFields.push("maritalStatus");
+        if (!occupation) missingFields.push("occupation");
+        if (!address) missingFields.push("address");
+
+        if (missingFields.length > 0)
+        {
+            return res.status(400).send({ error: `The following field(s) are required and missing: ${missingFields.join(", ")}. Please ensure all fields are filled out correctly.`, });
+        }
+
+        const newPatient = await Patient.create({ name, email, password, profileKey: key, bucket: process.env.BUCKET_NAME, region: process.env.REGION, DOB, gender, maritalStatus, occupation, address });
+
+        const token = await newPatient.generateAuthToken();
+
+        res.status(201).send({ newPatient, token, uploadUrl });
+    } catch (e)
+    {
+        // Check for duplicate key error
+        if (e.code === 11000 && e.keyPattern.email)
+        {
+            return res.status(400).send({ error: `The email '${e.keyValue.email}' is already in use. Please use a different email.` });
+        }
+        // console.error("Signup error:", e);
+        res.status(500).send({ error: "Failed to create a new user." });
+    }
+});
+
+// 2. Login Route
 router.post("/patient/login", async (req, res) =>
 {
     try
@@ -214,6 +226,9 @@ router.post("/patient/login", async (req, res) =>
     }
 });
 
+<<<<<<< HEAD
+// 3. Update Route
+=======
 router.post('/patient/verify2FA', async (req, res) => {
   console.log("patient verify2fa route hit");
 
@@ -245,6 +260,7 @@ router.post('/patient/verify2FA', async (req, res) => {
 });
 
 // Update Route
+>>>>>>> f35dfd2aed3474c8df04d146f2955394a62cbc9c
 router.patch("/patient/me", auth, async (req, res) =>
 {
     const { key, uploadUrl } = await getUploadProfileUrl(req.query.fileType);
@@ -278,7 +294,7 @@ router.patch("/patient/me", auth, async (req, res) =>
     }
 });
 
-// Delete Route
+// 4. Delete Route
 router.delete("/patient/me", auth, async (req, res) =>
 {
     try
@@ -295,7 +311,7 @@ router.delete("/patient/me", auth, async (req, res) =>
     }
 });
 
-// Logout Route
+// 5. Logout Route
 router.post("/patient/logout", auth, async (req, res) =>
 {
     try
@@ -313,7 +329,7 @@ router.post("/patient/logout", auth, async (req, res) =>
     }
 });
 
-// Logout All Route - Logout a patient from all devices
+// 6. Logout All Route - Logout a patient from all devices
 router.post("/patient/logoutall", auth, async (req, res) =>
 {
     try
@@ -329,7 +345,7 @@ router.post("/patient/logoutall", auth, async (req, res) =>
     }
 });
 
-// Read Patient Route
+// 7. Read Patient Route
 router.get("/patient/me", auth, async (req, res) =>
 {
     const patient = await Patient.findById(req.user._id)
@@ -343,7 +359,9 @@ router.get("/patient/me", auth, async (req, res) =>
     res.send({ patient, profileUrl });
 });
 
-// Connect to Doctor - Patient requests to connect to a doctor by email
+// ---------------- 3. Patient-Doctor Connection Routes ----------------
+
+// 1. Connect to Doctor - Patient requests to connect to a doctor by email
 router.post("/patient/requestDoctor", auth, async (req, res) =>
 {
     try
@@ -371,7 +389,7 @@ router.post("/patient/requestDoctor", auth, async (req, res) =>
     }
 });
 
-// Connection Request - Patient handles the response to a connection request
+// 2. Connection Request - Patient handles the response to a connection request
 router.patch('/patient/responseRequest/:id', auth, async (req, res) =>
 {
     try
@@ -392,7 +410,7 @@ router.patch('/patient/responseRequest/:id', auth, async (req, res) =>
     }
 });
 
-// Outgoing requests - Get all pending requests sent by the patient
+// 3. Outgoing requests - Get all pending requests sent by the patient
 router.get('/patient/sentRequests', auth, async (req, res) =>
 {
     try
@@ -407,7 +425,7 @@ router.get('/patient/sentRequests', auth, async (req, res) =>
     }
 });
 
-// Incoming requests - Get all pending requests received by the patient
+// 4. Incoming requests - Get all pending requests received by the patient
 router.get('/patient/receivedRequests', auth, async (req, res) =>
 {
     try
@@ -422,7 +440,7 @@ router.get('/patient/receivedRequests', auth, async (req, res) =>
     }
 });
 
-// Remove Doctor - Patient removes a connection with a doctor by email
+// 5. Remove Doctor - Patient removes a connection with a doctor by email
 router.delete("/patient/removeDoctor", auth, async (req, res) =>
 {
     try
@@ -451,7 +469,7 @@ router.delete("/patient/removeDoctor", auth, async (req, res) =>
     }
 });
 
-// Cancel Request - Cancel an outgoing request sent by the patient
+// 6. Cancel Request - Cancel an outgoing request sent by the patient
 router.delete('/patient/cancelRequest/:id', auth, async (req, res) =>
 {
     try
@@ -470,7 +488,112 @@ router.delete('/patient/cancelRequest/:id', auth, async (req, res) =>
     }
 });
 
-//forgot-password
+// ---------------- 4. Two Factor Authentication Routes ----------------
+
+// 1. Get QR Code - Route to generate a QR code for 2FA
+router.get('/patient/qrCode',auth, async (req, res) => {
+    try {
+        const patientId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
+        const secret = speakeasy.generateSecret({ length: 20 });
+        
+        // Update the existing patient document with the new secret
+        const patient = await Patient.findByIdAndUpdate(patientId, { twoFactorSecret: JSON.stringify(secret) }, { new: true });
+        if (!patient) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+
+        qrcode.toDataURL(secret.otpauth_url, (err, data) => {
+            if (err) {
+                console.error('Error generating QR code:', err);
+                return res.status(500).json({ message: 'Error generating QR code' });
+            }
+            res.json({ qrCode: data });
+        });
+    } catch (error) {
+        console.error('Error storing secret:', error);
+        res.status(500).json({ message: 'Error storing secret' });
+    }
+});
+
+// 2. Verify QR Code - To Enable 2FA for doctors
+router.post('/patient/verifyqrCode',auth, async (req, res) => {
+    try {
+        const { code } = req.body;
+        const patientId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
+        
+        const patient = await Patient.findById(patientId);
+        if (!patient) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+
+        const token = JSON.parse(patient.twoFactorSecret);
+        const verify = speakeasy.totp.verify({
+            secret: token.base32,
+            encoding: 'base32',
+            token: code
+        });
+
+        res.json({ verify });
+    } catch (error) {
+        console.error('Error verifying code:', error);
+        res.status(500).json({ message: 'Error verifying code' });
+    }
+});
+
+// 3. Verify 2FA Code - Route to verify the 2FA (OTP) code during login
+router.post('/patient/verify2FA', async (req, res) => {
+  console.log("patient verify2fa route hit");
+
+    try {
+        const { patientId, code } = req.body;
+        console.log(`Received verify2FA request with patientId: ${patientId}, code: ${code}`);
+        const patient = await Patient.findById(patientId);
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+
+        const token = JSON.parse(patient.twoFactorSecret);
+        const verify = speakeasy.totp.verify({
+            secret: token.base32,
+            encoding: 'base32',
+            token: code
+        });
+
+        if (verify) {
+            const authToken = await patient.generateAuthToken();
+            return res.status(200).json({ patient, token: authToken });
+        } else {
+            console.error('Invalid 2FA code');
+            return res.status(400).json({ error: 'Invalid 2FA code' });
+        }
+    } catch (error) {
+        console.error("Patient 2FA verification error:", error);
+        res.status(500).json({ error: 'Verification failed' });
+    }
+});
+
+// 4. Disable 2FA - Route to remove 2FA secret for patients
+router.post('/patient/remove2FA', auth, async (req, res) => {
+    console.log("remove yourself");
+    try {
+        const patientId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
+        
+        const patient = await Patient.findById(patientId);
+        if (!patient) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+
+        await Patient.updateOne({ _id: patientId }, { $unset: { twoFactorSecret: "" } });
+
+        res.status(200).json({ message: '2FA disabled successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to disable 2FA', error: error.message });
+    }
+});
+
+// ---------------- 5. Forgot and Reset Password Routes ----------------
+
+// 1. Forgot password - send email to patient with reset link
 router.post('/patient/forgot-password', (req, res) => {
     const { email } = req.body;
 
@@ -509,7 +632,11 @@ console.log("token in patient is", token);
     })
 })
 
+<<<<<<< HEAD
+// 2. Reset password - route to update password 
+=======
 //reset password
+>>>>>>> f35dfd2aed3474c8df04d146f2955394a62cbc9c
 router.post('/patient/reset-password/:id/:token', (req, res) => {
     // install bcrypt, nodemailer
     const {id, token} = req.params
@@ -536,75 +663,4 @@ router.post('/patient/reset-password/:id/:token', (req, res) => {
         }
     })
 })
-
-// getqrCode
-router.get('/patient/qrCode',auth, async (req, res) => {
-    try {
-        const patientId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
-        const secret = speakeasy.generateSecret({ length: 20 });
-        
-        // Update the existing patient document with the new secret
-        const patient = await Patient.findByIdAndUpdate(patientId, { twoFactorSecret: JSON.stringify(secret) }, { new: true });
-        if (!patient) {
-            return res.status(404).json({ message: 'Patient not found' });
-        }
-
-        qrcode.toDataURL(secret.otpauth_url, (err, data) => {
-            if (err) {
-                console.error('Error generating QR code:', err);
-                return res.status(500).json({ message: 'Error generating QR code' });
-            }
-            res.json({ qrCode: data });
-        });
-    } catch (error) {
-        console.error('Error storing secret:', error);
-        res.status(500).json({ message: 'Error storing secret' });
-    }
-});
-
-
-// verifyqrCode
-router.post('/patient/verifyqrCode',auth, async (req, res) => {
-    try {
-        const { code } = req.body;
-        const patientId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
-        
-        const patient = await Patient.findById(patientId);
-        if (!patient) {
-            return res.status(404).json({ message: 'Patient not found' });
-        }
-
-        const token = JSON.parse(patient.twoFactorSecret);
-        const verify = speakeasy.totp.verify({
-            secret: token.base32,
-            encoding: 'base32',
-            token: code
-        });
-
-        res.json({ verify });
-    } catch (error) {
-        console.error('Error verifying code:', error);
-        res.status(500).json({ message: 'Error verifying code' });
-    }
-});
-
-// Route to remove 2FA secret for patients
-router.post('/patient/remove2FA', auth, async (req, res) => {
-    console.log("remove yourself");
-    try {
-        const patientId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
-        
-        const patient = await Patient.findById(patientId);
-        if (!patient) {
-            return res.status(404).json({ message: 'Patient not found' });
-        }
-
-        await Patient.updateOne({ _id: patientId }, { $unset: { twoFactorSecret: "" } });
-
-        res.status(200).json({ message: '2FA disabled successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to disable 2FA', error: error.message });
-    }
-});
-
 module.exports = router;
