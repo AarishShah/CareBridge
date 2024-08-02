@@ -104,7 +104,7 @@ function ReadAllRecords() {
                     className="mt-4 text-lg font-semibold text-black hover:text-blue-600"
                     onClick={() => fetchMedicalRecord(record._id)}
                   >
-                    {record.biodata.name}
+                    {record.biodata.name}  - {record.title}
                   </button>
                 </li>
               </ul>
