@@ -20,11 +20,13 @@ const Reminder = () => {
     });
   };
 
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:5000/doctor/reminder", emailData, {
+      await axios.post(`${BASE_URL}/doctor/reminder`, emailData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -40,7 +42,7 @@ const Reminder = () => {
   return (
     <div
       className="flex items-center justify-center min-h-screen bg-gray-100"
-      style={{ backgroundImage: `url(${image})` }}
+      style={{ backgroundImage: `${BASE_URL}(${image})` }}
     >
       <div className="w-full max-w-lg p-8 bg-white shadow-lg rounded-lg">
         <h1 className="text-2xl font-bold mb-6 text-gray-800">

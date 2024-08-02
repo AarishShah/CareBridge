@@ -12,8 +12,8 @@ const patientImagesData = [
     heading: "Files",
     text: "Easily access and review your old <br/> medical records to stay informed <br/> about your health journey",
     buttons: [
-      { text: "View Medical Files", path: "medical-files" },
-      { text: "Upload Medical File", path: "medical-files/upload" },
+      { text: "View Medical Files", path: "/patient/dashboard/medical-files" },
+      { text: "Upload Medical File", path: "/patient/dashboard/medical-files/upload" },
     ],
   },
 

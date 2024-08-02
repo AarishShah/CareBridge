@@ -90,6 +90,8 @@ function CreateRecord() {
     });
   }
 
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
   async function handleSubmit(event) {
     event.preventDefault();
     next();
@@ -102,7 +104,7 @@ function CreateRecord() {
         const decodedToken = JSON.parse(atob(token.split('.')[1]));
         console.log("Decoded Token:", decodedToken); 
 
-        const submitUrl = `http://localhost:5000/medicalhistory/${id}`;
+        const submitUrl = `${BASE_URL}/medicalhistory/${id}`;
         console.log("Submit URL:", submitUrl); 
 
         const response = await axios.post(

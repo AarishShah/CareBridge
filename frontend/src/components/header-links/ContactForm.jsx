@@ -13,9 +13,7 @@ function ContactForm() {
                 <h1 className="text-black text-4xl font-bold mb-2">CareBridge Cares</h1>
                 <p className="text-black text-lg mb-2">Your health is our top priority. Reach out to us anytime, we're here to help!</p>
                 
-                    <p className="text-black text-lg mb-2">📧 Email: carebridge@gmail.com</p>
-                    <p className="text-black text-lg mb-2">📞 Phone: (123) 456-7890</p>
-                    <p className="text-black text-lg">🌐 Visit: www.carebridgehealth.com</p>
+                    <p className="text-black text-lg mb-2">📧 Email: carebridge56@gmail.com</p>
                 </div>
             </div>
         </div>
