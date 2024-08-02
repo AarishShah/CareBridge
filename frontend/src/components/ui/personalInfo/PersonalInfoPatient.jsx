@@ -46,7 +46,7 @@ const PersonalInfoDoctor = () => {
       </div>
       <div className="flex-1">
         <h3 className="text-sm md:text-xl  font-semibold mb-2">
-          {patientInfo.name}'s Information :
+          {patientInfo.name}'s Information:
         </h3>
         <div className="space-y-2">
           <p>
