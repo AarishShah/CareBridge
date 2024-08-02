@@ -6,6 +6,7 @@ function ReadAllRecords() {
   const [medicalRecords, setMedicalRecords] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [showSummary, setShowSummary] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const fetchMedicalRecords = async () => {
     const response = await axios.get(
@@ -29,6 +30,25 @@ function ReadAllRecords() {
       setShowSummary(false);
     } catch (error) {
       console.error("Error fetching medical record:", error);
+    }
+  };
+
+  const generateSummary = async (id) => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `http://localhost:5000/medicalhistory/summary/${id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      setSelectedRecord(response.data);
+      setShowSummary(true);
+    } catch (error) {
+      console.error("Error generating summary:", error);
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -190,11 +210,12 @@ function ReadAllRecords() {
               <h2 className="text-xl font-semibold text-gray-700">Summary</h2>
               <button
                 className="mt-4 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-800 py-2 px-4 rounded"
-                onClick={() => setShowSummary(true)}
+                onClick={() => generateSummary(selectedRecord._id)}
+                disabled={loading}
               >
-                Generate Summary
+                 {loading ? "Generating Summary..." : "Generate Summary"}
               </button>
-              {showSummary && (
+              {showSummary && !loading && (
                  <div className="mt-2" dangerouslySetInnerHTML={{ __html: formatSummary(selectedRecord.summary) }} />
               )}
 

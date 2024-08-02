@@ -319,7 +319,7 @@ router.get("/patient/me", auth, async (req, res) =>
 
         const { bucket, profileKey } = patient;
 
-        if (!bucket) throw new Error();
+    // if (!bucket) throw new Error();
 
         const profileUrl = await getProfileUrl(bucket, profileKey);
 
