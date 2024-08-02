@@ -10,11 +10,13 @@ const OutgoingRequests = () => {
   const [requests, setRequests] = useState([]);
   const location = useLocation();
 
-  let url = "http://localhost:5000/";
-  if (location.pathname.includes("patient/view-outgoing-requests")) {
-    url = url + "patient/sentRequests";
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+  let url = BASE_URL;
+  
+  if (location.pathname.includes("/patient/view-outgoing-requests")) {
+    url = url + "/patient/sentRequests";
   } else {
-    url = url + "doctor/sentRequests";
+    url = url + "/doctor/sentRequests";
   }
 
   useEffect(() => {
@@ -25,7 +27,7 @@ const OutgoingRequests = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-
+        console.log(response);
         setTimeout(() => {
           setRequests(response.data);
         }, 400);
@@ -35,7 +37,7 @@ const OutgoingRequests = () => {
     };
 
     fetchRequests();
-  }, [url, requests]);
+  }, [ requests]);
 
   return (
     <>

@@ -10,12 +10,13 @@ const RequestConnection = () => {
   const [message, setMessage] = useState("");
   const location = useLocation();
 
-  let url = "http://localhost:5000/";
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+  let url = BASE_URL;
 
   if (location.pathname.includes("assign-patients")) {
-    url = url + "doctor/requestPatient";
+    url = url + "/doctor/requestPatient";
   } else {
-    url = url + "patient/requestDoctor";
+    url = url + "/patient/requestDoctor";
   }
 
   const handleRequest = async () => {
