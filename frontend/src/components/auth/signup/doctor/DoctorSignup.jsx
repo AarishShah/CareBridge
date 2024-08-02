@@ -84,6 +84,10 @@ function DoctorSignup() {
     window.location.href = signInUrl;
   };
 
+  const handleSignInNormally = () => {
+    navigate("/login/doctor");
+  }
+
   return (
     <div className="flex min-h-screen h-full">
       <img src={image} alt="" className="hidden md:block w-1/2 object-cover" />
@@ -135,9 +139,10 @@ function DoctorSignup() {
         </div>
         <div className="text-center mt-8 font-normal text-sm">
           <span>Already have an Account? </span>
-          <a href="#" className="text-blue-500 font-semibold hover:underline">
+          <button
+          onClick={handleSignInNormally} className="text-blue-500 font-semibold hover:underline">
             Sign in
-          </a>
+          </button>
         </div>
       </form>
     </div>

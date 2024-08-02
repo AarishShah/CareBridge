@@ -128,10 +128,10 @@ function LoginPage() {
             className="border rounded h-10 text-sm placeholder-gray-400 border-gray-600 p-2"
           />
           <div className="flex items-center text-sm mt-2 font-thin mb-6">
-            <input type="checkbox" id="rememberMe" className="mr-1" />
+            {/* <input type="checkbox" id="rememberMe" className="mr-1" />
             <label htmlFor="rememberMe" className="font-normal text-sm mr-2">
               Remember me
-            </label>
+            </label> */}
             <Link
               to={forgotPasswordUrl}
               className="ml-auto font-normal text-sm text-[10px] hover:underline"

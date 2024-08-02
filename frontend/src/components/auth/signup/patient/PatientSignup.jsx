@@ -72,6 +72,10 @@ function PatientSignup() {
     window.location.href = `${BASE_URL}/patient/auth/google`;
   };
 
+  const handleSignInNormally = () => {
+    navigate("/login/patient");
+  };
+
   return (
     <div className="flex min-h-screen h-full">
       <img src={image} alt="" className="md:block w-1/2 object-cover" />
@@ -118,9 +122,11 @@ function PatientSignup() {
         </div>
         <div className="text-center font-normal text-sm mt-6">
           <span>Already have an Account? </span>
-          <a href="#" className="text-blue-500 font-semibold hover:underline">
+          <button
+          onClick={handleSignInNormally}
+            className="text-blue-500 font-semibold hover:underline">
             Sign in
-          </a>
+          </button>
         </div>
       </form>
     </div>
