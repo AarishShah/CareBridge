@@ -68,53 +68,43 @@ const getUploadProfileUrl = async (fileType) =>
 router.get('/patient/auth/google', passport.authenticate('google-patient', { scope: ['profile', 'email'] }));
 
 // 2. Google callback URL
-router.get('/patient/auth/google/callback',
-    passport.authenticate('google-patient', { failureRedirect: '/patient/auth/google' }),
-    async (req, res) =>
-    {
-        const user = req.user;
-        // console.log(user);
+router.get(
+  "/patient/auth/google/callback",
+  passport.authenticate("google-patient", {
+    failureRedirect: "/patient/auth/google",
+  }),
+  async (req, res) => {
+    const user = req.user;
+    // console.log(user);
 
-        if (!user)
-        {
-            return res.redirect('/patient/auth/google');
-        }
-
-        try
-        {
-            const existingUser = await Patient.findOne({ email: user.email });
-
-            // check if user is in db
-            if (existingUser)
-            {
-                // if user is in db but not linked to google account then link the account
-                if (!existingUser.isGoogleSignUp)
-                {
-                    existingUser.isGoogleSignUp = true;
-                    existingUser.googleId = user.googleId;
-                    await existingUser.save();
-                }
-
-                // generate token, save it to the session and redirect to dashboard
-                const token = await existingUser.generateAuthToken();
-                req.session.token = token; //  remove if the below line is working fine
-                // res.send({ token }); // test this
-                return res.redirect(`${process.env.FRONTEND_URL}/patient/dashboard`);
-            }
-
-            else
-            {
-                // Temporarily store the user data
-                req.session.tempUser = user;
-                return res.redirect(`${process.env.FRONTEND_URL}/patient/complete-profile`);
-            }
-
-        } catch (error)
-        {
-            console.error("Google authentication error:", error);
-            return res.redirect('/patient/auth/google');
-        }
+    if (!user) {
+      return res.redirect("/patient/auth/google");
     }
+    try {
+      const existingUser = await Patient.findOne({ email: user.email });
+
+      if (existingUser) {
+        if (!existingUser.isGoogleSignUp) {
+          existingUser.isGoogleSignUp = true;
+          existingUser.googleId = user.googleId;
+          await existingUser.save();
+        }
+
+        const token = await existingUser.generateAuthToken();
+        return res.redirect(
+          `${process.env.FRONTEND_URL}/patient/dashboard?token=${token}&role=patient`
+        );
+      } else {
+        req.session.tempUser = user;
+        return res.redirect(
+          `${process.env.FRONTEND_URL}/patient/complete-profile`
+        );
+      }
+    } catch (error) {
+    //   console.error("Google authentication error:", error);
+      return res.redirect("/patient/auth/google");
+    }
+  }
 );
 
 // 3. Complete Profile Route

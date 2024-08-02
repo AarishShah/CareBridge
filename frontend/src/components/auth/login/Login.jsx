@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -48,7 +48,9 @@ function LoginPage() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
         login(data.token);
-        navigate(userType === "doctor" ? "/doctor/dashboard" : "/patient/dashboard");
+        navigate(
+          userType === "doctor" ? "/doctor/dashboard" : "/patient/dashboard"
+        );
       }
     },
     onError: (error) => {
@@ -58,14 +60,17 @@ function LoginPage() {
   });
 
   const verify2FAMutation = useMutation({
-    mutationFn: ({ userType, userId, code }) => verify2FARequest({ userType, userId, code }),
+    mutationFn: ({ userType, userId, code }) =>
+      verify2FARequest({ userType, userId, code }),
     onSuccess: (data) => {
       console.log("verify2FA success:", data); // Debug success response
       if (data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
         login(data.token);
-        navigate(userType === "doctor" ? "/doctor/dashboard" : "/patient/dashboard");
+        navigate(
+          userType === "doctor" ? "/doctor/dashboard" : "/patient/dashboard"
+        );
       }
     },
     onError: (error) => {
@@ -81,10 +86,21 @@ function LoginPage() {
 
   const handleVerify2FA = (event) => {
     event.preventDefault();
-    console.log("userId is", userId); // Debug userId
-    console.log("code is", code); // Debug code
     verify2FAMutation.mutate({ userType, userId, code });
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get("token");
+    const role = params.get("role");
+
+    if (token) {
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+      login(token);
+      navigate(role === "doctor" ? "/doctor/dashboard" : "/patient/dashboard");
+    }
+  }, [location, login, navigate]);
 
   const handleSignin = () => {
     const signInUrl = `${BASE_URL}/${userType}/auth/google`;
@@ -128,10 +144,6 @@ function LoginPage() {
             className="border rounded h-10 text-sm placeholder-gray-400 border-gray-600 p-2"
           />
           <div className="flex items-center text-sm mt-2 font-thin mb-6">
-            {/* <input type="checkbox" id="rememberMe" className="mr-1" />
-            <label htmlFor="rememberMe" className="font-normal text-sm mr-2">
-              Remember me
-            </label> */}
             <Link
               to={forgotPasswordUrl}
               className="ml-auto font-normal text-sm text-[10px] hover:underline"
@@ -173,26 +185,28 @@ function LoginPage() {
         <span className="mx-2 text-gray-400">or</span>
         <div className="flex-grow border-t border-gray-400"></div>
       </div>
-      <button
-        type="button"
-        className="h-10 w-1/2 border border-gray-400 text-gray-600 rounded mt-8 ml-24 flex items-center justify-evenly font-medium text-sm hover:underline"
-        onClick={handleSignin}
-      >
-        <img
-          src="https://img.icons8.com/color/16/000000/google-logo.png"
-          alt="Google logo"
-          className="mr-1"
-        />
-        Sign in with Google
-      </button>
-      <div className="text-center mt-8 font-normal text-sm ml-2">
-        <span>Don't have an Account? </span>
+      {location.pathname.includes("patient") && (
         <button
-      onClick={handleSignUp}
-      className="text-blue-500 font-semibold hover:underline"
-    >
-      Sign up
-    </button>
+          type="button"
+          className="h-10 w-1/2 border border-gray-400 text-gray-600 rounded mt-8 ml-24 flex items-center justify-evenly font-medium text-sm hover:underline"
+          onClick={handleSignin}
+        >
+          <img
+            src="https://img.icons8.com/color/16/000000/google-logo.png"
+            alt="Google logo"
+            className="mr-1"
+          />
+          Continue with Google
+        </button>
+      )}
+      <div className="text-center mt-8 font-normal text-sm ml-2">
+        <span>Don&apos;t have an Account? </span>
+        <button
+          onClick={handleSignUp}
+          className="text-blue-500 font-semibold hover:underline"
+        >
+          Sign up
+        </button>
       </div>
     </AuthForm>
   );

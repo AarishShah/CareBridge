@@ -123,7 +123,7 @@ function DoctorSignup() {
             {currentStep !== steps.length - 1 ? "Next" : "Finish"}
           </button>
         </div>
-        <div>
+        {/* <div>
           <button
             type="button"
             className="h-10 w-48 border border-gray-400 text-gray-600 rounded mt-8 flex items-center justify-evenly font-medium text-sm hover:underline"
@@ -134,9 +134,9 @@ function DoctorSignup() {
               alt="Google logo"
               className="mr-1"
             />
-            Sign up with Google
+            Continue with Google
           </button>
-        </div>
+        </div> */}
         <div className="text-center mt-8 font-normal text-sm">
           <span>Already have an Account? </span>
           <button

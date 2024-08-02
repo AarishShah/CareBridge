@@ -28,7 +28,7 @@ const patientImagesData = [
     src: image4,
     heading: "Medical Records",
     text: "View and manage your complete<br/> medical history conveniently to stay<br/> informed about your health journey",
-    button: { text: "View Medical History", path: "/all-medical-records" },
+    button: { text: "View Medical History", path: "/patient/all-medical-records" },
   },
 
   {

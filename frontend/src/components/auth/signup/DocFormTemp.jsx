@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,16 +30,14 @@ const DocFormTemp = () => {
 
       const token = response.data.token;
       if (token) {
-        console.log("Navigating to dashboard");
         localStorage.setItem('token', token);
         setSuccess('Profile completed successfully!');
-        navigate('/doctor/dashboard');
+        navigate('/login/doctor');
       } else {
         setError('No token received');
       }
       setError('');
     } catch (err) {
-        console.error('Error:', err);
       setError(err.response && err.response.data.error ? err.response.data.error : 'An unexpected error occurred');
       setSuccess('');
     }
