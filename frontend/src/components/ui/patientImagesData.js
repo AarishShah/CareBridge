@@ -33,9 +33,19 @@ const patientImagesData = [
 
   {
     src: image5,
-    heading: "Assigned Doctors",
+    heading: "Connect to Doctors",
     text: "Easily view and manage doctors<br/> assigned to you for personalized<br/> healthcare support.",
-    buttons: [{ text: "Assign Doctors" }, { text: "View Assigned Doctors" }],
+    buttons: [
+      { text: "Connect to Doctors", path: "/assign-doctors" },
+      {
+        text: "View Incoming Requests",
+        path: "/patient/view-incoming-requests",
+      },
+      {
+        text: "View Outgoing Requests",
+        path: "/patient/view-outgoing-requests",
+      },
+    ],
   },
   {
     src: image4,

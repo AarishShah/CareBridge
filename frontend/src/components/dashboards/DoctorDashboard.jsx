@@ -1,11 +1,13 @@
-import Dashboard from '../ui/Dashboard'
+import Dashboard from "../ui/Dashboard";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const DoctorDashboard = () => {
-  return (
-    <div>
-      <Dashboard/>
-    </div>
-  )
-}
+  const { isAuthenticated } = useAuth();
 
-export default DoctorDashboard
+  return (
+    <>{isAuthenticated ? <Dashboard /> : <Navigate to="/" replace={true} />}</>
+  );
+};
+
+export default DoctorDashboard;
