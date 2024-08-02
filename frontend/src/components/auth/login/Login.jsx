@@ -6,7 +6,6 @@ import AuthForm from "../AuthForm";
 import { useAuth } from "../../context/AuthContext";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
-console.log("BASE_URL is", BASE_URL); // Debug BASE_URL
 
 const loginRequest = async (user, userType) => {
   const response = await axios.post(`${BASE_URL}/${userType}/login`, user);
