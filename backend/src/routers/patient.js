@@ -73,7 +73,7 @@ router.get('/patient/auth/google/callback',
     async (req, res) =>
     {
         const user = req.user;
-        console.log(user);
+        // console.log(user);
 
         if (!user)
         {
@@ -99,14 +99,14 @@ router.get('/patient/auth/google/callback',
                 const token = await existingUser.generateAuthToken();
                 req.session.token = token; //  remove if the below line is working fine
                 // res.send({ token }); // test this
-                return res.redirect('http://localhost:5173/patient/dashboard');
+                return res.redirect(`${process.env.FRONTEND_URL}/patient/dashboard`);
             }
 
             else
             {
                 // Temporarily store the user data
                 req.session.tempUser = user;
-                return res.redirect('http://localhost:5173/patient/complete-profile');
+                return res.redirect(`${process.env.FRONTEND_URL}/patient/complete-profile`);
             }
 
         } catch (error)
@@ -209,7 +209,6 @@ router.post("/patient/login", async (req, res) =>
 
          // Check if 2FA is enabled
          if (patient.twoFactorSecret) {
-            console.log(`2FA required for patient: ${patient._id}`);
             // Return a flag indicating that 2FA is required
             return res.status(200).send({ twoFactorRequired: true, patientId: patient._id });
         }
@@ -314,15 +313,21 @@ router.post("/patient/logoutall", auth, async (req, res) =>
 // 7. Read Patient Route
 router.get("/patient/me", auth, async (req, res) =>
 {
-    const patient = await Patient.findById(req.user._id)
+    try
+    {
+        const patient = await Patient.findById(req.user._id)
 
-    const { bucket, profileKey } = patient;
+        const { bucket, profileKey } = patient;
 
     // if (!bucket) throw new Error();
 
-    const profileUrl = await getProfileUrl(bucket, profileKey);
+        const profileUrl = await getProfileUrl(bucket, profileKey);
 
-    res.send({ patient, profileUrl });
+        res.send({ patient, profileUrl });
+    } catch (error)
+    {
+        res.status(500).send({ error: "Failed to fetch doctor details" });
+    }
 });
 
 // ---------------- 3. Patient-Doctor Connection Routes ----------------
@@ -470,13 +475,13 @@ router.get('/patient/qrCode',auth, async (req, res) => {
 
         qrcode.toDataURL(secret.otpauth_url, (err, data) => {
             if (err) {
-                console.error('Error generating QR code:', err);
+                // console.error('Error generating QR code:', err);
                 return res.status(500).json({ message: 'Error generating QR code' });
             }
             res.json({ qrCode: data });
         });
     } catch (error) {
-        console.error('Error storing secret:', error);
+        // console.error('Error storing secret:', error);
         res.status(500).json({ message: 'Error storing secret' });
     }
 });
@@ -508,11 +513,9 @@ router.post('/patient/verifyqrCode',auth, async (req, res) => {
 
 // 3. Verify 2FA Code - Route to verify the 2FA (OTP) code during login
 router.post('/patient/verify2FA', async (req, res) => {
-  console.log("patient verify2fa route hit");
 
     try {
         const { patientId, code } = req.body;
-        console.log(`Received verify2FA request with patientId: ${patientId}, code: ${code}`);
         const patient = await Patient.findById(patientId);
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
@@ -540,7 +543,6 @@ router.post('/patient/verify2FA', async (req, res) => {
 
 // 4. Disable 2FA - Route to remove 2FA secret for patients
 router.post('/patient/remove2FA', auth, async (req, res) => {
-    console.log("remove yourself");
     try {
         const patientId = req.user._id; // Assuming you have middleware to get the authenticated user's ID
         
@@ -570,28 +572,27 @@ router.post('/patient/forgot-password', (req, res) => {
         }
 
 
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1d"})
-console.log("token in patient is", token);
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1d"});
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-              user: 'carebridge56@gmail.com',
-              pass: 'qwnrzwddfyztxzha'
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
             }
           });
 
           const mailOptions = {
-            from: 'carebridge56@gmail.com',
+            from: process.env.EMAIL_USER,
             to: email,
             subject: 'Reset your password',
-            text: `http://localhost:5173/patient/reset-password/${user._id}/${token}`
+            text: `${process.env.FRONTEND_URL}/patient/reset-password/${user._id}/${token}`
           };
           
           transporter.sendMail(mailOptions, function(error, info){
             if (error) {
-              console.log(error);
+            //   console.log(error);
+                return res.send({Status: "Error"})
             } else {
-              console.log('Email sent: ' + info.response);
               return res.send({Status: "Success"})
             }
           });
@@ -604,15 +605,9 @@ router.post('/patient/reset-password/:id/:token', (req, res) => {
     const {id, token} = req.params
     const {password} = req.body
 
-    console.log('Received reset password request');
-    console.log(`ID: ${id}`);
-    console.log(`Token: ${token}`);
-    console.log(`Password: ${password}`);
-
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        console.log("res");
         if(err) {
-            console.error('Error with token verification:', err);
+            // console.error('Error with token verification:', err);
             return res.status(400).json({ Status: "Error with token" });
             
         } else {
