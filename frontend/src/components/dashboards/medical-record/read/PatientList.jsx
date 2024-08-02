@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import image from '../../../../assets/8.png';
 
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 function PatientList() {
   const [assignedPatients, setAssignedPatients] = useState([]);
   const navigate = useNavigate();
@@ -11,7 +13,7 @@ function PatientList() {
 
   const fetchAssignedDoctor = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/doctor/me", {
+      const response = await axios.get(`${BASE_URL}/doctor/me`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       // console.log(response.data.doctor.assignedPatients);
@@ -34,7 +36,7 @@ function PatientList() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center bg-cover bg-center bg-no-repeat min-h-screen" style={{ backgroundImage: `url(${image})`}}>
+    <div className="flex flex-col items-center bg-cover bg-center bg-no-repeat min-h-screen" style={{ backgroundImage: `${BASE_URL}(${image})`}}>
       {assignedPatients.length > 0 && (
         <h1 className="text-2xl font-semibold text-center text-gray-700 mt-2 mb-6">
           All Assigned Patients

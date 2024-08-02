@@ -8,9 +8,12 @@ function ReadAllRecords() {
   const [showSummary, setShowSummary] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
+
   const fetchMedicalRecords = async () => {
     const response = await axios.get(
-      "http://localhost:5000/medicalhistories?page=1&limit=10",
+      `${BASE_URL}/medicalhistories?page=1&limit=10`,
       {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       }
@@ -21,7 +24,7 @@ function ReadAllRecords() {
   const fetchMedicalRecord = async (id) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/medicalHistory/${id}`,
+        `${BASE_URL}/medicalHistory/${id}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
@@ -37,7 +40,7 @@ function ReadAllRecords() {
     try {
       setLoading(true);
       const response = await axios.post(
-        `http://localhost:5000/medicalhistory/summary/${id}`,
+        `${BASE_URL}/medicalhistory/summary/${id}`,
         {},
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -73,7 +76,7 @@ function ReadAllRecords() {
   };
 
   return (
-    <div className="bg-cover bg-center bg-no-repeat min-h-screen" style={{ backgroundImage: `url(${image})`}}>
+    <div className="bg-cover bg-center bg-no-repeat min-h-screen" style={{ backgroundImage: `${BASE_URL}(${image})`}}>
 
       <div className="fixed w-1/3 container mx-auto p-6">
         {medicalRecords.length === 0 && (

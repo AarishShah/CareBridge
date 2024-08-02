@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import backgroundImage from '../../assets/8.png';
 
-const BASE_URL = 'http://localhost:5000/'; 
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Enable2FA = () => {
     const [qrCode, setQrCode] = useState('');

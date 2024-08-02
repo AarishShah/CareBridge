@@ -5,11 +5,13 @@ import axios from "axios";
 const HandleConnectionRequest = ({ requestId }) => {
   const [message, setMessage] = useState("");
 
-  let url = "http://localhost:5000/";
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+  let url = BASE_URL;
+  
   if (location.pathname.includes("patient/view-incoming-requests")) {
-    url = url + "patient/responseRequest";
+    url = url + "/patient/responseRequest";
   } else {
-    url = url + "doctor/responseRequest";
+    url = url + "/doctor/responseRequest";
   }
 
   const handleResponse = async (action) => {

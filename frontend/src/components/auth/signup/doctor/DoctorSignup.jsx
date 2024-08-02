@@ -20,7 +20,7 @@ const INIT_DATA = {
   qualifications: "",
 };
 
-let url = "http://localhost:5000";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 function DoctorSignup() {
   const [data, setData] = useState(INIT_DATA);
@@ -58,7 +58,7 @@ function DoctorSignup() {
           qualifications: data.qualifications.split(","),
         };
 
-        const response = await axios.post(`${url}${pathname}`, formattedData);
+        const response = await axios.post(`${BASE_URL}${pathname}`, formattedData);
 
         if (response.data.token) {
           login(response.data.token);
@@ -80,7 +80,7 @@ function DoctorSignup() {
     const userType = location.pathname.includes("doctor")
       ? "doctor"
       : "patient";
-    const signInUrl = `${url}/${userType}/auth/google`;
+    const signInUrl = `${BASE_URL}/${userType}/auth/google`;
     window.location.href = signInUrl;
   };
 

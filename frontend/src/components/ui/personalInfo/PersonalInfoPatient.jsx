@@ -7,9 +7,10 @@ import defaultImage from "../../../assets/8.png";
 const PersonalInfoDoctor = () => {
   const [patientInfo, setPatientInfo] = useState({ address: {} });
   const [profile, setProfile] = useState("");
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
   const getPatientProfile = useCallback(async () => {
-    const response = await axios.get("http://localhost:5000/patient/me", {
+    const response = await axios.get(`${BASE_URL}/patient/me`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     setPatientInfo(response.data.patient);
