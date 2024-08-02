@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import image from "../../../assets/7.png";
 import image1 from "../../../assets/2.png";
 
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 async function uploadToS3(event, patientId) {
   const formData = new FormData(event.target);
 
@@ -17,7 +19,7 @@ async function uploadToS3(event, patientId) {
   const fileName = encodeURIComponent(file.name);
 
   const { data } = await axios.get(
-    `http://localhost:5000/medical-record/${patientId}?fileType=${fileType}&fileName=${fileName}`,
+    `${BASE_URL}/medical-record/${patientId}?fileType=${fileType}&fileName=${fileName}`,
     { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
   );
 
@@ -34,7 +36,7 @@ function UploadFile() {
   const [patientId, setPatientId] = useState("");
 
   const getPatient = useCallback(async () => {
-    const response = await axios.get("http://localhost:5000/patient/me", {
+    const response = await axios.get(`${BASE_URL}/patient/me`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     setPatientId(response.data.patient._id);

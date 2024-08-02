@@ -64,12 +64,14 @@ const Sidebar = ({ userType, hoveredIndex }) => {
             <span>Two-Factor Authentication</span>
           </Link>
         </li>
+        {userType === "doctor" ? (
         <li>
-          <Link to="#" className={linkClasses(5)}>
+          <Link to="#" className={linkClasses(6)}>
             <Clock10 className="h-6 w-6" />
             <span>Send Reminder</span>
           </Link>
         </li>
+        ) : null}
       </ul>
     </div>
   );

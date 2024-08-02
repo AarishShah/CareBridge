@@ -39,6 +39,8 @@ function DoctorSignup() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
   async function handleSubmit(event) {
     event.preventDefault();
     next();
@@ -54,7 +56,7 @@ function DoctorSignup() {
         });
 
         const response = await axios.patch(
-          `http://localhost:5000/doctor/me`,
+          `${BASE_URL}/doctor/me`,
           formattedData,
           {
             headers: {
@@ -80,7 +82,7 @@ function DoctorSignup() {
   }
 
   return (
-    <div className="bg-cover bg-center bg-no-repeat min-h-screen" style={{ backgroundImage: `url(${image})`}}>
+    <div className="bg-cover bg-center bg-no-repeat min-h-screen" style={{ backgroundImage: `${BASE_URL}(${image})`}}>
       <form onSubmit={handleSubmit}>
         {error && (
           <div style={{ color: "crimson" }}>Could not update. Try again?</div>

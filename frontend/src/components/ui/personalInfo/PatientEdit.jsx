@@ -54,6 +54,7 @@ function DoctorSignup() {
   ]);
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -64,7 +65,7 @@ function DoctorSignup() {
 
       try {
         const response = await axios.patch(
-          `http://localhost:5000/patient/me`,
+          `${BASE_URL}/patient/me`,
           nonEmptyData,
           {
             headers: {
@@ -92,7 +93,7 @@ function DoctorSignup() {
   return (
     <div
       className="bg-cover bg-center bg-no-repeat min-h-screen"
-      style={{ backgroundImage: `url(${image})` }}
+      style={{ backgroundImage: `${BASE_URL}(${image})` }}
     >
       <form onSubmit={handleSubmit}>
         {error && (

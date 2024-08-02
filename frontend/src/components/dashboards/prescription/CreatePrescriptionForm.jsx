@@ -28,12 +28,14 @@ function CreatePrescription() {
     }));
   }
 
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
   async function handleSubmit(event) {
     event.preventDefault();
 
     try {
       const token = localStorage.getItem("token");
-      const submitUrl = `http://localhost:5000/prescription/${id}`;
+      const submitUrl = `${BASE_URL}/prescription/${id}`;
 
       const response = await axios.post(
         submitUrl,

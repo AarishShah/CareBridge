@@ -5,11 +5,11 @@ import axios from "axios";
 import AuthForm from "../AuthForm";
 import { useAuth } from "../../context/AuthContext";
 
-const url = "http://localhost:5000";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const forgotPasswordRequest = async ({ email, userType }) => {
   console.log(" is", userType);
-  const response = await axios.post(`http://localhost:5000/${userType}/forgot-password`, {email});
+  const response = await axios.post(`${BASE_URL}/${userType}/forgot-password`, {email});
   return response.data;
 };
 

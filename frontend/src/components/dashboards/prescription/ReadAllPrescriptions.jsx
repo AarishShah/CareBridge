@@ -6,9 +6,11 @@ function ReadAllPrescriptions() {
   const [prescriptions, setPrescriptions] = useState([]);
   const [selectedPrescriptions, setSelectedPrescriptions] = useState(null);
 
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
   const fetchPrescriptions = async () => {
     const response = await axios.get(
-      "http://localhost:5000/prescription?page=1&limit=10",
+      `${BASE_URL}/prescription?page=1&limit=10`,
       {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       }
@@ -19,7 +21,7 @@ function ReadAllPrescriptions() {
   const fetchPrescription = async (id) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/prescription/${id}`,
+        `${BASE_URL}/prescription/${id}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }

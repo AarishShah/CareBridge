@@ -6,10 +6,12 @@ function ReadSingleMedicalRecord() {
   const [medicalRecord, setMedicalRecord] = useState(null);
   const { id } = useParams();
 
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
   const fetchMedicalRecord = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/medicalHistory/${id}`,
+        `${BASE_URL}/medicalHistory/${id}`,
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
       setMedicalRecord(response.data);

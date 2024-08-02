@@ -25,8 +25,7 @@ const INIT_DATA = {
     pinCode: "",
   },
 };
-
-let url = "http://localhost:5000";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 function PatientSignup() {
   const { login } = useAuth();
@@ -51,7 +50,7 @@ function PatientSignup() {
 
     if (currentStep >= steps.length - 1) {
       try {
-        const response = await axios.post(`${url}${pathname}`, data);
+        const response = await axios.post(`${BASE_URL}${pathname}`, data);
 
         if (response.data.token) {
           login(response.data.token);
@@ -70,7 +69,11 @@ function PatientSignup() {
   }
 
   const handleSignin = () => {
-    window.location.href = "http://localhost:5000/patient/auth/google";
+    window.location.href = `${BASE_URL}/patient/auth/google`;
+  };
+
+  const handleSignInNormally = () => {
+    navigate("/login/patient");
   };
 
   return (
@@ -119,9 +122,11 @@ function PatientSignup() {
         </div>
         <div className="text-center font-normal text-sm mt-6">
           <span>Already have an Account? </span>
-          <a href="#" className="text-blue-500 font-semibold hover:underline">
+          <button
+          onClick={handleSignInNormally}
+            className="text-blue-500 font-semibold hover:underline">
             Sign in
-          </a>
+          </button>
         </div>
       </form>
     </div>
