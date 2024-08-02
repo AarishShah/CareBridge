@@ -60,14 +60,14 @@ const OutgoingRequests = () => {
                     <Link to="">
                       <div className="text-lg font-medium text-gray-800">
                         {location.pathname.includes(
-                          "patient/view-incoming-requests"
+                          "patient/view-outgoing-requests"
                         )
                           ? request.doctor.name
                           : request.patient.name}
                       </div>
                       <div className="text-sm text-gray-600">
                         {location.pathname.includes(
-                          "patient/view-incoming-requests"
+                          "patient/view-outgoing-requests"
                         )
                           ? request.doctor.email
                           : request.patient.email}
