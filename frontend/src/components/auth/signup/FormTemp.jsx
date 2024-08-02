@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 const FormTemp = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -43,7 +45,7 @@ const FormTemp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/patient/complete-profile', formData, { withCredentials: true });
+      const response = await axios.post(`${BASE_URL}/patient/complete-profile`, formData, { withCredentials: true });
 
       const token = response.data.token;
       if(token) {

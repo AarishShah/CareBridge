@@ -8,9 +8,11 @@ const PersonalInfoDoctor = () => {
   const [doctorInfo, setDoctorInfo] = useState({});
   const [profile, setProfile] = useState('');
 
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
   const getDoctorProfile = useCallback(async () => {
     try {
-      const response = await axios.get("http://localhost:5000/doctor/me", {
+      const response = await axios.get(`${BASE_URL}/doctor/me`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setDoctorInfo(response.data.doctor);

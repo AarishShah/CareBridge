@@ -5,10 +5,11 @@ import axios from "axios";
 import AuthForm from "../AuthForm";
 import { useAuth } from "../../context/AuthContext";
 
-const url = "http://localhost:5000";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+console.log("BASE_URL is", BASE_URL); // Debug BASE_URL
 
 const loginRequest = async (user, userType) => {
-  const response = await axios.post(`${url}/${userType}/login`, user);
+  const response = await axios.post(`${BASE_URL}/${userType}/login`, user);
   return response.data;
 };
 
@@ -18,7 +19,7 @@ const verify2FARequest = async ({ userType, userId, code }) => {
     code,
   };
   console.log("payload is", payload); // Debug payload
-  const response = await axios.post(`${url}/${userType}/verify2FA`, payload);
+  const response = await axios.post(`${BASE_URL}/${userType}/verify2FA`, payload);
   console.log("verify2FA response", response); // Debug response
   return response.data;
 };
@@ -87,7 +88,7 @@ function LoginPage() {
   };
 
   const handleSignin = () => {
-    const signInUrl = `${url}/${userType}/auth/google`;
+    const signInUrl = `${BASE_URL}/${userType}/auth/google`;
     window.location.href = signInUrl;
   };
 
