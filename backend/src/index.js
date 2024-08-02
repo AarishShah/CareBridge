@@ -18,7 +18,7 @@ const port = process.env.PORT || 5000;
 
 // Apply CORS with specific options only once
 app.use(cors({
-  origin: process.env.FRONTEND_URL, // Frontend origin
+  origin: [process.env.FRONTEND_URL, process.env.BACKEND_URL], // Frontend origin
   credentials: true, // To handle cookies and authentication
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization'] // Allowed custom headers
