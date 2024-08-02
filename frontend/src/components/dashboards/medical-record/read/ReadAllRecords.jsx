@@ -5,6 +5,8 @@ import image from '../../../../assets/8.png';
 function ReadAllRecords() {
   const [medicalRecords, setMedicalRecords] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
+  const [showSummary, setShowSummary] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const fetchMedicalRecords = async () => {
     const response = await axios.get(
@@ -25,14 +27,50 @@ function ReadAllRecords() {
         }
       );
       setSelectedRecord(response.data);
+      setShowSummary(false);
     } catch (error) {
       console.error("Error fetching medical record:", error);
+    }
+  };
+
+  const generateSummary = async (id) => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `http://localhost:5000/medicalhistory/summary/${id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      setSelectedRecord(response.data);
+      setShowSummary(true);
+    } catch (error) {
+      console.error("Error generating summary:", error);
+    }finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchMedicalRecords();
   }, []);
+
+  const formatSummary = (summary) => {
+    if (!summary) return "No summary provided.";
+
+    // Replace '## ' with <h2> tags
+    summary = summary.replace(/## (.*?)\n/g, "<strong>$1</strong>\n");
+
+    // Replace '**' with <strong> tags
+    summary = summary.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+    // Replace '\n' with <br> tags
+    summary = summary.replace(/\n/g, "<br>");
+    summary = summary.replace(/\*/g, "");
+
+    return summary;
+  };
 
   return (
     <div className="bg-cover bg-center bg-no-repeat min-h-screen" style={{ backgroundImage: `url(${image})`}}>
@@ -170,7 +208,17 @@ function ReadAllRecords() {
 
             <div className="mt-6 p-4 border rounded-lg shadow-md">
               <h2 className="text-xl font-semibold text-gray-700">Summary</h2>
-              <p className="mt-2">{selectedRecord.summary || "No summary provided."}</p>
+              <button
+                className="mt-4 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-800 py-2 px-4 rounded"
+                onClick={() => generateSummary(selectedRecord._id)}
+                disabled={loading}
+              >
+                 {loading ? "Generating Summary..." : "Generate Summary"}
+              </button>
+              {showSummary && !loading && (
+                 <div className="mt-2" dangerouslySetInnerHTML={{ __html: formatSummary(selectedRecord.summary) }} />
+              )}
+
             </div>
           </div>
         )}

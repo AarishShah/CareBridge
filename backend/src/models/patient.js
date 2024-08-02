@@ -241,7 +241,7 @@ patientSchema.methods.toJSON = function ()
 patientSchema.methods.generateAuthToken = async function (next)
 {
     const patient = this;
-    const token = jwt.sign({ _id: patient.id.toString(), role: 'patient' }, "thisismynewcourse", { expiresIn: '14d' });
+    const token = jwt.sign({ _id: patient.id.toString(), role: 'patient' }, process.env.JWT_SECRET, { expiresIn: '14d' });
 
     patient.tokens = patient.tokens.concat({ token });
 
@@ -289,20 +289,3 @@ patientSchema.pre("save", async function (next)
 const Patient = mongoose.model("patient", patientSchema);
 
 module.exports = Patient;
-
-// Test data
-
-// {
-//     "name": "Alice Smith",
-//     "address": {
-//         "street": "Park Avenue",
-//         "city": "New York City",
-//         "state": "New York",
-//         "pinCode": "10018"
-//     },
-//     "email": "alicesmith@example.com",
-//     "password": "securePassword123",
-//     "DOB": "12/05/1995",
-//     "gender": "Female",
-//     "assignedDoctors": []
-// }
