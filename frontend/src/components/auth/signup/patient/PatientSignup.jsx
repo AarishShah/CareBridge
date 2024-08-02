@@ -114,7 +114,7 @@ function PatientSignup() {
               alt="Google logo"
               className="mr-1"
             />
-            Sign up with Google
+            Continue with Google
           </button>
         </div>
         <div className="text-center font-normal text-sm mt-6">
