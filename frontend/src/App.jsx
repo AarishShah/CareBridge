@@ -22,7 +22,7 @@ import ContactForm from "./components/header-links/ContactForm";
 import ReadAllPrescriptions from "./components/dashboards/prescription/ReadAllPrescriptions";
 import CreatePrescriptionForm from "./components/dashboards/prescription/CreatePrescriptionForm";
 import CreatePrescription from "./components/dashboards/prescription/CreatePrescription";
-import Reminder from './components/dashboards/reminders/Reminder';
+import Reminder from "./components/dashboards/reminders/Reminder";
 import AboutPage from "./components/header-links/AboutPage";
 import TeamPage from "./components/header-links/TeamPage";
 import DocFormTemp from "./components/auth/signup/DocFormTemp";
@@ -30,6 +30,9 @@ import ForgetPassword from "./components/auth/login/ForgetPassword";
 import ResetPassword from "./components/auth/login/ResetPassword";
 import Enable2FA from "./components/2FA/Enable2FA";
 import Features from "./components/Features";
+import RequestConnection from "./components/dashboards/connect/RequestConnection";
+import IncomingRequests from "./components/dashboards/connect/IncomingRequests";
+import OutgoingRequests from "./components/dashboards/connect/OutgoingRequests";
 
 const queryClient = new QueryClient();
 
@@ -75,7 +78,7 @@ const router = createBrowserRouter([
   { path: "/patient/dashboard/medical-files/upload", element: <UploadFile /> },
   { path: "/patient/complete-profile", element: <FormTemp /> },
   { path: "/doctor/complete-profile", element: <DocFormTemp /> },
-  { path: '/doctor/dashboard/reminder', element: <Reminder /> },
+  { path: "/doctor/dashboard/reminder", element: <Reminder /> },
   { path: "/prescription", element: <ReadAllPrescriptions /> },
   { path: "/create-prescription", element: <CreatePrescription /> },
   { path: "/create-prescription/:id", element: <CreatePrescriptionForm /> },
@@ -88,7 +91,13 @@ const router = createBrowserRouter([
   { path: "/doctor/reset-password/:id/:token", element: <ResetPassword /> },
   { path: "/patient/enable2fa", element: <Enable2FA /> },
   { path: "/doctor/enable2fa", element: <Enable2FA /> },
-  { path: "/features", element: <Features />}
+  { path: "/features", element: <Features /> },
+  { path: "assign-patients", element: <RequestConnection /> },
+  { path: "assign-doctors", element: <RequestConnection /> },
+  { path: "doctor/view-incoming-requests", element: <IncomingRequests /> },
+  { path: "/patient/view-incoming-requests", element: <IncomingRequests /> },
+  { path: "/doctor/view-outgoing-requests", element: <OutgoingRequests /> },
+  { path: "/patient/view-outgoing-requests", element: <OutgoingRequests /> },
 ]);
 
 function App() {

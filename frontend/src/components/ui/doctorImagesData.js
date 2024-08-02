@@ -36,11 +36,18 @@ const doctorImagesData = [
   },
   {
     src: image5,
-    heading: "Assigned Patients",
+    heading: "Connect to Patients",
     text: "Easily manage and assign patients<br/> for personalized healthcare support.",
     buttons: [
-      { text: "Assign Patients", path: "/assign-patients" },
-      { text: "View Assigned Patients", path: "/view-assigned-patients" },
+      { text: "Connect to Patients", path: "/assign-patients" },
+      {
+        text: "View Incoming Requests",
+        path: "/doctor/view-incoming-requests",
+      },
+      {
+        text: "View Outgoing Requests",
+        path: "/doctor/view-outgoing-requests",
+      },
     ],
   },
   {
@@ -53,9 +60,7 @@ const doctorImagesData = [
     src: image2,
     heading: "Send Reminder",
     text: "Send reminder to your patients </br> to take their medicine",
-    buttons: [
-      { text: "Send Reminder", path: "reminder" },
-    ],
+    buttons: [{ text: "Send Reminder", path: "reminder" }],
   },
 ];
 
