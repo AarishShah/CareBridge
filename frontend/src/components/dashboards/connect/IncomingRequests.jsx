@@ -10,11 +10,13 @@ const IncomingRequests = () => {
   const [requests, setRequests] = useState([]);
   const location = useLocation();
 
-  let url = "http://localhost:5000/";
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+  let url = BASE_URL;
+
   if (location.pathname.includes("patient/view-incoming-requests")) {
-    url = url + "patient/receivedRequests";
+    url = url + "/patient/receivedRequests";
   } else {
-    url = url + "doctor/receivedRequests";
+    url = url + "/doctor/receivedRequests";
   }
 
   useEffect(() => {

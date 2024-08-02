@@ -20,7 +20,7 @@ const INIT_DATA = {
   qualifications: "",
 };
 
-let url = "http://localhost:5000";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 function DoctorSignup() {
   const [data, setData] = useState(INIT_DATA);
@@ -58,7 +58,7 @@ function DoctorSignup() {
           qualifications: data.qualifications.split(","),
         };
 
-        const response = await axios.post(`${url}${pathname}`, formattedData);
+        const response = await axios.post(`${BASE_URL}${pathname}`, formattedData);
 
         if (response.data.token) {
           login(response.data.token);
@@ -80,9 +80,13 @@ function DoctorSignup() {
     const userType = location.pathname.includes("doctor")
       ? "doctor"
       : "patient";
-    const signInUrl = `${url}/${userType}/auth/google`;
+    const signInUrl = `${BASE_URL}/${userType}/auth/google`;
     window.location.href = signInUrl;
   };
+
+  const handleSignInNormally = () => {
+    navigate("/login/doctor");
+  }
 
   return (
     <div className="flex min-h-screen h-full">
@@ -135,9 +139,10 @@ function DoctorSignup() {
         </div>
         <div className="text-center mt-8 font-normal text-sm">
           <span>Already have an Account? </span>
-          <a href="#" className="text-blue-500 font-semibold hover:underline">
+          <button
+          onClick={handleSignInNormally} className="text-blue-500 font-semibold hover:underline">
             Sign in
-          </a>
+          </button>
         </div>
       </form>
     </div>

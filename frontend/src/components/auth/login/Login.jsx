@@ -5,10 +5,10 @@ import axios from "axios";
 import AuthForm from "../AuthForm";
 import { useAuth } from "../../context/AuthContext";
 
-const url = "http://localhost:5000";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const loginRequest = async (user, userType) => {
-  const response = await axios.post(`${url}/${userType}/login`, user);
+  const response = await axios.post(`${BASE_URL}/${userType}/login`, user);
   return response.data;
 };
 
@@ -18,7 +18,7 @@ const verify2FARequest = async ({ userType, userId, code }) => {
     code,
   };
   console.log("payload is", payload); // Debug payload
-  const response = await axios.post(`${url}/${userType}/verify2FA`, payload);
+  const response = await axios.post(`${BASE_URL}/${userType}/verify2FA`, payload);
   console.log("verify2FA response", response); // Debug response
   return response.data;
 };
@@ -87,7 +87,7 @@ function LoginPage() {
   };
 
   const handleSignin = () => {
-    const signInUrl = `${url}/${userType}/auth/google`;
+    const signInUrl = `${BASE_URL}/${userType}/auth/google`;
     window.location.href = signInUrl;
   };
 
@@ -128,10 +128,10 @@ function LoginPage() {
             className="border rounded h-10 text-sm placeholder-gray-400 border-gray-600 p-2"
           />
           <div className="flex items-center text-sm mt-2 font-thin mb-6">
-            <input type="checkbox" id="rememberMe" className="mr-1" />
+            {/* <input type="checkbox" id="rememberMe" className="mr-1" />
             <label htmlFor="rememberMe" className="font-normal text-sm mr-2">
               Remember me
-            </label>
+            </label> */}
             <Link
               to={forgotPasswordUrl}
               className="ml-auto font-normal text-sm text-[10px] hover:underline"
