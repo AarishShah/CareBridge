@@ -16,7 +16,7 @@ const Enable2FA = () => {
     const getQrCode = async () => {
         try {
             setIsLoading(true);
-            const response = await fetch(`${BASE_URL}${urlPrefix}/qrCode`, {
+            const response = await fetch(`${BASE_URL}/${urlPrefix}/qrCode`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
@@ -37,7 +37,7 @@ const Enable2FA = () => {
     const remove2FASecret = async () => {
         try {
             setIsLoading(true);
-            const response = await fetch(`${BASE_URL}${urlPrefix}/remove2FA`, {
+            const response = await fetch(`${BASE_URL}/${urlPrefix}/remove2FA`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ const Enable2FA = () => {
     const handleVerifyCode = async (code) => {
         try {
             setIsLoading(true);
-            const response = await fetch(`${BASE_URL}${urlPrefix}/verifyqrCode`, {
+            const response = await fetch(`${BASE_URL}/${urlPrefix}/verifyqrCode`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ const Enable2FA = () => {
             style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
         >
             <div className="p-8 bg-white shadow-md rounded-md text-center">
-                <h1 className="text-2xl font-bold mb-6">Enable 2-Factor Authentication</h1>
+                <h1 className="text-2xl font-bold mb-6">Enable/Disable 2-Factor Authentication</h1>
                 <button
                     onClick={handleToggle2FA}
                     className="mt-4 p-2 border border-gray-300 rounded-md w-full"
