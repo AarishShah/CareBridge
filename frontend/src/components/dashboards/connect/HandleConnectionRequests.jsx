@@ -33,7 +33,7 @@ const HandleConnectionRequest = ({ requestId }) => {
 
   return (
     <div className="mt-4">
-      {location.pathname.includes("patient/view-incoming-requests") && (
+      {location.pathname.includes("patient/view-incoming-requests") || location.pathname.includes("doctor/view-incoming-requests") && (
         <button
           className="mr-2 px-4 py-2 bg-green-500 text-white font-semibold rounded-md shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
           onClick={() => handleResponse("accept")}
