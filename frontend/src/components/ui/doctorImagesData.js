@@ -30,7 +30,7 @@ const doctorImagesData = [
     heading: "Medical Records",
     text: "View and create detailed medical records<br/> to ensure comprehensive patient care<br/> and accurate documentation.",
     buttons: [
-      { text: "View Medical Records", path: "/all-medical-records" },
+      { text: "View Medical Records", path: "/doctor/all-medical-records" },
       { text: "Create New Record", path: "/medical-record/create" },
     ],
   },

@@ -68,7 +68,8 @@ const router = createBrowserRouter([
   },
 
   { path: "/all-medical-records/:id", element: <ReadSingleMedicalRecord /> },
-  { path: "/all-medical-records", element: <ReadAllRecords /> },
+  { path: "/patient/all-medical-records", element: <ReadAllRecords /> },
+  { path: "/doctor/all-medical-records", element: <ReadAllRecords /> },
   { path: "/medical-record/create", element: <Create /> },
   { path: "/medical-record/create/:id", element: <CreateRecord /> },
   { path: "/doctor/edit", element: <DoctorEdit /> },
