@@ -1,10 +1,11 @@
-// DynamicSection.js
 import React from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import image from '../assets/3.png';
-import image1 from '../assets/4.png';
+import image from '../assets/17.png';
+import image1 from '../assets/18.png';
+import image2 from '../assets/15.png';
+import image3 from '../assets/16.png';
 
 const sections = [
   {
@@ -19,11 +20,21 @@ const sections = [
     title: 'Empowering Clinicians Everywhere',
     description: 'Join a community of professionals dedicated to improving patient outcomes.',
   },
+  {
+    img: image2,
+    alt: 'Patient Care',
+    title: 'Revolutionize Patient Care',
+    description: 'Experience seamless integration of advanced AI tools to enhance diagnosis and treatment plans on CareBridge.',
+  },
+  {
+    img: image3,
+    alt: 'Real-Time Data',
+    title: 'Foster Collaborative Practice',
+    description: 'Connect with other healthcare professionals to share insights and best practices.',
+  },
 ];
 
 export default function DynamicSection() {
-  const allSections = [...sections, ...sections];
-
   const settings = {
     dots: true,
     infinite: true,
@@ -40,38 +51,62 @@ export default function DynamicSection() {
   return (
     <div className="overflow-hidden">
       <Slider {...settings}>
-        {allSections.map((section, index) => (
-          <div key={index} style={{ display: 'flex' }}>
-            <div style={{ width: '100%' }}>
-              {/* First Section */}
-              <div className="flex items-center mb-24 bg-white rounded-lg shadow-lg p-8">
-                <img src={section.img} alt={section.alt} className="mr-16 h-80 w-112 rounded-lg object-cover" />
-                <div className="ml-auto text-left">
-                  <h2 className="text-2xl font-semibold mb-4">
-                    {section.title}
-                  </h2>
-                  <p className="text-lg">
-                    {section.description}
-                  </p>
-                </div>
+        <div key="first-section" style={{ display: 'flex' }}>
+          <div style={{ width: '100%' }}>
+            {/* First Section */}
+            <div className="flex items-center mb-24 bg-white rounded-lg shadow-lg p-8">
+              <img src={sections[0].img} alt={sections[0].alt} className="mr-16 h-80 w-112 rounded-lg object-cover" />
+              <div className="ml-auto text-left">
+                <h2 className="text-2xl font-semibold mb-4">
+                  {sections[0].title}
+                </h2>
+                <p className="text-lg">
+                  {sections[0].description}
+                </p>
               </div>
+            </div>
 
-              {/* Second Section */}
-              <div className="flex items-center bg-white rounded-lg shadow-lg p-8">
-                <div className="mr-16 text-left">
-                  <h2 className="text-2xl font-semibold mb-4">
-                    Empowering Clinicians Everywhere
-                  </h2>
-                  <p className="text-lg">
-                    Join a community of professionals dedicated
-                    to improving patient outcomes.
-                  </p>
-                </div>
-                <img src={image1} alt="Clinicians" className="h-80 w-112 rounded-lg object-cover ml-auto" />
+            <div className="flex items-center bg-white rounded-lg shadow-lg p-8">
+              <img src={sections[1].img} alt={sections[1].alt} className="mr-16 h-80 w-112 rounded-lg object-cover" />
+              <div className="ml-auto text-left">
+                <h2 className="text-2xl font-semibold mb-4">
+                  {sections[1].title}
+                </h2>
+                <p className="text-lg">
+                  {sections[1].description}
+                </p>
               </div>
             </div>
           </div>
-        ))}
+        </div>
+        <div key="second-section" style={{ display: 'flex' }}>
+          <div style={{ width: '100%' }}>
+            {/* Second Section */}
+            <div className="flex items-center mb-24 bg-white rounded-lg shadow-lg p-8">
+              <img src={sections[2].img} alt={sections[2].alt} className="mr-16 h-80 w-112 rounded-lg object-cover" />
+              <div className="ml-auto text-left">
+                <h2 className="text-2xl font-semibold mb-4">
+                  {sections[2].title}
+                </h2>
+                <p className="text-lg">
+                  {sections[2].description}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center bg-white rounded-lg shadow-lg p-8">
+              <img src={sections[3].img} alt={sections[3].alt} className="mr-16 h-80 w-112 rounded-lg object-cover" />
+              <div className="ml-auto text-left">
+                <h2 className="text-2xl font-semibold mb-4">
+                  {sections[3].title}
+                </h2>
+                <p className="text-lg">
+                  {sections[3].description}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </Slider>
     </div>
   );
