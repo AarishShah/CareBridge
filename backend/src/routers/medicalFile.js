@@ -29,6 +29,7 @@ const presigner = new S3RequestPresigner({
   sha256: Hash.bind(null, "sha256"),
 });
 
+// Get all medical files for a patient
 router.get("/medical-record", auth, async (req, res) => {
   try {
     let patientId;
@@ -72,6 +73,7 @@ router.get("/medical-record", auth, async (req, res) => {
   }
 });
 
+// Read a medical file
 router.get("/medical-record/:id", auth, async (req, res) => {
   if (req.role !== "patient") {
     return res
