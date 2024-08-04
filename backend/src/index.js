@@ -5,7 +5,6 @@ const session = require("express-session");
 require("./db/mongoose");
 require("../src/utils/cleanup-token");
 
-// const adminRouter = require("./routers/admin");
 const patientRouter = require("./routers/patient");
 const doctorRouter = require("./routers/doctor");
 const medicalHistoryRouter = require("./routers/medicalHistory");
@@ -35,7 +34,6 @@ app.use(session({
 // Parse JSON bodies
 app.use(express.json());
 
-// app.use(adminRouter); // to register admin router
 app.use(patientRouter);
 app.use(doctorRouter);
 app.use(medicalHistoryRouter);
