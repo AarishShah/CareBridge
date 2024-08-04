@@ -155,7 +155,7 @@ router.post("/doctor/complete-profile", async (req, res) =>
     }
 });
 
-// ---------------- 1. CRUD operations for doctors ----------------
+// ---------------- 2. CRUD operations for doctors ----------------
 
 // 1. Sign Up Route
 router.post("/doctor/signup", async (req, res) =>
@@ -322,7 +322,7 @@ router.get("/doctor/me", auth, async (req, res) =>
     }
 });
 
-// ---------------- 2. Patient-Doctor Connection Routes ----------------
+// ---------------- 3. Patient-Doctor Connection Routes ----------------
 
 // 1. Connect to Patient - Doctor requests to connect to a patient by email
 router.post("/doctor/requestPatient", auth, async (req, res) => 
@@ -450,7 +450,7 @@ router.delete('/doctor/cancelRequest/:id', auth, async (req, res) =>
     }
 });
 
-// ---------------- 3. Two Factor Authentication Routes ----------------
+// ---------------- 4. Two Factor Authentication Routes ----------------
 
 // 1. Get QR Code - Route to generate a QR code for 2FA
 router.get('/doctor/qrCode',auth, async (req, res) => {
@@ -549,7 +549,7 @@ router.post('/doctor/remove2FA', auth, async (req, res) => {
   }
 });
 
-// ---------------- 4. Forgot and Reset Password Routes ----------------
+// ---------------- 5. Forgot and Reset Password Routes ----------------
 
 // 1. Forgot password - send email to patient with reset link
 router.post('/doctor/forgot-password', (req, res) => {
@@ -612,7 +612,7 @@ router.post('/doctor/reset-password/:id/:token', (req, res) => {
   })
 })
 
-// ---------------- 5. Routes for sending medicine reminders ----------------
+// ---------------- 6. Routes for sending medicine reminders ----------------
 
 // 1. Send medicine reminder
 router.post('/doctor/reminder', auth, (req, res) =>
