@@ -5,6 +5,7 @@ const auth = require("../middleware/auth");
 
 const router = new express.Router();
 
+// Create patient's prescription
 router.post("/prescription/:id", auth, async (req, res) =>
 {
     if (req.role !== "doctor")
@@ -47,6 +48,7 @@ router.post("/prescription/:id", auth, async (req, res) =>
 }
 );
 
+// Get all prescriptions for a patient
 router.get("/prescription", auth, async (req, res) =>
 {
     const page = parseInt(req.query.page) || 1; // Default to first page
@@ -92,6 +94,7 @@ router.get("/prescription", auth, async (req, res) =>
 }
 );
 
+// Read prescription
 router.get('/prescription/:id', auth, async (req, res) =>
 {
     try
@@ -132,6 +135,7 @@ router.get('/prescription/:id', auth, async (req, res) =>
     }
 });
 
+// Delete a prescription
 router.delete("/prescription/:id", auth, async (req, res) =>
 {
     try

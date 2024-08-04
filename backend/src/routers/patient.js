@@ -147,7 +147,7 @@ router.post("/patient/complete-profile", async (req, res) =>
     }
 });
 
-// ---------------- 2. CRUD operations for doctors ----------------
+// ---------------- 1. CRUD operations for doctors ----------------
 
 // 1. Sign Up Route
 router.post("/patient/signup", async (req, res) =>
@@ -320,7 +320,7 @@ router.get("/patient/me", auth, async (req, res) =>
     }
 });
 
-// ---------------- 3. Patient-Doctor Connection Routes ----------------
+// ---------------- 2. Patient-Doctor Connection Routes ----------------
 
 // 1. Connect to Doctor - Patient requests to connect to a doctor by email
 router.post("/patient/requestDoctor", auth, async (req, res) =>
@@ -449,7 +449,7 @@ router.delete('/patient/cancelRequest/:id', auth, async (req, res) =>
     }
 });
 
-// ---------------- 4. Two Factor Authentication Routes ----------------
+// ---------------- 3. Two Factor Authentication Routes ----------------
 
 // 1. Get QR Code - Route to generate a QR code for 2FA
 router.get('/patient/qrCode',auth, async (req, res) => {
@@ -549,7 +549,7 @@ router.post('/patient/remove2FA', auth, async (req, res) => {
     }
 });
 
-// ---------------- 5. Forgot and Reset Password Routes ----------------
+// ---------------- 4. Forgot and Reset Password Routes ----------------
 
 // 1. Forgot password - send email to patient with reset link
 router.post('/patient/forgot-password', (req, res) => {
