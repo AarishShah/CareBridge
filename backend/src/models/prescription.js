@@ -3,11 +3,17 @@ const mongoose = require("mongoose");
 const prescription = new mongoose.Schema(
   {
     patientId: { type: String, required: true },
+    assignedBy: { type: String, required: true },
     prescribedDrug: { type: String, required: true },
     dosage: { type: String, required: true },
-    administrationRoute: { type: String, required: true},
-    dosageFrequency: { type: String,required: true },
-    allergies: { type: [String], default: null, }
+    administrationRoute: { type: String, required: true },
+    dosageFrequency: { type: String, required: true },
+    allergies: { type: [String], default: null },
+  },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 

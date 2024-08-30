@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import image from '../../../assets/8.png';
+import image from "../../../assets/8.png";
 
 function ReadAllPrescriptions() {
   const [prescriptions, setPrescriptions] = useState([]);
@@ -20,14 +20,11 @@ function ReadAllPrescriptions() {
 
   const fetchPrescription = async (id) => {
     try {
-      const response = await axios.get(
-        `${BASE_URL}/prescription/${id}`,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/prescription/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
       setSelectedPrescriptions(response.data);
-      console.log("Response: ", response)
+      console.log("Response: ", response);
     } catch (error) {
       console.error("Error fetching prescriptions:", error);
     }
@@ -38,8 +35,10 @@ function ReadAllPrescriptions() {
   }, []);
 
   return (
-    <div className="bg-cover bg-center bg-no-repeat min-h-screen" style={{ backgroundImage: `url(${image})`}}>
-
+    <div
+      className="bg-cover bg-center bg-no-repeat min-h-screen"
+      style={{ backgroundImage: `url(${image})` }}
+    >
       <div className="fixed w-1/3 container mx-auto p-6">
         {prescriptions.length === 0 && (
           <h2 className="text-xl font-semibold text-center text-gray-700">
@@ -47,7 +46,9 @@ function ReadAllPrescriptions() {
           </h2>
         )}
         <div className="flex justify-center items-center">
-          <h1 className="text-2xl font-semibold mb-6">View Patient's Prescriptions</h1>
+          <h1 className="text-2xl font-semibold mb-6">
+            View Patient&apos;s Prescriptions
+          </h1>
         </div>
         {prescriptions &&
           prescriptions.map((record) => (
@@ -68,23 +69,36 @@ function ReadAllPrescriptions() {
             </div>
           ))}
       </div>
-      
-      <div className="w-2/3 container mx-auto p-6" style={{ marginLeft: '26rem' }}>
+
+      <div
+        className="w-2/3 container mx-auto p-6"
+        style={{ marginLeft: "26rem" }}
+      >
         {selectedPrescriptions && (
           <div className="p-6 bg-gray-200 shadow-md rounded-lg">
             <h1 className="text-3xl font-bold text-gray-800">
               Prescribed Drug: {selectedPrescriptions.prescribedDrug}
             </h1>
             <div className="mt-6 p-4 border rounded-lg shadow-md">
-            <h3 className="text-2xl font-semibold text-gray-700 mt-4">
-              Dosage: {selectedPrescriptions.dosage}
-            </h3>
+              <h3 className="text-2xl font-semibold text-gray-700 mt-4">
+                Assigned By: Dr. {selectedPrescriptions.assignedBy} 
+              </h3>
             </div>
             <div className="mt-6 p-4 border rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-700">Administration Route: {selectedPrescriptions.administrationRoute}</h2>
+              <h3 className="text-2xl font-semibold text-gray-700 mt-4">
+                Dosage: {selectedPrescriptions.dosage}
+              </h3>
             </div>
             <div className="mt-6 p-4 border rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-700">Dosage Frequency: {selectedPrescriptions.dosageFrequency}</h2>
+              <h2 className="text-xl font-semibold text-gray-700">
+                Administration Route:{" "}
+                {selectedPrescriptions.administrationRoute}
+              </h2>
+            </div>
+            <div className="mt-6 p-4 border rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold text-gray-700">
+                Dosage Frequency: {selectedPrescriptions.dosageFrequency}
+              </h2>
             </div>
             <div className="mt-6 p-4 border rounded-lg shadow-md">
               <h2 className="text-xl font-semibold text-gray-700">Allergies</h2>
