@@ -34,11 +34,12 @@ router.post("/prescription/:id", auth, async (req, res) =>
         const prescription = new Prescription({
             patientId,
             prescribedDrug: req.body.prescribedDrug,
+            assignedBy: req.user.name,
             dosage: req.body.dosage,
             administrationRoute: req.body.administrationRoute,
             dosageFrequency: req.body.dosageFrequency,
             allergies: req.body.allergies,
-        })
+        });
 
         await prescription.save();
         res.status(201).send({ prescription });
